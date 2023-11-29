@@ -1,9 +1,9 @@
 # Routing cheatsheet
 
-> Those need to be declared in the correct router module and scope.
+> 올바른 라우터 모듈과 범위에서 선언해야 합니다.
 
-A quick reference to the common routing features' syntax.
-For an exhaustive overview, refer to the [routing guides](routing.md).
+일반적인 라우팅 기능의 구문에 대한 빠른 참조입니다.
+전체 개요는 [라우팅 가이드](routing.md)를 참조하세요.
 
 ## Routing declaration
 {: .col-2}
@@ -14,12 +14,14 @@ For an exhaustive overview, refer to the [routing guides](routing.md).
 get "/users", UserController, :index
 patch "/users/:id", UserController, :update
 ```
+
 ```elixir
 # generated routes
 ~p"/users"
 ~p"/users/9" # user_id is 9
 ```
-Also accepts `put`, `patch`, `options`, `delete` and `head`.
+
+또한 `put`, `patch`, `options`, `delete` 및 `head`도 사용할 수 있습니다.
 
 ### Resources
 
@@ -28,7 +30,8 @@ Also accepts `put`, `patch`, `options`, `delete` and `head`.
 ```elixir
 resources "/users", UserController
 ```
-Generates `:index`, `:edit`, `:new`, `:show`, `:create`, `:update` and `:delete`.
+
+`index`, `:edit`, `:new`, `:show`, `:create`, `:update` 및 `:delete`를 생성합니다.
 
 #### Options
 
@@ -45,16 +48,19 @@ resources "/users", UserController do
   resources "/posts", PostController
 end
 ```
+
 ```elixir
 # generated routes
 ~p"/users/3/posts" # user_id is 3
 ~p"/users/3/posts/17" # user_id is 3 and post_id = 17
 ```
-For more info check the [resources docs.](routing-1.html#resources)
+
+자세한 내용은 [리소스 문서](routing-1.html#resources)에서 확인하세요.
 
 ### Scopes
 
 #### Simple
+
 ```elixir
 scope "/admin", HelloWeb.Admin do
   pipe_through :browser
@@ -62,6 +68,7 @@ scope "/admin", HelloWeb.Admin do
   resources "/users",   UserController
 end
 ```
+
 ```elixir
 # generated path helpers
 ~p"/admin/users"
@@ -77,8 +84,10 @@ scope "/api", HelloWeb.Api, as: :api do
   end
 end
 ```
+
 ```elixir
 # generated path helpers
 ~p"/api/v1/users"
 ```
-For more info check the [scoped routes](routing.md#scoped-routes) docs.
+
+자세한 내용은 [범위 지정 경로](routing.md#scoped-routes) 문서를 참조하세요.
