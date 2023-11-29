@@ -4,13 +4,18 @@
 >
 > **Requirement**: This guide expects that you have gone through the [Channels guide](channels.html).
 
-Phoenix Presence is a feature which allows you to register process information on a topic and replicate it transparently across a cluster. It's a combination of both a server-side and client-side library, which makes it simple to implement. A simple use-case would be showing which users are currently online in an application.
+Phoenix Presence is a feature which allows you to register process information on a topic and replicate it transparently across a cluster.
+It's a combination of both a server-side and client-side library, which makes it simple to implement.
+A simple use-case would be showing which users are currently online in an application.
 
-Phoenix Presence is special for a number of reasons. It has no single point of failure, no single source of truth, relies entirely on the standard library with no operational dependencies and self-heals.
+Phoenix Presence is special for a number of reasons.
+It has no single point of failure, no single source of truth, relies entirely on the standard library with no operational dependencies and self-heals.
 
 ## Setting up
 
-We are going to use Presence to track which users are connected on the server and send updates to the client as users join and leave. We will deliver those updates via Phoenix Channels. Therefore, let's create a `RoomChannel`, as we did in the channels guides:
+We are going to use Presence to track which users are connected on the server and send updates to the client as users join and leave.
+We will deliver those updates via Phoenix Channels.
+Therefore, let's create a `RoomChannel`, as we did in the channels guides:
 
 ```shell
 mix phx.gen.channel Room
@@ -20,7 +25,8 @@ Follow the steps after the generator and you are ready to start tracking presenc
 
 ## The Presence generator
 
-To get started with Presence, we'll first need to generate a presence module. We can do this with the `mix phx.gen.presence` task:
+To get started with Presence, we'll first need to generate a presence module.
+We can do this with the `mix phx.gen.presence` task:
 
 ```shell
 $ mix phx.gen.presence
@@ -45,7 +51,8 @@ use Phoenix.Presence,
   pubsub_server: Hello.PubSub
 ```
 
-This sets up the module for presence, defining the functions we require for tracking presences. As mentioned in the generator task, we should add this module to our supervision tree in
+This sets up the module for presence, defining the functions we require for tracking presences.
+As mentioned in the generator task, we should add this module to our supervision tree in
 `application.ex`:
 
 ```elixir
@@ -57,7 +64,9 @@ children = [
 
 ## Usage With Channels and JavaScript
 
-Next, we will create the channel that we'll communicate presence over. After a user joins, we can push the list of presences down the channel and then track the connection. We can also provide a map of additional information to track.
+Next, we will create the channel that we'll communicate presence over.
+After a user joins, we can push the list of presences down the channel and then track the connection.
+We can also provide a map of additional information to track.
 
 ```elixir
 defmodule HelloWeb.RoomChannel do
@@ -81,11 +90,15 @@ defmodule HelloWeb.RoomChannel do
 end
 ```
 
-Finally, we can use the client-side Presence library included in `phoenix.js` to manage the state and presence diffs that come down the socket. It listens for the `"presence_state"` and `"presence_diff"` events and provides a simple callback for you to handle the events as they happen, with the `onSync` callback.
+Finally, we can use the client-side Presence library included in `phoenix.js` to manage the state and presence diffs that come down the socket.
+It listens for the `"presence_state"` and `"presence_diff"` events and provides a simple callback for you to handle the events as they happen, with the `onSync` callback.
 
-The `onSync` callback allows you to easily react to presence state changes, which most often results in re-rendering an updated list of active users. You can use the `list` method to format and return each individual presence based on the needs of your application.
+The `onSync` callback allows you to easily react to presence state changes, which most often results in re-rendering an updated list of active users.
+You can use the `list` method to format and return each individual presence based on the needs of your application.
 
-To iterate users, we use the `presences.list()` function which accepts a callback. The callback will be called for each presence item with 2 arguments, the presence id and a list of metas (one for each presence for that presence id). We use this to display the users and the number of devices they are online with.
+To iterate users, we use the `presences.list()` function which accepts a callback.
+The callback will be called for each presence item with 2 arguments, the presence id and a list of metas (one for each presence for that presence id).
+We use this to display the users and the number of devices they are online with.
 
 We can see presence working by adding the following to `assets/js/app.js`:
 
@@ -116,18 +129,22 @@ presence.onSync(() => renderOnlineUsers(presence));
 channel.join();
 ```
 
-We can ensure this is working by opening 3 browser tabs. If we navigate to <http://localhost:4000/?name=Alice> on two browser tabs and <http://localhost:4000/?name=Bob> then we should see:
+We can ensure this is working by opening 3 browser tabs.
+If we navigate to <http://localhost:4000/?name=Alice> on two browser tabs and <http://localhost:4000/?name=Bob> then we should see:
 
 ```plaintext
 Alice (count: 2)
 Bob (count: 1)
 ```
 
-If we close one of the Alice tabs, then the count should decrease to 1. If we close another tab, the user should disappear from the list entirely.
+If we close one of the Alice tabs, then the count should decrease to 1.
+If we close another tab, the user should disappear from the list entirely.
 
 ### Making it safe
 
-In our initial implementation, we are passing the name of the user as part of the URL. However, in many systems, you want to allow only logged in users to access the presence functionality. To do so, you should set up token authentication, [as detailed in the token authentication section of the channels guide](channels.html#using-token-authentication).
+In our initial implementation, we are passing the name of the user as part of the URL.
+However, in many systems, you want to allow only logged in users to access the presence functionality.
+To do so, you should set up token authentication, [as detailed in the token authentication section of the channels guide](channels.html#using-token-authentication).
 
 With token authentication, you should access `socket.assigns.user_id`, set in `UserSocket`, instead of `socket.assigns.name` set from parameters.
 
@@ -135,11 +152,13 @@ With token authentication, you should access `socket.assigns.user_id`, set in `U
 
 Whilst Phoenix does ship with a JavaScript API for dealing with presence, it is also possible to extend the `HelloWeb.Presence` module to support [LiveView](https://hexdocs.pm/phoenix_live_view).
 
-One thing to keep in mind when dealing with LiveView, is that each LiveView is a stateful process, so if we keep the presence state in the LiveView, each LiveView process will contain the full list of online users in memory. Instead, we can keep track of the online users within the `Presence` process, and pass separate events to the LiveView, which can use a stream to update the online list.
+One thing to keep in mind when dealing with LiveView, is that each LiveView is a stateful process, so if we keep the presence state in the LiveView, each LiveView process will contain the full list of online users in memory.
+Instead, we can keep track of the online users within the `Presence` process, and pass separate events to the LiveView, which can use a stream to update the online list.
 
 To start with, we need to update the `lib/hello_web/channels/presence.ex` file to add some optional callbacks to the `HelloWeb.Presence` module.
 
-Firstly, we add the `init/1` callback. This allows us to keep track of the presence state within the process.
+Firstly, we add the `init/1` callback.
+This allows us to keep track of the presence state within the process.
 
 ```elixir
   def init(_opts) do
@@ -147,7 +166,8 @@ Firstly, we add the `init/1` callback. This allows us to keep track of the prese
   end
 ```
 
-The presence module also allows a `fetch/2` callback, this allows the data fetched from the presence to be modified, allowing us to define the shape of the response. In this case we are adding an `id` and a `user` map.
+The presence module also allows a `fetch/2` callback, this allows the data fetched from the presence to be modified, allowing us to define the shape of the response.
+In this case we are adding an `id` and a `user` map.
 
 ```elixir
   def fetch(_topic, presences) do
@@ -159,7 +179,8 @@ The presence module also allows a `fetch/2` callback, this allows the data fetch
   end
 ```
 
-The final thing to add is the `handle_metas/4` callback. This callback updates the state that we keep track of in `HelloWeb.Presence` based on the user leaves and joins.
+The final thing to add is the `handle_metas/4` callback.
+This callback updates the state that we keep track of in `HelloWeb.Presence` based on the user leaves and joins.
 
 ```elixir
   def handle_metas(topic, %{joins: joins, leaves: leaves}, presences, state) do
@@ -185,7 +206,11 @@ The final thing to add is the `handle_metas/4` callback. This callback updates t
   end
 ```
 
-You can see that we are broadcasting events for the joins and leaves. These will be listened to by the LiveView process. You'll also see that we use "proxy" channel when broadcasting the joins and leaves. This is because we don't want our LiveView process to receive the presence events directly. We can add a few helper functions so that this particular implementation detail is abstracted from the LiveView module.
+You can see that we are broadcasting events for the joins and leaves.
+These will be listened to by the LiveView process.
+You'll also see that we use "proxy" channel when broadcasting the joins and leaves.
+This is because we don't want our LiveView process to receive the presence events directly.
+We can add a few helper functions so that this particular implementation detail is abstracted from the LiveView module.
 
 ```elixir
   def list_online_users(), do: list("online_users") |> Enum.map(fn {_id, presence} -> presence end)
@@ -195,7 +220,8 @@ You can see that we are broadcasting events for the joins and leaves. These will
   def subscribe(), do: Phoenix.PubSub.subscribe(Hello.PubSub, "proxy:online_users")
 ```
 
-Now that we have our presence module set up and broadcasting events, we can create a LiveView. Create a new file `lib/hello_web/live/online/index.ex` with the following contents:
+Now that we have our presence module set up and broadcasting events, we can create a LiveView.
+Create a new file `lib/hello_web/live/online/index.ex` with the following contents:
 
 ```elixir
 defmodule HelloWeb.OnlineLive do
@@ -243,4 +269,5 @@ If we add this route to the `lib/hello_web/router.ex`:
     live "/online/:name", OnlineLive, :index
 ```
 
-Then we can navigate to http://localhost:4000/online/Alice in one tab, and http://localhost:4000/online/Bob in another, you'll see that the presences are tracked, along with the number of presences per user. Opening and closing tabs with various users will update the presence list in real-time.
+Then we can navigate to http://localhost:4000/online/Alice in one tab, and http://localhost:4000/online/Bob in another, you'll see that the presences are tracked, along with the number of presences per user.
+Opening and closing tabs with various users will update the presence list in real-time.

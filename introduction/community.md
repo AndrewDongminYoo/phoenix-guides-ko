@@ -1,6 +1,7 @@
 # Community
 
-The Elixir and Phoenix communities are friendly and welcoming. All questions and comments are valuable, so please come join the discussion!
+The Elixir and Phoenix communities are friendly and welcoming.
+All questions and comments are valuable, so please come join the discussion!
 
 There are a number of places to connect with community members at all experience levels.
 
@@ -26,7 +27,8 @@ The Security Working Group of the Erlang Ecosystem Foundation also publishes in-
 
 - [Phoenix in Action (by Geoffrey Lessel - 2019)](https://manning.com/books/phoenix-in-action)
 
-- [Phoenix Inside Out - Book Series (by Shankar Dhanasekaran - 2017)](https://shankardevy.com/phoenix-book/). First book of the series Mastering Phoenix Framework is [free to read online](https://shankardevy.com/phoenix-inside-out-mpf/)
+- [Phoenix Inside Out - Book Series (by Shankar Dhanasekaran - 2017)](https://shankardevy.com/phoenix-book/).
+  First book of the series Mastering Phoenix Framework is [free to read online](https://shankardevy.com/phoenix-inside-out-mpf/)
 
 - [Functional Web Development with Elixir, OTP, and Phoenix Rethink the Modern Web App (by Lance Halvorsen - 2017)](https://pragprog.com/titles/lhelph/functional-web-development-with-elixir-otp-and-phoenix/)
 

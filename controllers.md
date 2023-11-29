@@ -4,9 +4,14 @@
 >
 > **Requirement**: This guide expects that you have gone through the [request life-cycle guide](request_lifecycle.html).
 
-Phoenix controllers act as intermediary modules. Their functions — called actions — are invoked from the router in response to HTTP requests. The actions, in turn, gather all the necessary data and perform all the necessary steps before invoking the view layer to render a template or returning a JSON response.
+Phoenix controllers act as intermediary modules.
+Their functions — called actions — are invoked from the router in response to HTTP requests.
+The actions, in turn, gather all the necessary data and perform all the necessary steps before invoking the view layer to render a template or returning a JSON response.
 
-Phoenix controllers also build on the Plug package, and are themselves plugs. Controllers provide the functions to do almost anything we need to in an action. If we do find ourselves looking for something that Phoenix controllers don't provide, we might find what we're looking for in Plug itself. Please see the [Plug guide](plug.html) or the [Plug documentation](`Plug`) for more information.
+Phoenix controllers also build on the Plug package, and are themselves plugs.
+Controllers provide the functions to do almost anything we need to in an action.
+If we do find ourselves looking for something that Phoenix controllers don't provide, we might find what we're looking for in Plug itself.
+Please see the [Plug guide](plug.html) or the [Plug documentation](`Plug`) for more information.
 
 A newly generated Phoenix app will have a single controller named `PageController`, which can be found at `lib/hello_web/controllers/page_controller.ex` which looks like this:
 
@@ -26,7 +31,9 @@ The first line below the module definition invokes the `__using__/1` macro of th
 
 ## Actions
 
-Controller actions are just functions. We can name them anything we like as long as they follow Elixir's naming rules. The only requirement we must fulfill is that the action name matches a route defined in the router.
+Controller actions are just functions.
+We can name them anything we like as long as they follow Elixir's naming rules.
+The only requirement we must fulfill is that the action name matches a route defined in the router.
 
 For example, in `lib/hello_web/router.ex` we could change the action name in the default route that Phoenix gives us in a new app from `home`:
 
@@ -52,7 +59,8 @@ defmodule HelloWeb.PageController do
 end
 ```
 
-While we can name our actions whatever we like, there are conventions for action names which we should follow whenever possible. We went over these in the [routing guide](routing.html), but we'll take another quick look here.
+While we can name our actions whatever we like, there are conventions for action names which we should follow whenever possible.
+We went over these in the [routing guide](routing.html), but we'll take another quick look here.
 
 - index - renders a list of all items of the given resource type
 - show - renders an individual item by ID
@@ -64,9 +72,13 @@ While we can name our actions whatever we like, there are conventions for action
 
 Each of these actions takes two parameters, which will be provided by Phoenix behind the scenes.
 
-The first parameter is always `conn`, a struct which holds information about the request such as the host, path elements, port, query string, and much more. `conn` comes to Phoenix via Elixir's Plug middleware framework. More detailed information about `conn` can be found in the [Plug.Conn documentation](`Plug.Conn`).
+The first parameter is always `conn`, a struct which holds information about the request such as the host, path elements, port, query string, and much more. `conn` comes to Phoenix via Elixir's Plug middleware framework.
+More detailed information about `conn` can be found in the [Plug.Conn documentation](`Plug.Conn`).
 
-The second parameter is `params`. Not surprisingly, this is a map which holds any parameters passed along in the HTTP request. It is a good practice to pattern match against parameters in the function signature to provide data in a simple package we can pass on to rendering. We saw this in the [request life-cycle guide](request_lifecycle.html) when we added a messenger parameter to our `show` route in `lib/hello_web/controllers/hello_controller.ex`.
+The second parameter is `params`.
+Not surprisingly, this is a map which holds any parameters passed along in the HTTP request.
+It is a good practice to pattern match against parameters in the function signature to provide data in a simple package we can pass on to rendering.
+We saw this in the [request life-cycle guide](request_lifecycle.html) when we added a messenger parameter to our `show` route in `lib/hello_web/controllers/hello_controller.ex`.
 
 ```elixir
 defmodule HelloWeb.HelloController do
@@ -78,13 +90,17 @@ defmodule HelloWeb.HelloController do
 end
 ```
 
-In some cases — often in `index` actions, for instance — we don't care about parameters because our behavior doesn't depend on them. In those cases, we don't use the incoming parameters, and simply prefix the variable name with an underscore, calling it `_params`. This will keep the compiler from complaining about the unused variable while still keeping the correct arity.
+In some cases — often in `index` actions, for instance — we don't care about parameters because our behavior doesn't depend on them.
+In those cases, we don't use the incoming parameters, and simply prefix the variable name with an underscore, calling it `_params`.
+This will keep the compiler from complaining about the unused variable while still keeping the correct arity.
 
 ## Rendering
 
-Controllers can render content in several ways. The simplest is to render some plain text using the [`text/2`] function which Phoenix provides.
+Controllers can render content in several ways.
+The simplest is to render some plain text using the [`text/2`] function which Phoenix provides.
 
-For example, let's rewrite the `show` action from `HelloController` to return text instead. For that, we could do the following.
+For example, let's rewrite the `show` action from `HelloController` to return text instead.
+For that, we could do the following.
 
 ```elixir
 def show(conn, %{"messenger" => messenger}) do
@@ -94,7 +110,8 @@ end
 
 Now [`/hello/Frank`] in your browser should display `From messenger Frank` as plain text without any HTML.
 
-A step beyond this is rendering pure JSON with the [`json/2`] function. We need to pass it something that the [Jason library](`Jason`) can decode into JSON, such as a map. (Jason is one of Phoenix's dependencies.)
+A step beyond this is rendering pure JSON with the [`json/2`] function.
+We need to pass it something that the [Jason library](`Jason`) can decode into JSON, such as a map. (Jason is one of Phoenix's dependencies.)
 
 ```elixir
 def show(conn, %{"messenger" => messenger}) do
@@ -108,7 +125,9 @@ If we again visit [`/hello/Frank`] in the browser, we should see a block of JSON
 { "id": "Frank" }
 ```
 
-The [`json/2`] function is useful for writing APIs and there is also the [`html/2`] function for rendering HTML, but most of the times we use Phoenix views to build our responses. For this, Phoenix includes the [`render/3`] function. It is specially important for HTML responses, as Phoenix Views provide performance and security benefits.
+The [`json/2`] function is useful for writing APIs and there is also the [`html/2`] function for rendering HTML, but most of the times we use Phoenix views to build our responses.
+For this, Phoenix includes the [`render/3`] function.
+It is specially important for HTML responses, as Phoenix Views provide performance and security benefits.
 
 Let's rollback our `show` action to what we originally wrote in the [request life-cycle guide](request_lifecycle.html):
 
@@ -122,11 +141,14 @@ defmodule HelloWeb.HelloController do
 end
 ```
 
-In order for the [`render/3`] function to work correctly, the controller and view must share the same root name (in this case `Hello`), and the `HelloHTML` module must include an `embed_templates` definition specifying where its templates live. By default the controller, view module, and templates are collocated together in the same controller directory. In other words, `HelloController` requires `HelloHTML`, and `HelloHTML` requires the existence of the `lib/hello_web/controllers/hello_html/` directory, which must contain the `show.html.heex` template.
+In order for the [`render/3`] function to work correctly, the controller and view must share the same root name (in this case `Hello`), and the `HelloHTML` module must include an `embed_templates` definition specifying where its templates live.
+By default the controller, view module, and templates are collocated together in the same controller directory.
+In other words, `HelloController` requires `HelloHTML`, and `HelloHTML` requires the existence of the `lib/hello_web/controllers/hello_html/` directory, which must contain the `show.html.heex` template.
 
 [`render/3`] will also pass the value which the `show` action received for `messenger` from the parameters as an assign.
 
-If we need to pass values into the template when using `render`, that's easy. We can pass a keyword like we've seen with `messenger: messenger`, or we can use `Plug.Conn.assign/3`, which conveniently returns `conn`.
+If we need to pass values into the template when using `render`, that's easy.
+We can pass a keyword like we've seen with `messenger: messenger`, or we can use `Plug.Conn.assign/3`, which conveniently returns `conn`.
 
 ```elixir
   def show(conn, %{"messenger" => messenger}) do
@@ -157,17 +179,24 @@ Or you can pass the assigns directly to `render` instead:
   end
 ```
 
-Generally speaking, once all assigns are configured, we invoke the view layer. The view layer (`HelloWeb.HelloHTML`) then renders `show.html` alongside the layout and a response is sent back to the browser.
+Generally speaking, once all assigns are configured, we invoke the view layer.
+The view layer (`HelloWeb.HelloHTML`) then renders `show.html` alongside the layout and a response is sent back to the browser.
 
-[Components and HEEx templates](components.html) have their own guide, so we won't spend much time on them here. What we will look at is how to render different formats from inside a controller action.
+[Components and HEEx templates](components.html) have their own guide, so we won't spend much time on them here.
+What we will look at is how to render different formats from inside a controller action.
 
 ## New rendering formats
 
-Rendering HTML through a template is fine, but what if we need to change the rendering format on the fly? Let's say that sometimes we need HTML, sometimes we need plain text, and sometimes we need JSON. Then what?
+Rendering HTML through a template is fine, but what if we need to change the rendering format on the fly? Let's say that sometimes we need HTML, sometimes we need plain text, and sometimes we need JSON.
+Then what?
 
-The view's job is not only to render HTML templates. Views are about data presentation. Given a bag of data, the view's purpose is to present that in a meaningful way given some format, be it HTML, JSON, CSV, or others. Many web apps today return JSON to remote clients, and Phoenix views are _great_ for JSON rendering.
+The view's job is not only to render HTML templates.
+Views are about data presentation.
+Given a bag of data, the view's purpose is to present that in a meaningful way given some format, be it HTML, JSON, CSV, or others.
+Many web apps today return JSON to remote clients, and Phoenix views are _great_ for JSON rendering.
 
-As an example, let's take `PageController`'s `home` action from a newly generated app. Out of the box, this has the right view `PageHTML`, the embedded templates from (`lib/hello_web/controllers/page_html`), and the right template for rendering HTML (`home.html.heex`.)
+As an example, let's take `PageController`'s `home` action from a newly generated app.
+Out of the box, this has the right view `PageHTML`, the embedded templates from (`lib/hello_web/controllers/page_html`), and the right template for rendering HTML (`home.html.heex`.)
 
 ```elixir
 def home(conn, _params) do
@@ -175,7 +204,10 @@ def home(conn, _params) do
 end
 ```
 
-What it doesn't have is a view for rendering JSON. Phoenix Controller hands off to a view module to render templates, and it does so per format. We already have a view for the HTML format, but we need to instruct Phoenix how to render the JSON format as well. By default, you can see which formats your controllers support in `lib/hello_web.ex`:
+What it doesn't have is a view for rendering JSON.
+Phoenix Controller hands off to a view module to render templates, and it does so per format.
+We already have a view for the HTML format, but we need to instruct Phoenix how to render the JSON format as well.
+By default, you can see which formats your controllers support in `lib/hello_web.ex`:
 
 ```elixir
   def controller do
@@ -188,7 +220,9 @@ What it doesn't have is a view for rendering JSON. Phoenix Controller hands off 
   end
 ```
 
-So out of the box Phoenix will look for a `HTML` and `JSON` view modules based on the request format and the controller name. We can also explicitly tell Phoenix in our controller which view(s) to use for each format. For example, what Phoenix does by default can be explicitly set with the following in your controller:
+So out of the box Phoenix will look for a `HTML` and `JSON` view modules based on the request format and the controller name.
+We can also explicitly tell Phoenix in our controller which view(s) to use for each format.
+For example, what Phoenix does by default can be explicitly set with the following in your controller:
 
 ```elixir
 plug :put_view, html: HelloWeb.PageHTML, json: HelloWeb.PageJSON
@@ -206,7 +240,10 @@ end
 
 Since the Phoenix View layer is simply a function that the controller renders, passing connection assigns, we can define a regular `home/1` function and return a map to be serialized as JSON.
 
-There are just a few more things we need to do to make this work. Because we want to render both HTML and JSON from the same controller, we need to tell our router that it should accept the `json` format. We do that by adding `json` to the list of accepted formats in the `:browser` pipeline. Let's open up `lib/hello_web/router.ex` and change `plug :accepts` to include `json` as well as `html` like this.
+There are just a few more things we need to do to make this work.
+Because we want to render both HTML and JSON from the same controller, we need to tell our router that it should accept the `json` format.
+We do that by adding `json` to the list of accepted formats in the `:browser` pipeline.
+Let's open up `lib/hello_web/router.ex` and change `plug :accepts` to include `json` as well as `html` like this.
 
 ```elixir
 defmodule HelloWeb.Router do
@@ -223,13 +260,17 @@ defmodule HelloWeb.Router do
 ...
 ```
 
-Phoenix allows us to change formats on the fly with the `_format` query string parameter. If we go to [`http://localhost:4000/?_format=json`](http://localhost:4000/?_format=json), we will see `%{"message": "this is some JSON"}`.
+Phoenix allows us to change formats on the fly with the `_format` query string parameter.
+If we go to [`http://localhost:4000/?_format=json`](http://localhost:4000/?_format=json), we will see `%{"message": "this is some JSON"}`.
 
-In practice, however, applications that need to render both formats typically use two distinct pipelines for each, such as the `pipeline :api` already defined in your router file. To learn more, see [our JSON and APIs guide](json_and_apis.md).
+In practice, however, applications that need to render both formats typically use two distinct pipelines for each, such as the `pipeline :api` already defined in your router file.
+To learn more, see [our JSON and APIs guide](json_and_apis.md).
 
 ### Sending responses directly
 
-If none of the rendering options above quite fits our needs, we can compose our own using some of the functions that `Plug` gives us. Let's say we want to send a response with a status of "201" and no body whatsoever. We can do that with the `Plug.Conn.send_resp/3` function.
+If none of the rendering options above quite fits our needs, we can compose our own using some of the functions that `Plug` gives us.
+Let's say we want to send a response with a status of "201" and no body whatsoever.
+We can do that with the `Plug.Conn.send_resp/3` function.
 
 Edit the `home` action of `PageController` in `lib/hello_web/controllers/page_controller.ex` to look like this:
 
@@ -239,7 +280,9 @@ def home(conn, _params) do
 end
 ```
 
-Reloading [http://localhost:4000](http://localhost:4000) should show us a completely blank page. The network tab of our browser's developer tools should show a response status of "201" (Created). Some browsers (Safari) will download the response, as the content type is not set.
+Reloading [http://localhost:4000](http://localhost:4000) should show us a completely blank page.
+The network tab of our browser's developer tools should show a response status of "201" (Created).
+Some browsers (Safari) will download the response, as the content type is not set.
 
 To be specific about the content type, we can use [`put_resp_content_type/2`] in conjunction with [`send_resp/3`].
 
@@ -273,9 +316,11 @@ For a list of valid content mime-types, please see the `MIME` library.
 
 ### Setting the HTTP Status
 
-We can also set the HTTP status code of a response similarly to the way we set the content type. The `Plug.Conn` module, imported into all controllers, has a `put_status/2` function to do this.
+We can also set the HTTP status code of a response similarly to the way we set the content type.
+The `Plug.Conn` module, imported into all controllers, has a `put_status/2` function to do this.
 
-`Plug.Conn.put_status/2` takes `conn` as the first parameter and as the second parameter either an integer or a "friendly name" used as an atom for the status code we want to set. The list of status code atom representations can be found in `Plug.Conn.Status.code/1` documentation.
+`Plug.Conn.put_status/2` takes `conn` as the first parameter and as the second parameter either an integer or a "friendly name" used as an atom for the status code we want to set.
+The list of status code atom representations can be found in `Plug.Conn.Status.code/1` documentation.
 
 Let's change the status in our `PageController` `home` action.
 
@@ -291,9 +336,13 @@ The status code we provide must be a valid number.
 
 ## Redirection
 
-Often, we need to redirect to a new URL in the middle of a request. A successful `create` action, for instance, will usually redirect to the `show` action for the resource we just created. Alternately, it could redirect to the `index` action to show all the things of that same type. There are plenty of other cases where redirection is useful as well.
+Often, we need to redirect to a new URL in the middle of a request.
+A successful `create` action, for instance, will usually redirect to the `show` action for the resource we just created.
+Alternately, it could redirect to the `index` action to show all the things of that same type.
+There are plenty of other cases where redirection is useful as well.
 
-Whatever the circumstance, Phoenix controllers provide the handy [`redirect/2`] function to make redirection easy. Phoenix differentiates between redirecting to a path within the application and redirecting to a URL — either within our application or external to it.
+Whatever the circumstance, Phoenix controllers provide the handy [`redirect/2`] function to make redirection easy.
+Phoenix differentiates between redirecting to a path within the application and redirecting to a URL — either within our application or external to it.
 
 In order to try out [`redirect/2`], let's create a new route in `lib/hello_web/router.ex`.
 
@@ -323,7 +372,8 @@ end
 
 ```
 
-We made use of `Phoenix.VerifiedRoutes.sigil_p/2` to build our redirect path, which is the preferred approach to reference any path within our application. We learned about verified routes in the [routing guide](routing.html).
+We made use of `Phoenix.VerifiedRoutes.sigil_p/2` to build our redirect path, which is the preferred approach to reference any path within our application.
+We learned about verified routes in the [routing guide](routing.html).
 
 Finally, let's define in the same file the action we redirect to, which simply renders the home, but now under a new address:
 
@@ -333,11 +383,15 @@ def redirect_test(conn, _params) do
 end
 ```
 
-When we reload our [welcome page], we see that we've been redirected to `/redirect_test` which shows the original welcome page. It works!
+When we reload our [welcome page], we see that we've been redirected to `/redirect_test` which shows the original welcome page.
+It works!
 
-If we care to, we can open up our developer tools, click on the network tab, and visit our root route again. We see two main requests for this page - a get to `/` with a status of `302`, and a get to `/redirect_test` with a status of `200`.
+If we care to, we can open up our developer tools, click on the network tab, and visit our root route again.
+We see two main requests for this page - a get to `/` with a status of `302`, and a get to `/redirect_test` with a status of `200`.
 
-Notice that the redirect function takes `conn` as well as a string representing a relative path within our application. For security reasons, the `:to` option can only redirect to paths within your application. If you want to redirect to a fully-qualified path or an external URL, you should use `:external` instead:
+Notice that the redirect function takes `conn` as well as a string representing a relative path within our application.
+For security reasons, the `:to` option can only redirect to paths within your application.
+If you want to redirect to a fully-qualified path or an external URL, you should use `:external` instead:
 
 ```elixir
 def home(conn, _params) do
@@ -347,9 +401,12 @@ end
 
 ## Flash messages
 
-Sometimes we need to communicate with users during the course of an action. Maybe there was an error updating a schema, or maybe we just want to welcome them back to the application. For this, we have flash messages.
+Sometimes we need to communicate with users during the course of an action.
+Maybe there was an error updating a schema, or maybe we just want to welcome them back to the application.
+For this, we have flash messages.
 
-The `Phoenix.Controller` module provides the [`put_flash/3`] to set flash messages as a key-value pair and placing them into a `@flash` assign in the connection. Let's set two flash messages in our `HelloWeb.PageController` to try this out.
+The `Phoenix.Controller` module provides the [`put_flash/3`] to set flash messages as a key-value pair and placing them into a `@flash` assign in the connection.
+Let's set two flash messages in our `HelloWeb.PageController` to try this out.
 
 To do this we modify the `home` action as follows:
 
@@ -364,7 +421,9 @@ defmodule HelloWeb.PageController do
 end
 ```
 
-In order to see our flash messages, we need to be able to retrieve them and display them in a template layout. We can do that using [`Phoenix.Flash.get/2`] which takes the flash data and the key we care about. It then returns the value for that key.
+In order to see our flash messages, we need to be able to retrieve them and display them in a template layout.
+We can do that using [`Phoenix.Flash.get/2`] which takes the flash data and the key we care about.
+It then returns the value for that key.
 
 For our convenience, a `flash_group` component is already available and added to the beginning of our [welcome page]
 
@@ -374,7 +433,9 @@ For our convenience, a `flash_group` component is already available and added to
 
 When we reload the [welcome page], our message should appear in the top right corner of the page.
 
-The flash functionality is handy when mixed with redirects. Perhaps you want to redirect to a page with some extra information. If we reuse the redirect action from the previous section, we can do:
+The flash functionality is handy when mixed with redirects.
+Perhaps you want to redirect to a page with some extra information.
+If we reuse the redirect action from the previous section, we can do:
 
 ```elixir
   def home(conn, _params) do
@@ -388,11 +449,15 @@ Now if you reload the [welcome page], you will be redirected and the flash messa
 
 Besides [`put_flash/3`], the `Phoenix.Controller` module has another useful function worth knowing about. [`clear_flash/1`] takes only `conn` and removes any flash messages which might be stored in the session.
 
-Phoenix does not enforce which keys are stored in the flash. As long as we are internally consistent, all will be well. `:info` and `:error`, however, are common and are handled by default in our templates.
+Phoenix does not enforce which keys are stored in the flash.
+As long as we are internally consistent, all will be well. `:info` and `:error`, however, are common and are handled by default in our templates.
 
 ## Error pages
 
-Phoenix has two views called `ErrorHTML` and `ErrorJSON` which live in `lib/hello_web/controllers/`. The purpose of these views is to handle errors in a general way for incoming HTML or JSON requests. Similar to the views we built in this guide, error views can return both HTML and JSON responses. See the [Custom Error Pages How-To](custom_error_pages.html) for more information.
+Phoenix has two views called `ErrorHTML` and `ErrorJSON` which live in `lib/hello_web/controllers/`.
+The purpose of these views is to handle errors in a general way for incoming HTML or JSON requests.
+Similar to the views we built in this guide, error views can return both HTML and JSON responses.
+See the [Custom Error Pages How-To](custom_error_pages.html) for more information.
 
 [`render/4`]: `Phoenix.Template.render/4`
 [`/hello/Frank`]: http://localhost:4000/hello/Frank

@@ -4,7 +4,8 @@ Fly.io maintains their own guide for Elixir/Phoenix here: [Fly.io/docs/elixir/ge
 
 ## What we'll need
 
-The only thing we'll need for this guide is a working Phoenix application. For those of us who need a simple application to deploy, please follow the [Up and Running guide](https://hexdocs.pm/phoenix/up_and_running.html).
+The only thing we'll need for this guide is a working Phoenix application.
+For those of us who need a simple application to deploy, please follow the [Up and Running guide](https://hexdocs.pm/phoenix/up_and_running.html).
 
 You can just:
 
@@ -44,11 +45,14 @@ Or sign in.
 flyctl auth login
 ```
 
-Fly has a [free tier](https://fly.io/docs/about/pricing/) for most applications. A credit card is required when setting up an account to help prevent abuse. See the [pricing](https://fly.io/docs/about/pricing/) page for more details.
+Fly has a [free tier](https://fly.io/docs/about/pricing/) for most applications.
+A credit card is required when setting up an account to help prevent abuse.
+See the [pricing](https://fly.io/docs/about/pricing/) page for more details.
 
 ## Deploy the app to Fly.io
 
-To tell Fly about your application, run `fly launch` in the directory with your source code. This creates and configures a Fly.io app.
+To tell Fly about your application, run `fly launch` in the directory with your source code.
+This creates and configures a Fly.io app.
 
 ```shell
 fly launch
@@ -59,13 +63,17 @@ This scans your source, detects the Phoenix project, and runs `mix phx.gen.relea
 The `fly launch` command walks you through a few questions.
 
 - You can name the app or have it generate a random name for you.
-- Choose an organization (defaults to `personal`). Organizations are a way of sharing applications and resources between Fly.io users.
-- Choose a region to deploy to. Defaults to the nearest Fly.io region. You can check out the [complete list of regions here](https://fly.io/docs/reference/regions/).
+- Choose an organization (defaults to `personal`).
+  Organizations are a way of sharing applications and resources between Fly.io users.
+- Choose a region to deploy to.
+  Defaults to the nearest Fly.io region.
+  You can check out the [complete list of regions here](https://fly.io/docs/reference/regions/).
 - Sets up a Postgres DB for you.
 - Builds the Dockerfile.
 - Deploys your application!
 
-The `fly launch` command also created a `fly.toml` file for you. This is where you can set ENV values and other config.
+The `fly launch` command also created a `fly.toml` file for you.
+This is where you can set ENV values and other config.
 
 ### Storing secrets on Fly.io
 
@@ -85,7 +93,8 @@ When you want to deploy changes to your application, use `fly deploy`.
 fly deploy
 ```
 
-Note: On Apple Silicon (M1) computers, docker runs cross-platform builds using qemu which might not always work. If you get a segmentation fault error like the following:
+Note: On Apple Silicon (M1) computers, docker runs cross-platform builds using qemu which might not always work.
+If you get a segmentation fault error like the following:
 
 ```log
  => [build  7/17] RUN mix deps.get --only
@@ -138,7 +147,9 @@ Connecting to my-app-1234.internal... complete
 / #
 ```
 
-If all has gone smoothly, then you have a shell into the machine! Now we just need to launch our remote IEx shell. The deployment Dockerfile was configured to pull our application into `/app`. So the command for an app named `my_app` looks like this:
+If all has gone smoothly, then you have a shell into the machine! Now we just need to launch our remote IEx shell.
+The deployment Dockerfile was configured to pull our application into `/app`.
+So the command for an app named `my_app` looks like this:
 
 ```shell
 app/bin/my_app remote
@@ -152,7 +163,8 @@ Now we have a running IEx shell into our node! You can safely disconnect using C
 
 ### Clustering your application
 
-Elixir and the BEAM have the incredible ability to be clustered together and pass messages seamlessly between nodes. This portion of the guide walks you through clustering your Elixir application.
+Elixir and the BEAM have the incredible ability to be clustered together and pass messages seamlessly between nodes.
+This portion of the guide walks you through clustering your Elixir application.
 
 There are 2 parts to getting clustering quickly setup on Fly.io.
 
@@ -163,7 +175,8 @@ There are 2 parts to getting clustering quickly setup on Fly.io.
 
 The widely adopted library [libcluster](https://github.com/bitwalker/libcluster) helps here.
 
-There are multiple strategies that `libcluster` can use to find and connect with other nodes. The strategy we'll use on Fly.io is `DNSPoll`.
+There are multiple strategies that `libcluster` can use to find and connect with other nodes.
+The strategy we'll use on Fly.io is `DNSPoll`.
 
 After installing `libcluster`, add it to the application like this:
 
@@ -211,7 +224,9 @@ This configures `libcluster` to use the `DNSPoll` strategy and look for other de
 
 #### Controlling the name for our node
 
-We need to control the naming of our Elixir nodes. To help them connect up, we'll name them using this pattern: `your-fly-app-name@the.ipv6.address.on.fly`. To do this, we'll generate the release config.
+We need to control the naming of our Elixir nodes.
+To help them connect up, we'll name them using this pattern: `your-fly-app-name@the.ipv6.address.on.fly`.
+To do this, we'll generate the release config.
 
 ```shell
 mix release.init
@@ -231,14 +246,15 @@ After making the change, deploy your app!
 fly deploy
 ```
 
-For our app to be clustered, we have to have multiple instances. Next we'll add an additional node instance.
+For our app to be clustered, we have to have multiple instances.
+Next we'll add an additional node instance.
 
 #### Running multiple instances
 
 There are two ways to run multiple instances.
 
-1. Scale our application to have multiple instances in one region.
-2. Add an instance to another region (multiple regions).
+1.. Scale our application to have multiple instances in one region.
+2.. Add an instance to another region (multiple regions).
 
 Let's first start with a baseline of our single deployment.
 
@@ -272,7 +288,8 @@ f9014bf7 27      sea    run     running 1 total, 1 passing 0        1h13m ago
 
 We now have two instances in the same region.
 
-Let's make sure they are clustered together. We can check the logs:
+Let's make sure they are clustered together.
+We can check the logs:
 
 ```shell
 fly logs
@@ -281,7 +298,8 @@ app[eb4119d3] sea [info] 21:50:21.924 [info] [libcluster:fly6pn] connected to :"
 ...
 ```
 
-But that's not as rewarding as seeing it from inside a node. From an IEx shell, we can ask the node we're connected to, what other nodes it can see.
+But that's not as rewarding as seeing it from inside a node.
+From an IEx shell, we can ask the node we're connected to, what other nodes it can see.
 
 ```shell
 fly ssh console -C "/app/bin/my_app remote"
@@ -292,13 +310,18 @@ iex(my-app-1234@fdaa:0:1da8:a7b:ac2:f901:4bf7:2)1> Node.list
 [:"my-app-1234@fdaa:0:1da8:a7b:ac4:eb41:19d3:2"]
 ```
 
-The IEx prompt is included to help show the IP address of the node we are connected to. Then getting the `Node.list` returns the other node. Our two instances are connected and clustered!
+The IEx prompt is included to help show the IP address of the node we are connected to.
+Then getting the `Node.list` returns the other node.
+Our two instances are connected and clustered!
 
 #### Scaling to multiple regions
 
-Fly makes it easy to deploy instances closer to your users. Through the magic of DNS, users are directed to the nearest region where your application is located. You can read more about [Fly.io regions here](https://fly.io/docs/reference/regions/).
+Fly makes it easy to deploy instances closer to your users.
+Through the magic of DNS, users are directed to the nearest region where your application is located.
+You can read more about [Fly.io regions here](https://fly.io/docs/reference/regions/).
 
-Starting back from our baseline of a single instance running in `sea` which is Seattle, Washington (US), let's add the region `ewr` which is Parsippany, NJ (US). This puts an instance on both coasts of the US.
+Starting back from our baseline of a single instance running in `sea` which is Seattle, Washington (US), let's add the region `ewr` which is Parsippany, NJ (US).
+This puts an instance on both coasts of the US.
 
 ```shell
 fly regions add ewr
@@ -312,7 +335,7 @@ sjc
 vin
 ```
 
-Looking at the status shows that we're only in 1 region because our count is set to 1.
+Looking at the status shows that we're only in 1 region because our count is set to 1..
 
 ```shell
 fly status

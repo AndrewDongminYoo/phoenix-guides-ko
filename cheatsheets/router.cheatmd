@@ -2,7 +2,8 @@
 
 > Those need to be declared in the correct router module and scope.
 
-A quick reference to the common routing features' syntax. For an exhaustive overview, refer to the [routing guides](routing.md).
+A quick reference to the common routing features' syntax.
+For an exhaustive overview, refer to the [routing guides](routing.md).
 
 ## Routing declaration
 {: .col-2}

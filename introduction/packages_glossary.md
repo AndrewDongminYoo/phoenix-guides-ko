@@ -9,10 +9,11 @@ The main packages are:
 
 - [Phoenix](https://hexdocs.pm/phoenix) - the Phoenix web framework (these docs)
 
-- [Phoenix LiveView](https://hexdocs.pm/phoenix_live_view) - build rich, real-time user experiences with server-rendered HTML. The LiveView project also defines [`Phoenix.Component`](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html) and
-  [the HEEx template engine](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2), used for rendering HTML content in both regular and real-time applications
+- [Phoenix LiveView](https://hexdocs.pm/phoenix_live_view) - build rich, real-time user experiences with server-rendered HTML.
+  The LiveView project also defines [`Phoenix.Component`](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html) and [the HEEx template engine](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2), used for rendering HTML content in both regular and real-time applications
 
-- [Plug](https://hexdocs.pm/plug) - specification and conveniences for building composable modules web applications. This is the package responsible for the connection abstraction and the regular request- response life-cycle
+- [Plug](https://hexdocs.pm/plug) - specification and conveniences for building composable modules web applications.
+  This is the package responsible for the connection abstraction and the regular request- response life-cycle
 
 You will also work with the following:
 

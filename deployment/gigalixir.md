@@ -2,7 +2,8 @@
 
 ## What we'll need
 
-The only thing we'll need for this guide is a working Phoenix application. For those of us who need a simple application to deploy, please follow the [Up and Running guide](https://hexdocs.pm/phoenix/up_and_running.html).
+The only thing we'll need for this guide is a working Phoenix application.
+For those of us who need a simple application to deploy, please follow the [Up and Running guide](https://hexdocs.pm/phoenix/up_and_running.html).
 
 ## Goals
 
@@ -23,7 +24,8 @@ Let's separate this process into a few steps, so we can keep track of where we a
 
 ## Initializing Git repository
 
-If you haven't already, we'll need to commit our files to git. We can do so by running the following commands in our project directory:
+If you haven't already, we'll need to commit our files to git.
+We can do so by running the following commands in our project directory:
 
 ```shell
 git init
@@ -37,7 +39,8 @@ Follow the instructions [here](https://gigalixir.readthedocs.io/en/latest/gettin
 
 ## Signing up for Gigalixir
 
-We can sign up for an account at [gigalixir.com](https://www.gigalixir.com) or with the CLI. Let's use the CLI.
+We can sign up for an account at [gigalixir.com](https://www.gigalixir.com) or with the CLI.
+Let's use the CLI.
 
 ```shell
 gigalixir signup
@@ -59,7 +62,10 @@ gigalixir account
 
 ## Creating and setting up our Gigalixir application
 
-There are three different ways to deploy a Phoenix app on Gigalixir: with mix, with Elixir's releases, or with Distillery. In this guide, we'll be using Mix because it is the easiest to get up and running, but you won't be able to connect a remote observer or hot upgrade. For more information, see [Mix vs Distillery vs Elixir Releases](https://gigalixir.readthedocs.io/en/latest/modify-app/index.html#mix-vs-distillery-vs-elixir-releases). If you want to deploy with another method, follow the [Getting Started Guide](https://gigalixir.readthedocs.io/en/latest/getting-started-guide.html).
+There are three different ways to deploy a Phoenix app on Gigalixir: with mix, with Elixir's releases, or with Distillery.
+In this guide, we'll be using Mix because it is the easiest to get up and running, but you won't be able to connect a remote observer or hot upgrade.
+For more information, see [Mix vs Distillery vs Elixir Releases](https://gigalixir.readthedocs.io/en/latest/modify-app/index.html#mix-vs-distillery-vs-elixir-releases).
+If you want to deploy with another method, follow the [Getting Started Guide](https://gigalixir.readthedocs.io/en/latest/getting-started-guide.html).
 
 ### Creating a Gigalixir application
 
@@ -69,7 +75,8 @@ Let's create a Gigalixir application
 gigalixir create -n "your_app_name"
 ```
 
-Note: the app name cannot be changed afterwards. A random name is used if you do not provide one.
+Note: the app name cannot be changed afterwards.
+A random name is used if you do not provide one.
 
 Verify the app was created
 
@@ -93,7 +100,8 @@ echo 'erlang_version=24.3' >> elixir_buildpack.config
 echo 'node_version=12.16.3' > phoenix_static_buildpack.config
 ```
 
-Phoenix v1.6 uses `esbuild` to compile your assets, but all Gigalixir images come with `npm`, so we will configure `npm` directly to deploy our assets. Add a `assets/package.json` file if you don't have any with the following:
+Phoenix v1.6 uses `esbuild` to compile your assets, but all Gigalixir images come with `npm`, so we will configure `npm` directly to deploy our assets.
+Add a `assets/package.json` file if you don't have any with the following:
 
 ```json
 {
@@ -112,9 +120,11 @@ git commit -m "Set Elixir, Erlang, and Node version"
 
 ## Making our Project ready for Gigalixir
 
-There's nothing we need to do to get our app running on Gigalixir, but for a production app, you probably want to enforce SSL. To do that, see [Force SSL](https://hexdocs.pm/phoenix/using_ssl.html#force-ssl)
+There's nothing we need to do to get our app running on Gigalixir, but for a production app, you probably want to enforce SSL.
+To do that, see [Force SSL](https://hexdocs.pm/phoenix/using_ssl.html#force-ssl)
 
-You may also want to use SSL for your database connection. For that, uncomment the line `ssl: true` in your `Repo` config.
+You may also want to use SSL for your database connection.
+For that, uncomment the line `ssl: true` in your `Repo` config.
 
 ## Provisioning a database
 

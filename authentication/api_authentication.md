@@ -2,9 +2,11 @@
 
 > **Requirement**: This guide expects that you have gone through the [`mix phx.gen.auth`](mix_phx_gen_auth.html) guide.
 
-This guide shows how to add API authentication on top of `mix phx.gen.auth`. Since the authentication generator already includes a token table, we use it to store API tokens too, following the best security practices.
+This guide shows how to add API authentication on top of `mix phx.gen.auth`.
+Since the authentication generator already includes a token table, we use it to store API tokens too, following the best security practices.
 
-We will break this guide in two parts: augmenting the context and the plug implementation. We will assume that the following `mix phx.gen.auth` command was executed:
+We will break this guide in two parts: augmenting the context and the plug implementation.
+We will assume that the following `mix phx.gen.auth` command was executed:
 
 ```shell
 mix phx.gen.auth Accounts User users
@@ -14,7 +16,9 @@ If you ran something else, it should be trivial to adapt the names.
 
 ## Adding API functions to the context
 
-Our authentication system will require two functions. One to create the API token and another to verify it. Open up `lib/my_app/accounts.ex` and add these two new functions:
+Our authentication system will require two functions.
+One to create the API token and another to verify it.
+Open up `lib/my_app/accounts.ex` and add these two new functions:
 
 ```elixir
   ## API
@@ -44,11 +48,15 @@ Our authentication system will require two functions. One to create the API toke
   end
 ```
 
-The new functions use the existing `UserToken` functionality to store a new type of token called "api-token". Because this is an email token, if the user changes their email, the tokens will be expired.
+The new functions use the existing `UserToken` functionality to store a new type of token called "api-token".
+Because this is an email token, if the user changes their email, the tokens will be expired.
 
-Also notice we called the second function `fetch_user_by_api_token`, instead of `get_user_by_api_token`. Because we want to render different status codes in our API, depending if a user was found or not, we return `{:ok, user}` or `:error`. Elixir's convention is to call these functions `fetch_*`, instead of `get_*` which would usually return `nil` instead of tuples.
+Also notice we called the second function `fetch_user_by_api_token`, instead of `get_user_by_api_token`.
+Because we want to render different status codes in our API, depending if a user was found or not, we return `{:ok, user}` or `:error`.
+Elixir's convention is to call these functions `fetch_*`, instead of `get_*` which would usually return `nil` instead of tuples.
 
-To make sure our new functions work, let's write tests. Open up `test/my_app/accounts_test.exs` and add this new describe block:
+To make sure our new functions work, let's write tests.
+Open up `test/my_app/accounts_test.exs` and add this new describe block:
 
 ```elixir
   describe "create_user_api_token/1 and fetch_user_by_api_token/1" do
@@ -61,7 +69,8 @@ To make sure our new functions work, let's write tests. Open up `test/my_app/acc
   end
 ```
 
-If you run the tests, they will actually fail. Something similar to this:
+If you run the tests, they will actually fail.
+Something similar to this:
 
 ```elixir
 1) test create_user_api_token/1 and fetch_user_by_api_token/1 creates and verify token (Demo.AccountsTest)
@@ -86,9 +95,12 @@ If you run the tests, they will actually fail. Something similar to this:
      test/demo/accounts_test.exs:24: (test)
 ```
 
-If you prefer, try looking at the error and fixing it yourself. The explanation will come next.
+If you prefer, try looking at the error and fixing it yourself.
+The explanation will come next.
 
-The `UserToken` module expects us to declare the validity of each token and we haven't defined one for "api-token". The length is going to depend on your application and how sensitive it is in terms of security. For this example, let's say the token is valid for 365 days.
+The `UserToken` module expects us to declare the validity of each token and we haven't defined one for "api-token".
+The length is going to depend on your application and how sensitive it is in terms of security.
+For this example, let's say the token is valid for 365 days.
 
 Open up `lib/my_app/accounts/user_token.ex`, find where `defp days_for_context` is defined, and add a new clause, like this:
 
@@ -104,7 +116,8 @@ Now tests should pass and we are ready to move forward!
 
 The last part is to add authentication to our API.
 
-When we ran `mix phx.gen.auth`, it generated a `MyAppWeb.UserAuth` module with several plugs, which are small functions that receive the `conn` and customize our request/response life-cycle. Open up `lib/my_app_web/user_auth.ex` and add this new function:
+When we ran `mix phx.gen.auth`, it generated a `MyAppWeb.UserAuth` module with several plugs, which are small functions that receive the `conn` and customize our request/response life-cycle.
+Open up `lib/my_app_web/user_auth.ex` and add this new function:
 
 ```elixir
 def fetch_api_user(conn, _opts) do
@@ -120,9 +133,12 @@ def fetch_api_user(conn, _opts) do
 end
 ```
 
-Our function receives the connection and checks if the "authorization" header has been set with "Bearer TOKEN", where "TOKEN" is the value returned by `Accounts.create_user_api_token/1`. In case the token is not valid or there is no such user, we abort the request.
+Our function receives the connection and checks if the "authorization" header has been set with "Bearer TOKEN", where "TOKEN" is the value returned by `Accounts.create_user_api_token/1`.
+In case the token is not valid or there is no such user, we abort the request.
 
-Finally, we need to add this `plug` to our pipeline. Open up `lib/my_app_web/router.ex` and you will find a pipeline for API. Let's add our new plug under it, like this:
+Finally, we need to add this `plug` to our pipeline.
+Open up `lib/my_app_web/router.ex` and you will find a pipeline for API.
+Let's add our new plug under it, like this:
 
 ```elixir
   pipeline :api do
@@ -131,7 +147,9 @@ Finally, we need to add this `plug` to our pipeline. Open up `lib/my_app_web/rou
   end
 ```
 
-Now you are ready to receive and validate API requests. Feel free to open up `test/my_app_web/user_auth_test.exs` and write your own test. You can use the tests for other plugs as templates!
+Now you are ready to receive and validate API requests.
+Feel free to open up `test/my_app_web/user_auth_test.exs` and write your own test.
+You can use the tests for other plugs as templates!
 
 ## Your turn
 
@@ -139,4 +157,5 @@ The overall API authentication flow will depend on your application.
 
 If you want to use this token in a JavaScript client, you will need to slightly alter the `UserSessionController` to invoke `Accounts.create_user_api_token/1` and return a JSON response and include the token returned it.
 
-If you want to provide APIs for 3rd-party users, you will need to allow them to create tokens, and show the result of `Accounts.create_user_api_token/1` to them. They must save these tokens somewhere safe and include them as part of their requests using the "authorization" header.
+If you want to provide APIs for 3rd-party users, you will need to allow them to create tokens, and show the result of `Accounts.create_user_api_token/1` to them.
+They must save these tokens somewhere safe and include them as part of their requests using the "authorization" header.
