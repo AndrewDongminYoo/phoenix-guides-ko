@@ -302,10 +302,7 @@ Feel free to modify the `changeset` function and see how your API behaves.
 
 ## API-only applications
 
-In case you want to generate a Phoenix application exclusively for APIs, you can pass
-several options when invoking `mix phx.new`. Let's check which `--no-*` flags we need
-to use to not generate the scaffolding that isn't necessary on our Phoenix application
-for the REST API.
+In case you want to generate a Phoenix application exclusively for APIs, you can pass several options when invoking `mix phx.new`. Let's check which `--no-*` flags we need to use to not generate the scaffolding that isn't necessary on our Phoenix application for the REST API.
 
 From your terminal run:
 

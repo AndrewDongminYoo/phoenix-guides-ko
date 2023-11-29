@@ -303,8 +303,7 @@ $ mix phx.gen.channel Room
 If your application does not have a `UserSocket` yet, it will ask if you want to create one:
 
 ```log
-The default socket handler - HelloWeb.UserSocket - was not found
-in its default location.
+The default socket handler - HelloWeb.UserSocket - was not found in its default location.
 
 Do you want to create it? [Y/n]
 ```
@@ -318,8 +317,7 @@ Add the socket handler to your `lib/hello_web/endpoint.ex`, for example:
       websocket: true,
       longpoll: false
 
-For the front-end integration, you need to import the `user_socket.js`
-in your `assets/js/app.js` file:
+For the front-end integration, you need to import the `user_socket.js` in your `assets/js/app.js` file:
 
     import "./user_socket.js"
 ```
@@ -343,8 +341,7 @@ This task will generate a presence tracker. The module name can be passed as an 
 $ mix phx.gen.presence Presence
 * lib/hello_web/channels/presence.ex
 
-Add your new module to your supervision tree,
-in lib/hello/application.ex:
+Add your new module to your supervision tree, in lib/hello/application.ex:
 
     children = [
       ...

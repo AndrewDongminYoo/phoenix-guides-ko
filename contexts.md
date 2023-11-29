@@ -571,8 +571,7 @@ $ mix phx.gen.context ShoppingCart Cart carts user_uuid:uuid:unique
 * creating test/support/fixtures/shopping_cart_fixtures.ex
 * injecting test/support/fixtures/shopping_cart_fixtures.ex
 
-Some of the generated database columns are unique. Please provide
-unique implementations for the following fixture function(s) in
+Some of the generated database columns are unique. Please provide unique implementations for the following fixture function(s) in
 test/support/fixtures/shopping_cart_fixtures.ex:
 
     def unique_cart_user_uuid do

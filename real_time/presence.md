@@ -26,8 +26,7 @@ To get started with Presence, we'll first need to generate a presence module. We
 $ mix phx.gen.presence
 * creating lib/hello_web/channels/presence.ex
 
-Add your new module to your supervision tree,
-in lib/hello/application.ex:
+Add your new module to your supervision tree, in lib/hello/application.ex:
 
     children = [
       ...

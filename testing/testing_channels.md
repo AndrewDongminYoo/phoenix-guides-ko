@@ -30,8 +30,7 @@ Add the socket handler to your `lib/hello_web/endpoint.ex`, for example:
       websocket: true,
       longpoll: false
 
-For the front-end integration, you need to import the `user_socket.js`
-in your `assets/js/app.js` file:
+For the front-end integration, you need to import the `user_socket.js` in your `assets/js/app.js` file:
 
     import "./user_socket.js"
 ```
@@ -75,8 +74,7 @@ It is very straight-forward. It sets up a case template that imports all of `Pho
 
 ## Subscribe and joining
 
-Now that we know that Phoenix provides with a custom Test Case just for channels and what it
-provides, we can move on to understanding the rest of `test/hello_web/channels/room_channel_test.exs`.
+Now that we know that Phoenix provides with a custom Test Case just for channels and what it provides, we can move on to understanding the rest of `test/hello_web/channels/room_channel_test.exs`.
 
 First off, is the setup block:
 
