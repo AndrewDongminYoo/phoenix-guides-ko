@@ -1,39 +1,39 @@
-# Installation
+# 설치
 
-In order to build a Phoenix application, we will need a few dependencies installed in our Operating System:
+Phoenix 애플리케이션을 빌드하려면 운영 체제에 몇 가지 종속성을 설치해야 합니다:
 
-- the Erlang VM and the Elixir programming language
-- a database - Phoenix recommends PostgreSQL, but you can pick others or not use a database at all
-- and other optional packages.
+- Erlang 가상 머신과 Elixir 프로그래밍 언어
+- 데이터베이스 - Phoenix는 PostgreSQL을 권장하지만 다른 데이터베이스를 선택하거나 데이터베이스를 전혀 사용하지 않을 수 있습니다.
+- 기타 옵션 패키지.
 
-Please take a look at this list and make sure to install anything necessary for your system.
-Having dependencies installed in advance can prevent frustrating problems later on.
+이 목록을 살펴보고 시스템에 필요한 모든 것을 설치하세요.
+종속성을 미리 설치하면 나중에 문제가 발생하는 것을 방지할 수 있습니다.
 
-## Elixir 1.14 or later
+## 엘릭서 1.14 이상 버전
 
-Phoenix is written in Elixir, and our application code will also be written in Elixir.
-We won't get far in a Phoenix app without it! The Elixir site maintains a great [Installation Page](https://elixir-lang.org/install.html) to help.
+Phoenix는 Elixir로 작성되었으며, 애플리케이션 코드도 Elixir로 작성됩니다.
+이 기능 없이는 Phoenix 앱에서 멀리 갈 수 없습니다! 엘릭서 사이트에는 도움이 되는 훌륭한 [설치 페이지](https://elixir-lang.org/install.html)가 있습니다.
 
-If we have just installed Elixir for the first time, we will need to install the Hex package manager as well.
-Hex is necessary to get a Phoenix app running (by installing dependencies) and to install any extra dependencies we might need along the way.
+Elixir를 처음 설치했다면 Hex 패키지 관리자도 설치해야 합니다.
+Hex는 Phoenix 앱을 실행하고(종속성을 설치하여) 그 과정에서 필요한 추가 종속성을 설치하는 데 필요합니다.
 
-Here's the command to install Hex (If you have Hex already installed, it will upgrade Hex to the latest version):
+다음은 Hex를 설치하는 명령어입니다(Hex가 이미 설치되어 있는 경우 Hex를 최신 버전으로 업그레이드합니다):
 
 ```shell
 mix local.hex
 ```
 
-## Erlang 24 or later
+## Erlang 24 이상
 
-Elixir code compiles to Erlang byte code to run on the Erlang virtual machine.
-Without Erlang, Elixir code has no virtual machine to run on, so we need to install Erlang as well.
+Elixir 코드는 Erlang 바이트 코드로 컴파일되어 Erlang 가상 머신에서 실행됩니다.
+Erlang이 없으면 Elixir 코드를 실행할 가상 머신이 없으므로 Erlang도 설치해야 합니다.
 
-When we install Elixir using instructions from the Elixir [Installation Page](https://elixir-lang.org/install.html), we will usually get Erlang too.
-If Erlang was not installed along with Elixir, please see the [Erlang Instructions](https://elixir-lang.org/install.html#installing-erlang) section of the Elixir Installation Page for instructions.
+Elixir [설치 페이지](https://elixir-lang.org/install.html)의 안내에 따라 Elixir를 설치하면 일반적으로 Erlang도 함께 설치됩니다.
+Elixir와 함께 설치되지 않은 경우, Elixir 설치 페이지의 [Erlang 지침](https://elixir-lang.org/install.html#installing-erlang) 섹션에서 지침을 참조하세요.
 
 ## Phoenix
 
-To check that we are on Elixir 1.14 and Erlang 24 or later, run:
+Elixir 1.14 및 Erlang 24 이상을 사용 중인지 확인하려면 다음과 같이 실행하세요:
 
 ```shell
 $ elixir -v
@@ -42,36 +42,36 @@ Erlang/OTP 24 [erts-12.0] [source] [64-bit] [smp:8:8] [async-threads:10] [hipe] 
 Elixir 1.14.0
 ```
 
-Once we have Elixir and Erlang, we are ready to install the Phoenix application generator:
+Elixir와 Erlang이 준비되었으면 이제 Phoenix 애플리케이션 생성기를 설치할 준비가 되었습니다:
 
 ```shell
 mix archive.install hex phx_new
 ```
 
-The `phx.new` generator is now available to generate new applications in the next guide, called [Up and Running](up_and_running.html).
-The flags mentioned below are command line options to the generator; see all available options by calling `mix help phx.new`.
+이제 `phx.new` 생성기를 사용하여 다음 가이드인 [가동 및 실행](up_and_running.html)에서 새 애플리케이션을 생성할 수 있습니다.
+아래에 언급된 플래그는 생성기에 대한 명령줄 옵션이며, `mix help phx.new`를 호출하여 사용 가능한 모든 옵션을 확인할 수 있습니다.
 
 ## PostgreSQL
 
-PostgreSQL is a relational database server.
-Phoenix configures applications to use it by default, but we can switch to MySQL, MSSQL, or SQLite3 by passing the `--database` flag when creating a new application.
+PostgreSQL은 관계형 데이터베이스 서버입니다.
+Phoenix는 기본적으로 이 서버를 사용하도록 애플리케이션을 구성하지만, 새 애플리케이션을 만들 때 `--database` 플래그를 전달하여 MySQL, MSSQL 또는 SQLite3로 전환할 수 있습니다.
 
-In order to talk to databases, Phoenix applications use another Elixir package, called [Ecto](https://github.com/elixir-ecto/ecto).
-If you don't plan to use databases in your application, you can pass the `--no-ecto` flag.
+데이터베이스와 통신하기 위해 Phoenix 애플리케이션은 [Ecto](https://github.com/elixir-ecto/ecto)라는 다른 Elixir 패키지를 사용합니다.
+애플리케이션에서 데이터베이스를 사용하지 않으려는 경우 `--no-ecto` 플래그를 전달하면 됩니다.
 
-However, if you are just getting started with Phoenix, we recommend you to install PostgreSQL and make sure it is running.
-The PostgreSQL wiki has [installation guides](https://wiki.postgresql.org/wiki/Detailed_installation_guides) for a number of different systems.
+그러나 Phoenix를 처음 시작하는 경우 PostgreSQL을 설치하고 실행 중인지 확인하는 것이 좋습니다.
+다양한 시스템에 대한 [설치 가이드](https://wiki.postgresql.org/wiki/Detailed_installation_guides)는 PostgreSQL 위키에 있습니다.
 
-## inotify-tools (for Linux users)
+## inotify-tools(Linux 사용자)
 
-Phoenix provides a very handy feature called Live Reloading.
-As you change your views or your assets, it automatically reloads the page in the browser.
-In order for this functionality to work, you need a filesystem watcher.
+Phoenix는 라이브 리로딩이라는 매우 편리한 기능을 제공합니다.
+보기나 에셋을 변경하면 브라우저에서 페이지를 자동으로 새로고침합니다.
+이 기능이 작동하려면 파일 시스템 감시기가 필요합니다.
 
-macOS and Windows users already have a filesystem watcher, but Linux users must install inotify-tools.
-Please consult the [inotify-tools wiki](https://github.com/rvoicilas/inotify-tools/wiki) for distribution-specific installation instructions.
+macOS 및 Windows 사용자에게는 이미 파일 시스템 감시기가 있지만 Linux 사용자는 inotify-tools를 설치해야 합니다.
+배포판별 설치 지침은 [inotify-tools 위키](https://github.com/rvoicilas/inotify-tools/wiki)를 참조하세요.
 
-## Summary
+## 요약
 
-At the end of this section, you must have installed Elixir, Hex, Phoenix, and PostgreSQL.
-Now that we have everything installed, let's create our first Phoenix application and get [up and running](up_and_running.html).
+이 섹션이 끝나면 Elixir, Hex, Phoenix 및 PostgreSQL을 설치했어야 합니다.
+이제 모든 것이 설치되었으므로 첫 번째 Phoenix 애플리케이션을 생성하고 [가동 및 실행](up_and_running.html)해 보겠습니다.

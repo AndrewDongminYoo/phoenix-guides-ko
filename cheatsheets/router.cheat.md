@@ -6,6 +6,7 @@
 전체 개요는 [라우팅 가이드](routing.md)를 참조하세요.
 
 ## Routing declaration
+
 {: .col-2}
 
 ### Single route
@@ -75,6 +76,7 @@ end
 ```
 
 #### Nested
+
 ```elixir
 scope "/api", HelloWeb.Api, as: :api do
   pipe_through :api

@@ -1,36 +1,36 @@
-# Overview
+# 개요
 
-Phoenix is a web development framework written in Elixir which implements the server-side Model View Controller (MVC) pattern.
-Many of its components and concepts will seem familiar to those of us with experience in other web frameworks like Ruby on Rails or Python's Django.
+Phoenix는 서버 측 MVC(모델 뷰 컨트롤러) 패턴을 구현하는 Elixir로 작성된 웹 개발 프레임워크입니다.
+많은 구성 요소와 개념이 Ruby on Rails나 Python의 장고와 같은 다른 웹 프레임워크를 사용해 본 경험이 있는 사람들에게는 친숙하게 느껴질 것입니다.
 
-Phoenix provides the best of both worlds - high developer productivity _and_ high application performance.
-It also has some interesting new twists like channels for implementing realtime features and pre-compiled templates for blazing speed.
+Phoenix는 높은 개발자 생산성과 높은 애플리케이션 성능이라는 두 가지 장점을 모두 제공합니다.
+또한 실시간 기능 구현을 위한 채널과 빠른 속도를 위한 사전 컴파일된 템플릿과 같은 흥미로운 새로운 기능도 있습니다.
 
-If you are already familiar with Elixir, great! If not, there are a number of places to learn.
-The [Elixir guides](https://elixir-lang.org/getting-started/introduction.html) and the [Elixir learning resources page](https://elixir-lang.org/learning.html) are two great places to start.
+Elixir에 이미 익숙하다면 더할 나위 없이 좋습니다! 아직 익숙하지 않다면 여러 곳에서 배울 수 있습니다.
+[엘릭서 가이드](https://elixir-lang.org/getting-started/introduction.html)와 [엘릭서 학습 리소스 페이지](https://elixir-lang.org/learning.html)는 시작하기에 좋은 두 곳입니다.
 
-The guides that you are currently looking at provide an overview of all parts that make Phoenix.
-Here is a rundown of what they provide:
+현재 보고 계신 가이드는 Phoenix를 구성하는 모든 부분에 대한 개요를 제공합니다.
+다음은 각 가이드가 제공하는 내용을 요약한 것입니다:
 
-- Introduction - the guides you are currently reading.
-  They will cover how to get your first application up and running
+- 소개 - 현재 읽고 있는 가이드입니다.
+  첫 번째 애플리케이션을 시작하고 실행하는 방법을 다룹니다.
 
-- Guides - in-depth guides covering the main components in Phoenix and Phoenix applications
+- 가이드 - 피닉스 및 피닉스 애플리케이션의 주요 구성 요소를 다루는 심층 가이드
 
-- Authentication - in-depth guide covering how to use `mix phx.gen.auth`
+- 인증 - `mix phx.gen.auth` 사용 방법을 다루는 심층 가이드입니다.
 
-- Real-time components - in-depth guides covering Phoenix's built-in real-time components
+- 실시간 컴포넌트 - Phoenix의 기본 제공 실시간 컴포넌트를 다루는 심층 가이드
 
-- Testing - in-depth guides about testing
+- 테스트 - 테스트에 대한 심층 가이드
 
-- Deployment - in-depth guides about deployment
+- 배포 - 배포에 대한 심층 가이드
 
-- How-to's - a collection of articles on how to achieve certain things with Phoenix
+- 사용법 - Phoenix로 특정 작업을 수행하는 방법에 대한 문서 모음입니다.
 
-If you would prefer to read these guides as an EPUB, [click here!](Phoenix.epub)
+이 가이드를 EPUB로 읽고 싶으시면 [이 링크](Phoenix.epub)를 참조하세요.
 
-Note, these guides are not a step-by-step introduction to Phoenix.
-If you want a more structured approach to learning the framework, we have a large community and many books, courses, and screencasts available.
-See [our community page](community.html) for a complete list.
+이 가이드는 Phoenix에 대한 단계별 소개가 아니라는 점에 유의하세요.
+프레임워크를 보다 체계적으로 학습하고 싶다면 대규모 커뮤니티와 다양한 책, 강좌, 스크린캐스트가 준비되어 있습니다.
+전체 목록은 [커뮤니티 페이지](community.html)를 참조하세요.
 
-[Let's get Phoenix installed](installation.html).
+[Phoenix를 설치해 봅시다](installation.html).

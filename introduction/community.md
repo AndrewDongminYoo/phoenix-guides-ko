@@ -1,59 +1,59 @@
-# Community
+# 커뮤니티
 
-The Elixir and Phoenix communities are friendly and welcoming.
-All questions and comments are valuable, so please come join the discussion!
+엘릭서 및 피닉스 커뮤니티는 친절하고 환영하는 분위기입니다.
+모든 질문과 의견은 소중하므로 토론에 참여해 주세요!
 
-There are a number of places to connect with community members at all experience levels.
+다양한 경험 수준의 커뮤니티 회원들과 소통할 수 있는 다양한 장소가 있습니다.
 
-- We're on Libera IRC in the [\#elixir](https://web.libera.chat/?channels=#elixir) channel.
+- 저희는 [\#elixir](https://web.libera.chat/?channels=#elixir) 채널의 리베라 IRC에 있습니다.
 
-- Feel free to join and check out the #phoenix channel on [Discord](https://discord.gg/elixir).
+- [Discord](https://discord.gg/elixir)의 [#phoenix] 채널에서 자유롭게 가입하고 확인하세요.
 
-- Read about [bug reports](https://github.com/phoenixframework/phoenix/blob/main/CONTRIBUTING.md#bug-reports) or open an issue in the Phoenix [issue tracker](https://github.com/phoenixframework/phoenix/issues).
+- [버그 리포트](https://github.com/phoenixframework/phoenix/blob/main/CONTRIBUTING.md#bug-reports)를 읽거나 Phoenix [이슈 트래커](https://github.com/phoenixframework/phoenix/issues)에서 이슈를 개설하세요.
 
-- Ask or answer questions about Phoenix on [Elixir Forum](https://elixirforum.com/c/phoenix-forum) or [Stack Overflow](https://stackoverflow.com/questions/tagged/phoenix-framework).
+- [엘릭서 포럼](https://elixirforum.com/c/phoenix-forum) 또는 [스택 오버플로](https://stackoverflow.com/questions/tagged/phoenix-framework)에서 Phoenix에 대해 질문하거나 답변하세요.
 
-- Follow the Phoenix Framework on [Twitter](https://twitter.com/elixirphoenix).
+- [트위터](https://twitter.com/elixirphoenix)에서 피닉스 프레임워크를 팔로우하세요.
 
-The Security Working Group of the Erlang Ecosystem Foundation also publishes in-depth documents about [security best practices for Erlang, Elixir, and Phoenix](https://erlef.github.io/security-wg/web_app_security_best_practices_beam/).
+Erlang 생태계 재단의 보안 워킹 그룹은 [Erlang, Elixir 및 Phoenix의 보안 모범 사례](https://erlef.github.io/security-wg/web_app_security_best_practices_beam/)에 대한 심층적인 문서도 게시하고 있습니다.
 
-## Books
+## 도서
 
-- [Programming Phoenix LiveView - Interactive Elixir Web Programming Without Writing Any JavaScript - 2023 (by Bruce Tate and Sophie DeBenedetto)](https://pragprog.com/titles/liveview/programming-phoenix-liveview/)
+- [프로그래밍 피닉스 라이브뷰 - 자바스크립트 작성 없이 인터랙티브 엘릭서 웹 프로그래밍 - 2023 (브루스 테이트, 소피 드베네데토 저)](https://pragprog.com/titles/liveview/programming-phoenix-liveview/)
 
-- [Real-Time Phoenix - Build Highly Scalable Systems with Channels (by Stephen Bussey - 2020)](https://pragprog.com/titles/sbsockets/real-time-phoenix/)
+- [실시간 피닉스 - 채널로 확장성이 뛰어난 시스템 구축(스티븐 버시 저 - 2020)](https://pragprog.com/titles/sbsockets/real-time-phoenix/)
 
-- [Programming Phoenix 1.4 (by Bruce Tate, Chris McCord, and José Valim - 2019)](https://pragprog.com/titles/phoenix14/programming-phoenix-1-4/)
+- [Phoenix 1.4 프로그래밍(브루스 테이트, 크리스 맥코드, 호세 발림 저 - 2019)](https://pragprog.com/titles/phoenix14/programming-phoenix-1-4/)
 
-- [Phoenix in Action (by Geoffrey Lessel - 2019)](https://manning.com/books/phoenix-in-action)
+- [피닉스 인 액션 (제프리 레셀 저 - 2019)](https://manning.com/books/phoenix-in-action)
 
-- [Phoenix Inside Out - Book Series (by Shankar Dhanasekaran - 2017)](https://shankardevy.com/phoenix-book/).
-  First book of the series Mastering Phoenix Framework is [free to read online](https://shankardevy.com/phoenix-inside-out-mpf/)
+- [피닉스 인사이드 아웃 - 도서 시리즈(샨카르 다나세카란 저 - 2017)](https://shankardevy.com/phoenix-book/).
+  피닉스 프레임워크 마스터하기 시리즈의 첫 번째 책은 [온라인에서 무료로 읽을 수 있습니다](https://shankardevy.com/phoenix-inside-out-mpf/).
 
-- [Functional Web Development with Elixir, OTP, and Phoenix Rethink the Modern Web App (by Lance Halvorsen - 2017)](https://pragprog.com/titles/lhelph/functional-web-development-with-elixir-otp-and-phoenix/)
+- [엘릭서, OTP, Phoenix를 사용한 기능적 웹 개발: 최신 웹 앱을 다시 생각하다(Lance Halvorsen 저 - 2017)](https://pragprog.com/titles/lhelph/functional-web-development-with-elixir-otp-and-phoenix/)
 
-## Screencasts/Courses
+## 스크린캐스트/강좌
 
-- [Phoenix LiveView Free Course (by The Pragmatic Studio - 2023)](https://pragmaticstudio.com/courses/phoenix-liveview)
+- [피닉스 라이브뷰 무료 강좌(The Pragmatic Studio - 2023)](https://pragmaticstudio.com/courses/phoenix-liveview)
 
-- [Build It With Phoenix video course (by Geoffrey Lessel - 2023)](https://builditwithphoenix.com)
+- [피닉스로 구축하기 비디오 강좌(Geoffrey Lessel - 2023)](https://builditwithphoenix.com)
 
-- [Free Crash Course: Phoenix LiveView (by Productive Programmer - 2023)](https://www.productiveprogrammer.com/learn-phoenix-liveview-free)
+- [무료 크래시 코스: 피닉스 라이브뷰 (프로덕티브 프로그래머 - 2023년)](https://www.productiveprogrammer.com/learn-phoenix-liveview-free)
 
-- [Phoenix on Rails: Elixir and Phoenix for Ruby on Rails developers (by George Arrowsmith - 2023)](https://phoenixonrails.com)
+- [피닉스 온 레일즈: 루비 온 레일즈 개발자를 위한 엘릭서 및 피닉스(조지 애로우스미스 - 2023)](https://phoenixonrails.com)
 
-- [Groxio LiveView: Self Study Program (by Bruce Tate - 2020)](https://grox.io/language/liveview/course)
+- [Groxio 라이브뷰: 셀프 스터디 프로그램(브루스 테이트 - 2020)](https://grox.io/language/liveview/course)
 
-- [Alchemist Camp: Learn Elixir and Phoenix by building (2018-2022)](https://alchemist.camp/episodes)
+- [연금술사 캠프: 건물로 엘릭서와 피닉스 배우기(2018-2022)](https://alchemist.camp/episodes)
 
-- [The Complete Elixir and Phoenix Bootcamp Master Functional Programming Techniques with Elixir and Phoenix while Learning to Build Compelling Web Applications (by Stephen Grider - 2017)](https://www.udemy.com/the-complete-elixir-and-phoenix-bootcamp-and-tutorial/)
+- [완전한 엘릭서 및 피닉스 부트캠프: 매력적인 웹 애플리케이션을 구축하는 방법을 배우면서 엘릭서 및 피닉스로 함수형 프로그래밍 기법 마스터하기 (Stephen Grider - 2017)](https://www.udemy.com/the-complete-elixir-and-phoenix-bootcamp-and-tutorial/)
 
-- [Discover Elixir & Phoenix (by Tristan Edwards - 2017)](https://www.ludu.co/course/discover-elixir-phoenix)
+- [엘릭서 & 피닉스 알아보기(트리스탄 에드워즈 저 - 2017)](https://www.ludu.co/course/discover-elixir-phoenix)
 
-- [Phoenix Framework Tutorial (by Tensor Programming - 2017)](https://www.youtube.com/watch?v=irDC1nWKhZ8&index=6&list=PLJbE2Yu2zumAgKjSPyFtvYjP5LqgzafQq)
+- [Phoenix 프레임워크 튜토리얼(텐서 프로그래밍 - 2017)](https://www.youtube.com/watch?v=irDC1nWKhZ8&index=6&list=PLJbE2Yu2zumAgKjSPyFtvYjP5LqgzafQq)
 
-- [Getting Started with Phoenix (by Pluralsight - 2017)](https://www.pluralsight.com/courses/phoenix-getting-started)
+- [피닉스 시작하기(Pluralsight - 2017)](https://www.pluralsight.com/courses/phoenix-getting-started)
 
-- [LearnPhoenix.tv: Learn how to Build Fast, Dependable Web Apps with Phoenix (2017)](https://www.learnphoenix.tv/)
+- [LearnPhoenix.tv: Phoenix로 빠르고 신뢰할 수 있는 웹 앱 구축 방법 알아보기(2017)](https://www.learnphoenix.tv/)
 
-- [LearnPhoenix.io: Build Scalable, Real-Time Apps with Phoenix, React, and React Native (2016)](https://www.learnphoenix.io/)
+- [LearnPhoenix.io: Phoenix, React, React Native로 확장 가능한 실시간 앱 빌드하기(2016)](https://www.learnphoenix.io/)
