@@ -6,8 +6,8 @@ There are currently a number of built-in Phoenix-specific and Ecto-specific [Mix
 
 ## Phoenix tasks
 
-```console
-$ mix help --search "phx"
+```shell
+mix help --search "phx"
 mix local.phx          # Updates the Phoenix project generator locally
 mix phx                # Prints Phoenix help information
 mix phx.digest         # Digests and compresses static files
@@ -42,7 +42,7 @@ Phoenix offers the ability to generate all the code to stand up a complete HTML 
 
 The `mix phx.gen.html` task takes the following arguments: the module name of the context, the module name of the schema, the resource name, and a list of column_name:type attributes. The module name we pass in must conform to the Elixir rules of module naming, following proper capitalization.
 
-```console
+```shell
 $ mix phx.gen.html Blog Post posts body:string word_count:integer
 * creating lib/hello_web/controllers/post_controller.ex
 * creating lib/hello_web/controllers/post_html/edit.html.heex
@@ -64,7 +64,7 @@ $ mix phx.gen.html Blog Post posts body:string word_count:integer
 
 When `mix phx.gen.html` is done creating files, it helpfully tells us that we need to add a line to our router file as well as run our Ecto migrations.
 
-```console
+```log
 Add the resource to your browser scope in lib/hello_web/router.ex:
 
     resources "/posts", PostController
@@ -76,7 +76,7 @@ Remember to update your repository by running migrations:
 
 Important: If we don't do this, we will see the following warnings in our logs, and our application will error when compiling.
 
-```console
+```shell
 $ mix phx.server
 Compiling 17 files (.ex)
 
@@ -86,7 +86,7 @@ warning: no route path for HelloWeb.Router matches \"/posts\"
 
 If we don't want to create a context or schema for our resource we can use the `--no-context` flag. Note that this still requires a context module name as a parameter.
 
-```console
+```shell
 $ mix phx.gen.html Blog Post posts body:string word_count:integer --no-context
 * creating lib/hello_web/controllers/post_controller.ex
 * creating lib/hello_web/controllers/post_html/edit.html.heex
@@ -100,7 +100,7 @@ $ mix phx.gen.html Blog Post posts body:string word_count:integer --no-context
 
 It will tell us we need to add a line to our router file, but since we skipped the context, it won't mention anything about `ecto.migrate`.
 
-```console
+```log
 Add the resource to your browser scope in lib/hello_web/router.ex:
 
     resources "/posts", PostController
@@ -108,7 +108,7 @@ Add the resource to your browser scope in lib/hello_web/router.ex:
 
 Similarly, if we want a context created without a schema for our resource we can use the `--no-schema` flag.
 
-```console
+```shell
 $ mix phx.gen.html Blog Post posts body:string word_count:integer --no-schema
 * creating lib/hello_web/controllers/post_controller.ex
 * creating lib/hello_web/controllers/post_html/edit.html.heex
@@ -134,7 +134,7 @@ Phoenix also offers the ability to generate all the code to stand up a complete 
 
 The `mix phx.gen.json` task takes the following arguments: the module name of the context, the module name of the schema, the resource name, and a list of column_name:type attributes. The module name we pass in must conform to the Elixir rules of module naming, following proper capitalization.
 
-```console
+```shell
 $ mix phx.gen.json Blog Post posts title:string content:string
 * creating lib/hello_web/controllers/post_controller.ex
 * creating lib/hello_web/controllers/post_json.ex
@@ -153,7 +153,7 @@ $ mix phx.gen.json Blog Post posts title:string content:string
 
 When `mix phx.gen.json` is done creating files, it helpfully tells us that we need to add a line to our router file as well as run our Ecto migrations.
 
-```console
+```log
 Add the resource to your :api scope in lib/hello_web/router.ex:
 
     resources "/posts", PostController, except: [:new, :edit]
@@ -165,7 +165,7 @@ Remember to update your repository by running migrations:
 
 Important: If we don't do this, we'll get the following warning in our logs and the application will error when attempting to compile:
 
-```console
+```shell
 $ mix phx.server
 Compiling 19 files (.ex)
 
@@ -181,7 +181,7 @@ If we don't need a complete HTML/JSON resource and only need a context, we can u
 
 The `mix phx.gen.context` task takes the following arguments: the module name of the context, the module name of the schema, the resource name, and a list of column_name:type attributes.
 
-```console
+```shell
 $ mix phx.gen.context Accounts User users name:string age:integer
 * creating lib/hello/accounts/user.ex
 * creating priv/repo/migrations/20170906161158_create_users.exs
@@ -195,7 +195,7 @@ $ mix phx.gen.context Accounts User users name:string age:integer
 
 > Note: If we need to namespace our resource we can simply namespace the first argument of the generator.
 
-```console
+```shell
 $ mix phx.gen.context Admin.Accounts User users name:string age:integer
 * creating lib/hello/admin/accounts/user.ex
 * creating priv/repo/migrations/20170906161246_create_users.exs
@@ -213,7 +213,7 @@ If we don't need a complete HTML/JSON resource and are not interested in generat
 
 The `mix phx.gen.schema` task takes the following arguments: the module name of the schema (which may be namespaced), the resource name, and a list of column_name:type attributes.
 
-```console
+```shell
 $ mix phx.gen.schema Accounts.Credential credentials email:string:unique user_id:references:users
 * creating lib/hello/accounts/credential.ex
 * creating priv/repo/migrations/20170906162013_create_credentials.exs
@@ -227,7 +227,7 @@ The `mix phx.gen.auth` task takes the following arguments: the module name of th
 
 Here is an example version of the command:
 
-```console
+```shell
 $ mix phx.gen.auth Accounts User users
 * creating priv/repo/migrations/20201205184926_create_users_auth_tables.exs
 * creating lib/hello/accounts/user_notifier.ex
@@ -274,7 +274,7 @@ $ mix phx.gen.auth Accounts User users
 
 When `mix phx.gen.auth` is done creating files, it helpfully tells us that we need to re-fetch our dependencies as well as run our Ecto migrations.
 
-```console
+```log
 Please re-fetch your dependencies with the following command:
 
     mix deps.get
@@ -294,7 +294,7 @@ A more complete walk-through of how to get started with this generator is availa
 
 This task will generate a basic Phoenix channel, the socket to power the channel (if you haven't created one yet), as well a test case for it. It takes the module name for the channel as the only argument:
 
-```console
+```shell
 $ mix phx.gen.channel Room
 * creating lib/hello_web/channels/room_channel.ex
 * creating test/hello_web/channels/room_channel_test.exs
@@ -302,7 +302,7 @@ $ mix phx.gen.channel Room
 
 If your application does not have a `UserSocket` yet, it will ask if you want to create one:
 
-```console
+```log
 The default socket handler - HelloWeb.UserSocket - was not found
 in its default location.
 
@@ -311,7 +311,7 @@ Do you want to create it? [Y/n]
 
 By confirming, a channel will be created, then you need to connect the socket in your endpoint:
 
-```console
+```log
 Add the socket handler to your `lib/hello_web/endpoint.ex`, for example:
 
     socket "/socket", HelloWeb.UserSocket,
@@ -326,7 +326,7 @@ in your `assets/js/app.js` file:
 
 In case a `UserSocket` already exists or you decide to not create one, the `channel` generator will tell you to add it to the Socket manually:
 
-```console
+```log
 Add the channel to your `lib/hello_web/channels/user_socket.ex` handler, for example:
 
     channel "rooms:lobby", HelloWeb.RoomChannel
@@ -339,7 +339,7 @@ You can also create a socket any time by invoking `mix phx.gen.socket`.
 This task will generate a presence tracker. The module name can be passed as an argument,
 `Presence` is used if no module name is passed.
 
-```console
+```shell
 $ mix phx.gen.presence Presence
 * lib/hello_web/channels/presence.ex
 
@@ -358,14 +358,14 @@ This task has a single purpose, to show us all the routes defined for a given ro
 
 If we don't specify a router for this task, it will default to the router Phoenix generated for us.
 
-```console
+```shell
 $ mix phx.routes
 GET  /  TaskTester.PageController.index/2
 ```
 
 We can also specify an individual router if we have more than one for our application.
 
-```console
+```shell
 $ mix phx.routes TaskTesterWeb.Router
 GET  /  TaskTesterWeb.PageController.index/2
 ```
@@ -374,22 +374,22 @@ GET  /  TaskTesterWeb.PageController.index/2
 
 This is the task we use to get our application running. It takes no arguments at all. If we pass any in, they will be silently ignored.
 
-```console
+```shell
 $ mix phx.server
 [info] Running TaskTesterWeb.Endpoint with Cowboy on port 4000 (http)
 ```
 
 It will silently ignore our `DoesNotExist` argument:
 
-```console
+```shell
 $ mix phx.server DoesNotExist
 [info] Running TaskTesterWeb.Endpoint with Cowboy on port 4000 (http)
 ```
 
 If we would like to start our application and also have an `IEx` session open to it, we can run the Mix task within `iex` like this, `iex -S mix phx.server`.
 
-```console
-$ iex -S mix phx.server
+```shell
+iex -S mix phx.server
 Erlang/OTP 17 [erts-6.4] [source] [64-bit] [smp:8:8] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
 
 [info] Running TaskTesterWeb.Endpoint with Cowboy on port 4000 (http)
@@ -407,7 +407,7 @@ Before we run this task let's inspect the contents of two directories in our hel
 
 First `priv/static/` which should look similar to this:
 
-```console
+```log
 ├── assets
 │   ├── app.css
 │   └── app.js
@@ -417,7 +417,7 @@ First `priv/static/` which should look similar to this:
 
 And then `assets/` which should look similar to this:
 
-```console
+```log
 ├── css
 │   └── app.css
 ├── js
@@ -429,17 +429,17 @@ And then `assets/` which should look similar to this:
 
 All of these files are our static assets. Now let's run the `mix phx.digest` task.
 
-```console
+```shell
 $ mix phx.digest
 Check your digested files at 'priv/static'.
 ```
 
 We can now do as the task suggests and inspect the contents of `priv/static/` directory. We'll see that all files from `assets/` have been copied over to `priv/static/` and also each file now has a couple of versions. Those versions are:
 
-* the original file
-* a compressed file with gzip
-* a file containing the original file name and its digest
-* a compressed file containing the file name and its digest
+- the original file
+- a compressed file with gzip
+- a file containing the original file name and its digest
+- a compressed file containing the file name and its digest
 
 We can optionally determine which files should be gzipped by using the `:gzippable_exts` option in the config file:
 
@@ -449,7 +449,7 @@ config :phoenix, :gzippable_exts, ~w(.js .css)
 
 > Note: We can specify a different output folder where `mix phx.digest` will put processed files. The first argument is the path where the static files are located.
 
-```console
+```shell
 $ mix phx.digest priv/static/ -o www/public/
 Check your digested files at 'www/public/'
 ```
@@ -460,8 +460,8 @@ Check your digested files at 'www/public/'
 
 Newly generated Phoenix applications now include Ecto and Postgrex as dependencies by default (which is to say, unless we use `mix phx.new` with the `--no-ecto` flag). With those dependencies come Mix tasks to take care of common Ecto operations. Let's see which tasks we get out of the box.
 
-```console
-$ mix help --search "ecto"
+```shell
+mix help --search "ecto"
 mix ecto               # Prints Ecto help information
 mix ecto.create        # Creates the repository storage
 mix ecto.drop          # Drops the repository storage
@@ -484,57 +484,57 @@ This task will create the database specified in our repo. By default it will loo
 
 Here's what it looks like in action.
 
-```console
-$ mix ecto.create
+```shell
+mix ecto.create
 The database for Hello.Repo has been created.
 ```
 
 There are a few things that can go wrong with `ecto.create`. If our Postgres database doesn't have a "postgres" role (user), we'll get an error like this one.
 
-```console
-$ mix ecto.create
+```shell
+mix ecto.create
 ** (Mix) The database for Hello.Repo couldn't be created, reason given: psql: FATAL:  role "postgres" does not exist
 ```
 
 We can fix this by creating the "postgres" role in the `psql` console with the permissions needed to log in and create a database.
 
-```console
+```log
 =# CREATE ROLE postgres LOGIN CREATEDB;
 CREATE ROLE
 ```
 
 If the "postgres" role does not have permission to log in to the application, we'll get this error.
 
-```console
-$ mix ecto.create
+```shell
+mix ecto.create
 ** (Mix) The database for Hello.Repo couldn't be created, reason given: psql: FATAL:  role "postgres" is not permitted to log in
 ```
 
 To fix this, we need to change the permissions on our "postgres" user to allow login.
 
-```console
+```log
 =# ALTER ROLE postgres LOGIN;
 ALTER ROLE
 ```
 
 If the "postgres" role does not have permission to create a database, we'll get this error.
 
-```console
-$ mix ecto.create
+```shell
+mix ecto.create
 ** (Mix) The database for Hello.Repo couldn't be created, reason given: ERROR:  permission denied to create database
 ```
 
-To fix this, we need to change the permissions on our "postgres" user in the `psql` console  to allow database creation.
+To fix this, we need to change the permissions on our "postgres" user in the `psql` console to allow database creation.
 
-```console
+```log
 =# ALTER ROLE postgres CREATEDB;
 ALTER ROLE
 ```
 
 If the "postgres" role is using a password different from the default "postgres", we'll get this error.
 
-```console
-$ mix ecto.create
+```shell
+mix ecto.create
 ** (Mix) The database for Hello.Repo couldn't be created, reason given: psql: FATAL:  password authentication failed for user "postgres"
 ```
 
@@ -542,8 +542,8 @@ To fix this, we can change the password in the environment specific configuratio
 
 Finally, if we happen to have another repo called `OurCustom.Repo` that we want to create the database for, we can run this.
 
-```console
-$ mix ecto.create -r OurCustom.Repo
+```shell
+mix ecto.create -r OurCustom.Repo
 The database for OurCustom.Repo has been created.
 ```
 
@@ -551,15 +551,15 @@ The database for OurCustom.Repo has been created.
 
 This task will drop the database specified in our repo. By default it will look for the repo named after our application (the one generated with our app unless we opted out of Ecto). It will not prompt us to check if we're sure we want to drop the database, so do exercise caution.
 
-```console
-$ mix ecto.drop
+```shell
+mix ecto.drop
 The database for Hello.Repo has been dropped.
 ```
 
 If we happen to have another repo that we want to drop the database for, we can specify it with the `-r` flag.
 
-```console
-$ mix ecto.drop -r OurCustom.Repo
+```shell
+mix ecto.drop -r OurCustom.Repo
 The database for OurCustom.Repo has been dropped.
 ```
 
@@ -569,8 +569,8 @@ Many applications require more than one data store. For each data store, we'll n
 
 If we name our repo `OurCustom.Repo`, this task will create it here `lib/our_custom/repo.ex`.
 
-```console
-$ mix ecto.gen.repo -r OurCustom.Repo
+```shell
+mix ecto.gen.repo -r OurCustom.Repo
 * creating lib/our_custom
 * creating lib/our_custom/repo.ex
 * updating config/config.exs
@@ -614,8 +614,8 @@ Migrations are a programmatic, repeatable way to affect changes to a database sc
 
 We simply need to invoke the task with a `snake_case` version of the module name that we want. Preferably, the name will describe what we want the migration to do.
 
-```console
-$ mix ecto.gen.migration add_comments_table
+```shell
+mix ecto.gen.migration add_comments_table
 * creating priv/repo/migrations
 * creating priv/repo/migrations/20150318001628_add_comments_table.exs
 ```
@@ -651,8 +651,8 @@ end
 
 Again, we can run this task with the `-r` flag and another repo if we need to.
 
-```console
-$ mix ecto.gen.migration -r OurCustom.Repo add_users
+```shell
+mix ecto.gen.migration -r OurCustom.Repo add_users
 * creating priv/repo/migrations
 * creating priv/repo/migrations/20150318172927_add_users.exs
 ```
@@ -668,8 +668,8 @@ That's it! We're ready to run our migration.
 
 Once we have our migration module ready, we can simply run `mix ecto.migrate` to have our changes applied to the database.
 
-```console
-$ mix ecto.migrate
+```shell
+mix ecto.migrate
 [info] == Running Hello.Repo.Migrations.AddCommentsTable.change/0 forward
 [info] create table comments
 [info] == Migrated in 0.1s
@@ -679,7 +679,7 @@ When we first run `ecto.migrate`, it will create a table for us called `schema_m
 
 Here's what the `schema_migrations` table looks like.
 
-```console
+```log
 hello_dev=# select * from schema_migrations;
 version        |     inserted_at
 ---------------+---------------------
@@ -688,14 +688,14 @@ version        |     inserted_at
 (2 rows)
 ```
 
-When we roll back a migration, [`ecto.rollback`](#mix-ecto-rollback) will remove the record representing this migration from `schema_migrations`.
+When we roll back a migration, [`ecto.rollback`](/mix_tasks.md#mix-ecto-rollback) will remove the record representing this migration from `schema_migrations`.
 
 By default, `ecto.migrate` will execute all pending migrations. We can exercise more control over which migrations we run by specifying some options when we run the task.
 
 We can specify the number of pending migrations we would like to run with the `-n` or `--step` options.
 
-```console
-$ mix ecto.migrate -n 2
+```shell
+mix ecto.migrate -n 2
 [info] == Running Hello.Repo.Migrations.CreatePost.change/0 forward
 [info] create table posts
 [info] == Migrated in 0.0s
@@ -706,21 +706,21 @@ $ mix ecto.migrate -n 2
 
 The `--step` option will behave the same way.
 
-```console
+```shell
 mix ecto.migrate --step 2
 ```
 
 The `--to` option will run all migrations up to and including given version.
 
-```console
+```shell
 mix ecto.migrate --to 20150317170448
 ```
 
 ### `mix ecto.rollback`
 
-The [`ecto.rollback`](`mix ecto.rollback`) task will reverse the last migration we have run, undoing the schema changes. [`ecto.migrate`](#mix-ecto-migrate) and `ecto.rollback` are mirror images of each other.
+The [`ecto.rollback`](`mix ecto.rollback`) task will reverse the last migration we have run, undoing the schema changes. [`ecto.migrate`](/mix_tasks.md#mix-ecto-migrate) and `ecto.rollback` are mirror images of each other.
 
-```console
+```shell
 $ mix ecto.rollback
 [info] == Running Hello.Repo.Migrations.AddCommentsTable.change/0 backward
 [info] drop table comments
@@ -735,8 +735,8 @@ As we've seen throughout this guide, both Mix itself and the dependencies we bri
 
 The first thing we need to do is create a `mix/tasks/` directory inside of `lib/`. This is where any of our application specific Mix tasks will go.
 
-```console
-$ mkdir -p lib/mix/tasks/
+```shell
+mkdir -p lib/mix/tasks/
 ```
 
 Inside that directory, let's create a new file, `hello.greeting.ex`, that looks like this.
@@ -777,16 +777,16 @@ Of course, our task is just a module, so we can define other private functions a
 
 Now that we have our task module defined, our next step is to compile the application.
 
-```console
-$ mix compile
+```shell
+mix compile
 Compiled lib/tasks/hello.greeting.ex
 Generated hello.app
 ```
 
 Now our new task should be visible to `mix help`.
 
-```console
-$ mix help --search hello
+```shell
+mix help --search hello
 mix hello.greeting # Sends a greeting to us from Hello Phoenix
 ```
 
@@ -794,8 +794,8 @@ Notice that `mix help` displays the text we put into the `@shortdoc` along with 
 
 So far, so good, but does it work?
 
-```console
-$ mix hello.greeting
+```shell
+mix hello.greeting
 Greetings from the Hello Phoenix Application!
 ```
 

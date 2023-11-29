@@ -1,10 +1,10 @@
 # Components and HEEx
 
 > **Requirement**: This guide expects that you have gone through the [introductory guides](installation.html) and got a Phoenix application [up and running](up_and_running.html).
-
+>
 > **Requirement**: This guide expects that you have gone through the [request life-cycle guide](request_lifecycle.html).
 
-The Phoenix endpoint pipeline takes a request, routes it to a controller, and calls a view module to render a template. The view interface from the controller is simple – the controller calls a view function with the connections assigns, and the function's job is to return a HEEx template. We call any function that accepts an `assigns` parameter and returns a HEEx template a *function component*. Function components are defined with the help of the [`Phoenix.Component`](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html) module.
+The Phoenix endpoint pipeline takes a request, routes it to a controller, and calls a view module to render a template. The view interface from the controller is simple – the controller calls a view function with the connections assigns, and the function's job is to return a HEEx template. We call any function that accepts an `assigns` parameter and returns a HEEx template a _function component_. Function components are defined with the help of the [`Phoenix.Component`](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html) module.
 
 Function components are the essential building block for any kind of markup-based template rendering you'll perform in Phoenix. They serve as a shared abstraction for the standard MVC controller-based applications, LiveView applications, layouts, and smaller UI definitions you'll use throughout other templates.
 
@@ -70,27 +70,27 @@ If the component was defined elsewhere, we can also type `<HelloWeb.HelloHTML.gr
 
 By declaring attributes as required, Phoenix will warn at compile time if we call the `<.greet />` component without passing attributes. If an attribute is optional, you can specify the `:default` option with a value:
 
-```
+```elixir
 attr :messenger, :string, default: nil
 ```
 
 Although this is a quick example, it shows the different roles function components play in Phoenix:
 
-* Function components can be defined as functions that receive `assigns` as argument and call the `~H` sigil, as we did in `greet/1`
+- Function components can be defined as functions that receive `assigns` as argument and call the `~H` sigil, as we did in `greet/1`
 
-* Function components can be embedded from template files, that's how we load `show.html.heex` into `HelloWeb.HelloHTML`
+- Function components can be embedded from template files, that's how we load `show.html.heex` into `HelloWeb.HelloHTML`
 
-* Function components can declare which attributes are expected, which are validated at compilation time
+- Function components can declare which attributes are expected, which are validated at compilation time
 
-* Function components can be directly rendered from controllers
+- Function components can be directly rendered from controllers
 
-* Function components can be directly rendered from other function components, as we called `<.greet messenger={@messenger} />` from `show.html.heex`
+- Function components can be directly rendered from other function components, as we called `<.greet messenger={@messenger} />` from `show.html.heex`
 
 And there's more. Before we go deeper, let's fully understand the expressive power behind the HEEx template language.
 
 ## HEEx
 
-Function components and templates files are powered by [the HEEx template language](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2), which stands for  "HTML+EEx". EEx is an Elixir library that uses `<%= expression %>` to execute Elixir expressions and interpolate their results into the template. This is frequently used to display assigns we have set by way of the `@` shortcut. In your controller, if you invoke:
+Function components and templates files are powered by [the HEEx template language](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2), which stands for "HTML+EEx". EEx is an Elixir library that uses `<%= expression %>` to execute Elixir expressions and interpolate their results into the template. This is frequently used to display assigns we have set by way of the `@` shortcut. In your controller, if you invoke:
 
 ```elixir
   render(conn, :show, username: "joe")
@@ -235,8 +235,8 @@ If you look inside `def html` in `HelloWeb` placed at `lib/hello_web.ex`, you wi
 
 CoreComponents also play an important role in Phoenix code generators, as the code generators assume those components are available in order to quickly scaffold your application. In case you want to learn more about all of these pieces, you may:
 
-  * Explore the generated `CoreComponents` module to learn more from practical examples
+- Explore the generated `CoreComponents` module to learn more from practical examples
 
-  * Read the official documentation for [`Phoenix.Component`](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html)
+- Read the official documentation for [`Phoenix.Component`](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html)
 
-  * Read the official documentation for [HEEx and the ~H sigils](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2)
+- Read the official documentation for [HEEx and the ~H sigils](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2)

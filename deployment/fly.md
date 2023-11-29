@@ -1,6 +1,5 @@
 # Deploying on Fly.io
 
-
 Fly.io maintains their own guide for Elixir/Phoenix here: [Fly.io/docs/elixir/getting-started/](https://fly.io/docs/elixir/getting-started/) we will keep this guide up but for the latest and greatest check with them!
 
 ## What we'll need
@@ -9,8 +8,8 @@ The only thing we'll need for this guide is a working Phoenix application. For t
 
 You can just:
 
-```console
-$ mix phx.new my_app
+```shell
+mix phx.new my_app
 ```
 
 ## Goals
@@ -35,14 +34,14 @@ Follow the instructions [here](https://fly.io/docs/getting-started/installing-fl
 
 We can [sign up for an account](https://fly.io/docs/getting-started/log-in-to-fly/) using the CLI.
 
-```console
-$ fly auth signup
+```shell
+fly auth signup
 ```
 
 Or sign in.
 
-```console
-$ flyctl auth login
+```shell
+flyctl auth login
 ```
 
 Fly has a [free tier](https://fly.io/docs/about/pricing/) for most applications. A credit card is required when setting up an account to help prevent abuse. See the [pricing](https://fly.io/docs/about/pricing/) page for more details.
@@ -51,8 +50,8 @@ Fly has a [free tier](https://fly.io/docs/about/pricing/) for most applications.
 
 To tell Fly about your application, run `fly launch` in the directory with your source code. This creates and configures a Fly.io app.
 
-```console
-$ fly launch
+```shell
+fly launch
 ```
 
 This scans your source, detects the Phoenix project, and runs `mix phx.gen.release --docker` for you! This creates a Dockerfile for you.
@@ -74,47 +73,47 @@ You may also have some secrets you'd like to set on your app.
 
 Use [`fly secrets`](https://fly.io/docs/reference/secrets/#setting-secrets) to configure those.
 
-```console
-$ fly secrets set MY_SECRET_KEY=my_secret_value
+```shell
+fly secrets set MY_SECRET_KEY=my_secret_value
 ```
 
 ### Deploying again
 
 When you want to deploy changes to your application, use `fly deploy`.
 
-```console
-$ fly deploy
+```shell
+fly deploy
 ```
 
 Note: On Apple Silicon (M1) computers, docker runs cross-platform builds using qemu which might not always work. If you get a segmentation fault error like the following:
 
-```
+```log
  => [build  7/17] RUN mix deps.get --only
  => => # qemu: uncaught target signal 11 (Segmentation fault) - core dumped
 ```
 
 You can use fly's remote builder by adding the `--remote-only` flag:
 
-```console
-$ fly deploy --remote-only
+```shell
+fly deploy --remote-only
 ```
 
 You can always check on the status of a deploy
 
-```console
-$ fly status
+```shell
+fly status
 ```
 
 Check your app logs
 
-```console
-$ fly logs
+```shell
+fly logs
 ```
 
 If everything looks good, open your app on Fly
 
-```console
-$ fly open
+```shell
+fly open
 ```
 
 ## Extra Fly.io tips
@@ -127,22 +126,22 @@ There are a couple prerequisites, we first need to establish an [SSH Shell](http
 
 This step sets up a root certificate for your account and then issues a certificate.
 
-```console
-$ fly ssh issue --agent
+```shell
+fly ssh issue --agent
 ```
 
 With SSH configured, let's open a console.
 
-```console
-$ fly ssh console
+```shell
+fly ssh console
 Connecting to my-app-1234.internal... complete
 / #
 ```
 
 If all has gone smoothly, then you have a shell into the machine! Now we just need to launch our remote IEx shell. The deployment Dockerfile was configured to pull our application into `/app`. So the command for an app named `my_app` looks like this:
 
-```console
-$ app/bin/my_app remote
+```shell
+app/bin/my_app remote
 Erlang/OTP 23 [erts-11.2.1] [source] [64-bit] [smp:1:1] [ds:1:1:10] [async-threads:1]
 
 Interactive Elixir (1.11.2) - press Ctrl+C to exit (type h() ENTER for help)
@@ -214,13 +213,13 @@ This configures `libcluster` to use the `DNSPoll` strategy and look for other de
 
 We need to control the naming of our Elixir nodes. To help them connect up, we'll name them using this pattern: `your-fly-app-name@the.ipv6.address.on.fly`. To do this, we'll generate the release config.
 
-```console
-$ mix release.init
+```shell
+mix release.init
 ```
 
 Then edit the generated `rel/env.sh.eex` file and add the following lines:
 
-```console
+```shell
 ip=$(grep fly-local-6pn /etc/hosts | cut -f 1)
 export RELEASE_DISTRIBUTION=name
 export RELEASE_NODE=$FLY_APP_NAME@$ip
@@ -228,8 +227,8 @@ export RELEASE_NODE=$FLY_APP_NAME@$ip
 
 After making the change, deploy your app!
 
-```console
-$ fly deploy
+```shell
+fly deploy
 ```
 
 For our app to be clustered, we have to have multiple instances. Next we'll add an additional node instance.
@@ -243,8 +242,8 @@ There are two ways to run multiple instances.
 
 Let's first start with a baseline of our single deployment.
 
-```console
-$ fly status
+```shell
+fly status
 ...
 Instances
 ID       VERSION REGION DESIRED STATUS  HEALTH CHECKS      RESTARTS CREATED
@@ -255,15 +254,15 @@ f9014bf7 26      sea    run     running 1 total, 1 passing 0        1h8m ago
 
 Let's scale up to 2 instances in our current region.
 
-```console
-$ fly scale count 2
+```shell
+fly scale count 2
 Count changed to 2
 ```
 
 Checking the status, we can see what happened.
 
-```console
-$ fly status
+```shell
+fly status
 ...
 Instances
 ID       VERSION REGION DESIRED STATUS  HEALTH CHECKS      RESTARTS CREATED
@@ -275,8 +274,8 @@ We now have two instances in the same region.
 
 Let's make sure they are clustered together. We can check the logs:
 
-```console
-$ fly logs
+```shell
+fly logs
 ...
 app[eb4119d3] sea [info] 21:50:21.924 [info] [libcluster:fly6pn] connected to :"my-app-1234@fdaa:0:1da8:a7b:ac2:f901:4bf7:2"
 ...
@@ -284,8 +283,8 @@ app[eb4119d3] sea [info] 21:50:21.924 [info] [libcluster:fly6pn] connected to :"
 
 But that's not as rewarding as seeing it from inside a node. From an IEx shell, we can ask the node we're connected to, what other nodes it can see.
 
-```console
-$ fly ssh console -C "/app/bin/my_app remote"
+```shell
+fly ssh console -C "/app/bin/my_app remote"
 ```
 
 ```elixir
@@ -301,8 +300,8 @@ Fly makes it easy to deploy instances closer to your users. Through the magic of
 
 Starting back from our baseline of a single instance running in `sea` which is Seattle, Washington (US), let's add the region `ewr` which is Parsippany, NJ (US). This puts an instance on both coasts of the US.
 
-```console
-$ fly regions add ewr
+```shell
+fly regions add ewr
 Region Pool:
 ewr
 sea
@@ -315,8 +314,8 @@ vin
 
 Looking at the status shows that we're only in 1 region because our count is set to 1.
 
-```console
-$ fly status
+```shell
+fly status
 ...
 Instances
 ID       VERSION REGION DESIRED STATUS  HEALTH CHECKS      RESTARTS CREATED
@@ -325,15 +324,15 @@ cdf6c422 29      sea    run     running 1 total, 1 passing 0        58s ago
 
 Let's add a 2nd instance and see it deploy to `ewr`.
 
-```console
-$ fly scale count 2
+```shell
+fly scale count 2
 Count changed to 2
 ```
 
 Now the status shows we have two instances spread across 2 regions!
 
-```console
-$ fly status
+```shell
+fly status
 ...
 Instances
 ID       VERSION REGION DESIRED STATUS  HEALTH CHECKS      RESTARTS CREATED
@@ -343,8 +342,8 @@ cdf6c422 30      sea    run     running 1 total, 1 passing 0        6m47s ago
 
 Let's ensure they are clustered together.
 
-```console
-$ fly ssh console -C "/app/bin/my_app remote"
+```shell
+fly ssh console -C "/app/bin/my_app remote"
 ```
 
 ```elixir
@@ -360,41 +359,41 @@ The Fly.io platform has built-in distribution support making it easy to cluster 
 
 Open the Dashboard for your account
 
-```console
-$ fly dashboard
+```shell
+fly dashboard
 ```
 
 Deploy your application
 
-```console
-$ fly deploy
+```shell
+fly deploy
 ```
 
 Show the status of your deployed application
 
-```console
-$ fly status
+```shell
+fly status
 ```
 
 Access and tail the logs
 
-```console
-$ fly logs
+```shell
+fly logs
 ```
 
 Scaling your application up or down
 
-```console
-$ fly scale count 2
+```shell
+fly scale count 2
 ```
 
 Refer to the [Fly.io Elixir documentation](https://fly.io/docs/getting-started/elixir) for additional information.
 
 [Working with Fly.io applications](https://fly.io/docs/getting-started/working-with-fly-apps/) covers things like:
 
-* Status and logs
-* Custom domains
-* Certificates
+- Status and logs
+- Custom domains
+- Certificates
 
 ## Troubleshooting
 

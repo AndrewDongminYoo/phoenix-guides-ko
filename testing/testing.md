@@ -10,8 +10,8 @@ Elixir ships with a built-in testing framework called [ExUnit](https://hexdocs.p
 
 When Phoenix generates a web application for us, it also includes tests. To run them, simply type `mix test`:
 
-```console
-$ mix test
+```shell
+mix test
 ....
 
 Finished in 0.09 seconds
@@ -24,7 +24,7 @@ We already have five tests!
 
 In fact, we already have a directory structure completely set up for testing, including a test helper and support files.
 
-```console
+```log
 test
 ├── hello_web
 │   └── controllers
@@ -70,10 +70,10 @@ Then we define each test using the `test/3` macro. The `test/3` macro receives t
 
 When writing tests in Elixir, we use assertions to check that something is true. In our case, `assert html_response(conn, 200) =~ "Peace of mind from prototype to production"` is doing a couple things:
 
-  * It asserts that `conn` has rendered a response
-  * It asserts that the response has the 200 status code (which means OK in HTTP parlance)
-  * It asserts that the type of the response is HTML
-  * It asserts that the result of `html_response(conn, 200)`, which is an HTML response, has the string "Peace of mind from prototype to production" in it
+- It asserts that `conn` has rendered a response
+- It asserts that the response has the 200 status code (which means OK in HTTP parlance)
+- It asserts that the type of the response is HTML
+- It asserts that the result of `html_response(conn, 200)`, which is an HTML response, has the string "Peace of mind from prototype to production" in it
 
 However, from where does the `conn` we use on `get` and `html_response` come from? To answer this question, let's take a look at `HelloWeb.ConnCase`.
 
@@ -98,7 +98,7 @@ defmodule HelloWeb.ConnCase do
       import HelloWeb.ConnCase
     end
   end
-  
+
   setup tags do
     Hello.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
@@ -163,8 +163,8 @@ Now that we have an idea what our tests are doing, let's look at different ways 
 
 As we saw near the beginning of this guide, we can run our entire suite of tests with `mix test`.
 
-```console
-$ mix test
+```shell
+mix test
 ....
 
 Finished in 0.2 seconds
@@ -175,8 +175,8 @@ Randomized with seed 540755
 
 If we would like to run all the tests in a given directory, `test/hello_web/controllers` for instance, we can pass the path to that directory to `mix test`.
 
-```console
-$ mix test test/hello_web/controllers/
+```shell
+mix test test/hello_web/controllers/
 .
 
 Finished in 0.2 seconds
@@ -187,8 +187,8 @@ Randomized with seed 652376
 
 In order to run all the tests in a specific file, we can pass the path to that file into `mix test`.
 
-```console
-$ mix test test/hello_web/controllers/error_html_test.exs
+```shell
+mix test test/hello_web/controllers/error_html_test.exs
 ...
 
 Finished in 0.2 seconds
@@ -201,8 +201,8 @@ And we can run a single test in a file by appending a colon and a line number to
 
 Let's say we only wanted to run the test for the way `HelloWeb.ErrorHTML` renders `500.html`. The test begins on line 11 of the file, so this is how we would do it.
 
-```console
-$ mix test test/hello_web/controllers/error_html_test.exs:11
+```shell
+mix test test/hello_web/controllers/error_html_test.exs:11
 Including tags: [line: "11"]
 Excluding tags: [:test]
 
@@ -248,8 +248,8 @@ For now, let's leave it as a simple atom `@moduletag :error_view_case`.
 
 We can run only the tests from the error view case by passing `--only error_view_case` into `mix test`.
 
-```console
-$ mix test --only error_view_case
+```shell
+mix test --only error_view_case
 Including tags: [:error_view_case]
 Excluding tags: [:test]
 
@@ -263,8 +263,8 @@ Randomized with seed 125659
 
 > Note: ExUnit tells us exactly which tags it is including and excluding for each test run. If we look back to the previous section on running tests, we'll see that line numbers specified for individual tests are actually treated as tags.
 
-```console
-$ mix test test/hello_web/controllers/error_html_test.exs:11
+```shell
+mix test test/hello_web/controllers/error_html_test.exs:11
 Including tags: [line: "11"]
 Excluding tags: [:test]
 
@@ -278,8 +278,8 @@ Randomized with seed 364723
 
 Specifying a value of `true` for `error_view_case` yields the same results.
 
-```console
-$ mix test --only error_view_case:true
+```shell
+mix test --only error_view_case:true
 Including tags: [error_view_case: "true"]
 Excluding tags: [:test]
 
@@ -293,8 +293,8 @@ Randomized with seed 833356
 
 Specifying `false` as the value for `error_view_case`, however, will not run any tests because no tags in our system match `error_view_case: false`.
 
-```console
-$ mix test --only error_view_case:false
+```shell
+mix test --only error_view_case:false
 Including tags: [error_view_case: "false"]
 Excluding tags: [:test]
 
@@ -309,8 +309,8 @@ The --only option was given to "mix test" but no test executed
 
 We can use the `--exclude` flag in a similar way. This will run all of the tests except those in the error view case.
 
-```console
-$ mix test --exclude error_view_case
+```shell
+mix test --exclude error_view_case
 Excluding tags: [:error_view_case]
 
 .
@@ -350,8 +350,8 @@ end
 
 If we would like to run only tests tagged as `individual_test`, regardless of their value, this will work.
 
-```console
-$ mix test --only individual_test
+```shell
+mix test --only individual_test
 Including tags: [:individual_test]
 Excluding tags: [:test]
 
@@ -365,8 +365,8 @@ Randomized with seed 813729
 
 We can also specify a value and run only tests with that.
 
-```console
-$ mix test --only individual_test:yup
+```shell
+mix test --only individual_test:yup
 Including tags: [individual_test: "yup"]
 Excluding tags: [:test]
 
@@ -380,8 +380,8 @@ Randomized with seed 770938
 
 Similarly, we can run all tests except for those tagged with a given value.
 
-```console
-$ mix test --exclude individual_test:nope
+```shell
+mix test --exclude individual_test:nope
 Excluding tags: [individual_test: "nope"]
 
 ...
@@ -394,8 +394,8 @@ Randomized with seed 539324
 
 We can be more specific and exclude all the tests from the error view case except the one tagged with `individual_test` that has the value "yup".
 
-```console
-$ mix test --exclude error_view_case --include individual_test:yup
+```shell
+mix test --exclude error_view_case --include individual_test:yup
 Including tags: [individual_test: "yup"]
 Excluding tags: [:error_view_case]
 
@@ -417,8 +417,8 @@ Ecto.Adapters.SQL.Sandbox.mode(Hello.Repo, :manual)
 
 Now when we run `mix test`, it only runs the specs from our `page_controller_test.exs` and `error_json_test.exs`.
 
-```console
-$ mix test
+```shell
+mix test
 Excluding tags: [error_view_case: true]
 
 .
@@ -431,8 +431,8 @@ Randomized with seed 186055
 
 We can override this behavior with the `--include` flag, telling `mix test` to include tests tagged with `error_view_case`.
 
-```console
-$ mix test --include error_view_case
+```shell
+mix test --include error_view_case
 Including tags: [:error_view_case]
 Excluding tags: [error_view_case: true]
 
@@ -452,8 +452,8 @@ Running tests in random order is a good way to ensure that our tests are truly i
 
 ExUnit will randomize the order tests run in by default, using an integer to seed the randomization. If we notice that a specific random seed triggers our intermittent failure, we can re-run the tests with that same seed to reliably recreate that test sequence in order to help us figure out what the problem is.
 
-```console
-$ mix test --seed 401472
+```shell
+mix test --seed 401472
 ....
 
 Finished in 0.2 seconds
@@ -474,11 +474,11 @@ database: "hello_test#{System.get_env("MIX_TEST_PARTITION")}",
 
 By default, the `MIX_TEST_PARTITION` environment variable has no value, and therefore it has no effect. But in your CI server, you can, for example, split your test suite across machines by using four distinct commands:
 
-```console
-$ MIX_TEST_PARTITION=1 mix test --partitions 4
-$ MIX_TEST_PARTITION=2 mix test --partitions 4
-$ MIX_TEST_PARTITION=3 mix test --partitions 4
-$ MIX_TEST_PARTITION=4 mix test --partitions 4
+```shell
+MIX_TEST_PARTITION=1 mix test --partitions 4
+MIX_TEST_PARTITION=2 mix test --partitions 4
+MIX_TEST_PARTITION=3 mix test --partitions 4
+MIX_TEST_PARTITION=4 mix test --partitions 4
 ```
 
 That's all you need to do and ExUnit and Phoenix will take care of all rest, including setting up the database for each distinct partition with a distinct name.
@@ -489,7 +489,7 @@ While ExUnit is a simple test framework, it provides a really flexible and robus
 
 We've seen what Phoenix gives us with a newly generated app. Furthermore, whenever you generate a new resource, Phoenix will generate all appropriate tests for that resource too. For example, you can create a complete scaffold with schema, context, controllers, and views by running the following command at the root of your application:
 
-```console
+```shell
 $ mix phx.gen.html Blog Post posts title body:text
 * creating lib/hello_web/controllers/post_controller.ex
 * creating lib/hello_web/controllers/post_html/edit.html.heex
@@ -523,8 +523,8 @@ Now let's follow the directions and add the new resources route to our `lib/hell
 
 When we run `mix test` again, we see that we now have twenty-one tests!
 
-```console
-$ mix test
+```shell
+mix test
 ................
 
 Finished in 0.1 seconds

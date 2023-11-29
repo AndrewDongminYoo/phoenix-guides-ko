@@ -13,12 +13,15 @@ Our main goal for this guide is to get a Phoenix application running on Heroku.
 Heroku is a great platform and Elixir performs well on it. However, you may run into limitations if you plan to leverage advanced features provided by Elixir and Phoenix, such as:
 
 - Connections are limited.
+
   - Heroku [limits the number of simultaneous connections](https://devcenter.heroku.com/articles/http-routing#request-concurrency) as well as the [duration of each connection](https://devcenter.heroku.com/articles/limits#http-timeouts). It is common to use Elixir for real-time apps which need lots of concurrent, persistent connections, and Phoenix is capable of [handling over 2 million connections on a single server](https://www.phoenixframework.org/blog/the-road-to-2-million-websocket-connections).
 
 - Distributed clustering is not possible.
+
   - Heroku [firewalls dynos off from one another](https://devcenter.heroku.com/articles/dynos#networking). This means things like [distributed Phoenix channels](https://dockyard.com/blog/2016/01/28/running-elixir-and-phoenix-projects-on-a-cluster-of-nodes) and [distributed tasks](https://elixir-lang.org/getting-started/mix-otp/distributed-tasks.html) will need to rely on something like Redis instead of Elixir's built-in distribution.
 
 - In-memory state such as those in [Agents](https://elixir-lang.org/getting-started/mix-otp/agent.html), [GenServers](https://elixir-lang.org/getting-started/mix-otp/genserver.html), and [ETS](https://elixir-lang.org/getting-started/mix-otp/ets.html) will be lost every 24 hours.
+
   - Heroku [restarts dynos](https://devcenter.heroku.com/articles/dynos#restarting) every 24 hours regardless of whether the node is healthy.
 
 - [The built-in observer](https://elixir-lang.org/getting-started/debugging.html#observer) can't be used with Heroku.
@@ -46,10 +49,10 @@ Let's separate this process into a few steps, so we can keep track of where we a
 
 Before we can push to Heroku, we'll need to initialize a local Git repository and commit our files to it. We can do so by running the following commands in our project directory:
 
-```console
-$ git init
-$ git add .
-$ git commit -m "Initial commit"
+```shell
+git init
+git add .
+git commit -m "Initial commit"
 ```
 
 Heroku offers some great information on how it is using Git [here](https://devcenter.heroku.com/articles/git#prerequisites-install-git-and-the-heroku-cli).
@@ -78,24 +81,24 @@ A [buildpack](https://devcenter.heroku.com/articles/buildpacks) is a convenient 
 
 With the Toolbelt installed, let's create the Heroku application. We will do so using the latest available version of the [Elixir buildpack](https://github.com/HashNuke/heroku-buildpack-elixir):
 
-```console
-$ heroku create --buildpack hashnuke/elixir
+```shell
+heroku create --buildpack hashnuke/elixir
 Creating app... done, ⬢ mysterious-meadow-6277
 Setting buildpack to hashnuke/elixir... done
 https://mysterious-meadow-6277.herokuapp.com/ | https://git.heroku.com/mysterious-meadow-6277.git
 ```
 
 > Note: the first time we use a Heroku command, it may prompt us to log in. If this happens, just enter the email and password you specified during signup.
-
+>
 > Note: the name of the Heroku application is the random string after "Creating" in the output above (mysterious-meadow-6277). This will be unique, so expect to see a different name from "mysterious-meadow-6277".
-
+>
 > Note: the URL in the output is the URL to our application. If we open it in our browser now, we will get the default Heroku welcome page.
-
+>
 > Note: if we hadn't initialized our Git repository before we ran the `heroku create` command, we wouldn't have our Heroku remote repository properly set up at this point. We can set that up manually by running: `heroku git:remote -a [our-app-name].`
 
 The buildpack uses a predefined Elixir and Erlang version, but to avoid surprises when deploying, it is best to explicitly list the Elixir and Erlang version we want in production to be the same we are using during development or in your continuous integration servers. This is done by creating a config file named `elixir_buildpack.config` in the root directory of your project with your target version of Elixir and Erlang:
 
-```console
+```shell
 # Elixir version
 elixir_version=1.14.0
 
@@ -110,7 +113,7 @@ hook_post_compile="eval mix assets.deploy && rm -f _build/esbuild*"
 
 Finally, let's tell the build pack how to start our webserver. Create a file named `Procfile` at the root of your project:
 
-```console
+```shell
 web: mix phx.server
 ```
 
@@ -118,8 +121,8 @@ web: mix phx.server
 
 By default, Phoenix uses `esbuild` and manages all assets for you. However, if you are using `node` and `npm`, you will need to install the [Phoenix Static buildpack](https://github.com/gjaldon/heroku-buildpack-phoenix-static) to handle them:
 
-```console
-$ heroku buildpacks:add https://github.com/gjaldon/heroku-buildpack-phoenix-static.git
+```shell
+heroku buildpacks:add https://github.com/gjaldon/heroku-buildpack-phoenix-static.git
 Buildpack added. Next release on mysterious-meadow-6277 will use:
   1. https://github.com/HashNuke/heroku-buildpack-elixir.git
   2. https://github.com/gjaldon/heroku-buildpack-phoenix-static.git
@@ -191,8 +194,8 @@ end
 
 Also set the host in Heroku:
 
-```console
-$ heroku config:set PHX_HOST="mysterious-meadow-6277.herokuapp.com"
+```shell
+heroku config:set PHX_HOST="mysterious-meadow-6277.herokuapp.com"
 ```
 
 This ensures that any idle connections are closed by Phoenix before they reach Heroku's 55-second timeout window.
@@ -201,29 +204,29 @@ This ensures that any idle connections are closed by Phoenix before they reach H
 
 The `DATABASE_URL` config var is automatically created by Heroku when we add the [Heroku Postgres add-on](https://elements.heroku.com/addons/heroku-postgresql). We can create the database via the Heroku toolbelt:
 
-```console
-$ heroku addons:create heroku-postgresql:hobby-dev
+```shell
+heroku addons:create heroku-postgresql:hobby-dev
 ```
 
 Now we set the `POOL_SIZE` config var:
 
-```console
-$ heroku config:set POOL_SIZE=18
+```shell
+heroku config:set POOL_SIZE=18
 ```
 
 This value should be just under the number of available connections, leaving a couple open for migrations and mix tasks. The hobby-dev database allows 20 connections, so we set this number to 18. If additional dynos will share the database, reduce the `POOL_SIZE` to give each dyno an equal share.
 
 When running a mix task later (after we have pushed the project to Heroku) you will also want to limit its pool size like so:
 
-```console
-$ heroku run "POOL_SIZE=2 mix hello.task"
+```shell
+heroku run "POOL_SIZE=2 mix hello.task"
 ```
 
 So that Ecto does not attempt to open more than the available connections.
 
 We still have to create the `SECRET_KEY_BASE` config based on a random string. First, use `mix phx.gen.secret` to get a new secret:
 
-```console
+```shell
 $ mix phx.gen.secret
 xvafzY4y01jYuzLm3ecJqo008dVnU3CN4f+MamNd1Zue4pXvfvUjbiXT8akaIF53
 ```
@@ -232,27 +235,27 @@ Your random string will be different; don't use this example value.
 
 Now set it in Heroku:
 
-```console
-$ heroku config:set SECRET_KEY_BASE="xvafzY4y01jYuzLm3ecJqo008dVnU3CN4f+MamNd1Zue4pXvfvUjbiXT8akaIF53"
+```shell
+heroku config:set SECRET_KEY_BASE="xvafzY4y01jYuzLm3ecJqo008dVnU3CN4f+MamNd1Zue4pXvfvUjbiXT8akaIF53"
 Setting config vars and restarting mysterious-meadow-6277... done, v3
 SECRET_KEY_BASE: xvafzY4y01jYuzLm3ecJqo008dVnU3CN4f+MamNd1Zue4pXvfvUjbiXT8akaIF53
 ```
 
-## Deploy Time!
+## Deploy Time
 
 Our project is now ready to be deployed on Heroku.
 
 Let's commit all our changes:
 
-```console
-$ git add elixir_buildpack.config
-$ git commit -a -m "Use production config from Heroku ENV variables and decrease socket timeout"
+```shell
+git add elixir_buildpack.config
+git commit -a -m "Use production config from Heroku ENV variables and decrease socket timeout"
 ```
 
 And deploy:
 
-```console
-$ git push heroku main
+```shell
+git push heroku main
 Counting objects: 55, done.
 Delta compression using up to 8 threads.
 Compressing objects: 100% (49/49), done.
@@ -317,8 +320,8 @@ To https://git.heroku.com/mysterious-meadow-6277.git
 
 Typing `heroku open` in the terminal should launch a browser with the Phoenix welcome page opened. In the event that you are using Ecto to access a database, you will also need to run migrations after the first deploy:
 
-```console
-$ heroku run "POOL_SIZE=2 mix ecto.migrate"
+```shell
+heroku run "POOL_SIZE=2 mix ecto.migrate"
 ```
 
 And that's it!
@@ -329,10 +332,10 @@ And that's it!
 
 Set the stack of your app to `container`, this allows us to use `Dockerfile` to define our app setup.
 
-```console
-$ heroku create
+```shell
+heroku create
 Creating app... done, ⬢ mysterious-meadow-6277
-$ heroku stack:set container
+heroku stack:set container
 ```
 
 Add a new `heroku.yml` file to your root folder. In this file you can define addons used by your app, how to build the image and what configs are passed to the image. You can learn more about Heroku's `heroku.yml` options [here](https://devcenter.heroku.com/articles/build-docker-images-heroku-yml). Here is a sample:
@@ -361,20 +364,20 @@ Once you have the image definition set up, you can push your app to heroku and y
 
 We can look at the logs of our application by running the following command in our project directory:
 
-```console
-$ heroku logs # use --tail if you want to tail them
+```shell
+heroku logs # use --tail if you want to tail them
 ```
 
 We can also start an IEx session attached to our terminal for experimenting in our app's environment:
 
-```console
-$ heroku run "POOL_SIZE=2 iex -S mix"
+```shell
+heroku run "POOL_SIZE=2 iex -S mix"
 ```
 
 In fact, we can run anything using the `heroku run` command, like the Ecto migration task from above:
 
-```console
-$ heroku run "POOL_SIZE=2 mix ecto.migrate"
+```shell
+heroku run "POOL_SIZE=2 mix ecto.migrate"
 ```
 
 ## Connecting to your dyno
@@ -399,7 +402,7 @@ You have an iex session into your dyno!
 
 Occasionally, an application will compile locally, but not on Heroku. The compilation error on Heroku will look something like this:
 
-```console
+```shell
 remote: == Compilation error on file lib/postgrex/connection.ex ==
 remote: could not compile dependency :postgrex, "mix compile" failed. You can recompile this dependency with "mix deps.compile postgrex", update it with "mix deps.update postgrex" or clean it with "mix deps.clean postgrex"
 remote: ** (CompileError) lib/postgrex/connection.ex:207: Postgrex.Connection.__struct__/0 is undefined, cannot expand struct Postgrex.Connection
@@ -429,7 +432,7 @@ Commit this file to the repository and try to push again to Heroku.
 
 If you are constantly getting connection timeouts while running `heroku run` this could mean that your internet provider has blocked port number 5000:
 
-```console
+```shell
 heroku run "POOL_SIZE=2 mix myapp.task"
 Running POOL_SIZE=2 mix myapp.task on mysterious-meadow-6277... !
 ETIMEDOUT: connect ETIMEDOUT 50.19.103.36:5000
@@ -437,7 +440,7 @@ ETIMEDOUT: connect ETIMEDOUT 50.19.103.36:5000
 
 You can overcome this by adding `detached` option to run command:
 
-```console
+```shell
 heroku run:detached "POOL_SIZE=2 mix ecto.migrate"
 Running POOL_SIZE=2 mix ecto.migrate on mysterious-meadow-6277... done, run.8089 (Free)
 ```

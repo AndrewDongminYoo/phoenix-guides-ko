@@ -1,13 +1,13 @@
 # Testing Controllers
 
 > **Requirement**: This guide expects that you have gone through the [introductory guides](installation.html) and got a Phoenix application [up and running](up_and_running.html).
-
+>
 > **Requirement**: This guide expects that you have gone through the [Introduction to Testing guide](testing.html).
 
 At the end of the Introduction to Testing guide, we generated an HTML resource for posts using the following command:
 
-```console
-$ mix phx.gen.html Blog Post posts title body:text
+```shell
+mix phx.gen.html Blog Post posts title body:text
 ```
 
 This gave us a number of modules for free, including a PostController and the associated tests. We are going to explore those tests to learn more about testing controllers in general. At the end of the guide, we will generate a JSON resource, and explore how our API tests look like.
@@ -25,7 +25,7 @@ defmodule HelloWeb.PostControllerTest do
   @create_attrs %{body: "some body", title: "some title"}
   @update_attrs %{body: "some updated body", title: "some updated title"}
   @invalid_attrs %{body: nil, title: nil}
-  
+
   describe "index" do
     test "lists all posts", %{conn: conn} do
       conn = get(conn, ~p"/posts")
@@ -122,9 +122,9 @@ end
 
 In other words, creating a post can fail for the following reasons:
 
-  * the title is missing
-  * the body is missing
-  * the title is present but is less than 2 characters
+- the title is missing
+- the body is missing
+- the title is present but is less than 2 characters
 
 Should we test all of these possible outcomes in our controller tests?
 
@@ -185,8 +185,8 @@ end
 
 `assert_error_sent` is a testing helper provided by `Phoenix.ConnTest`. In this case, it verifies that:
 
-  1. An exception was raised
-  2. The exception has a status code equivalent to 404 (which stands for Not Found)
+1. An exception was raised
+2. The exception has a status code equivalent to 404 (which stands for Not Found)
 
 This pretty much mimics how Phoenix handles exceptions. For example, when we access `/posts/12345` where `12345` is an ID that does not exist, we will invoke our `show` action:
 
@@ -217,16 +217,16 @@ So far we have been working with a generated HTML resource. However, let's take 
 
 First of all, run this command:
 
-```console
-$ mix phx.gen.json News Article articles title body
+```shell
+mix phx.gen.json News Article articles title body
 ```
 
 We chose a very similar concept to the Blog context <-> Post schema, except we are using a different name, so we can study these concepts in isolation.
 
 After you run the command above, do not forget to follow the final steps output by the generator. Once all is done, we should run `mix test` and now have 35 passing tests:
 
-```console
-$ mix test
+```shell
+mix test
 ................
 
 Finished in 0.6 seconds

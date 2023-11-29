@@ -8,7 +8,7 @@ The `mix phx.gen.auth` command generates a flexible, pre-built authentication sy
 
 Let's start by running the following command from the root of our app (or `apps/my_app_web` in an umbrella app):
 
-```console
+```shell
 $ mix phx.gen.auth Accounts User users
 
 An authentication system can be created in two different ways:
@@ -24,26 +24,26 @@ Either approach will create an `Accounts` context with an `Accounts.User` schema
 
 Since this generator installed additional dependencies in `mix.exs`, let's fetch those:
 
-```console
-$ mix deps.get
+```shell
+mix deps.get
 ```
 
 Now we need to verify the database connection details for the development and test environments in `config/` so the migrator and tests can run properly. Then run the following to create the database:
 
-```console
-$ mix ecto.setup
+```shell
+mix ecto.setup
 ```
 
 Let's run the tests to make sure our new authentication system works as expected.
 
-```console
-$ mix test
+```shell
+mix test
 ```
 
 And finally, let's start our Phoenix server and try it out.
 
-```console
-$ mix phx.server
+```shell
+mix phx.server
 ```
 
 ## Developer responsibilities
@@ -60,9 +60,9 @@ The password hashing mechanism defaults to `bcrypt` for Unix systems and `pbkdf2
 
 The password hashing mechanism can be overridden with the `--hashing-lib` option. The following values are supported:
 
-  * `bcrypt` - [bcrypt_elixir](https://hex.pm/packages/bcrypt_elixir)
-  * `pbkdf2` - [pbkdf2_elixir](https://hex.pm/packages/pbkdf2_elixir)
-  * `argon2` - [argon2_elixir](https://hex.pm/packages/argon2_elixir)
+- `bcrypt` - [bcrypt_elixir](https://hex.pm/packages/bcrypt_elixir)
+- `pbkdf2` - [pbkdf2_elixir](https://hex.pm/packages/pbkdf2_elixir)
+- `argon2` - [argon2_elixir](https://hex.pm/packages/argon2_elixir)
 
 We recommend developers to consider using `argon2`, which is the most robust of all 3. The downside is that `argon2` is quite CPU and memory intensive, and you will need more powerful instances to run your applications on.
 
@@ -72,9 +72,9 @@ For more information about choosing these libraries, see the [Comeonin project](
 
 The generated code ships with an authentication module with a handful of plugs that fetch the current user, require authentication and so on. For instance, in an app named Demo which had `mix phx.gen.auth Accounts User users` run on it, you will find a module named `DemoWeb.UserAuth` with plugs such as:
 
-  * `fetch_current_user` - fetches the current user information if available
-  * `require_authenticated_user` - must be invoked after `fetch_current_user` and requires that a current user exists and is authenticated
-  * `redirect_if_user_is_authenticated` - used for the few pages that must not be available to authenticated users
+- `fetch_current_user` - fetches the current user information if available
+- `require_authenticated_user` - must be invoked after `fetch_current_user` and requires that a current user exists and is authenticated
+- `redirect_if_user_is_authenticated` - used for the few pages that must not be available to authenticated users
 
 ### Confirmation
 
@@ -118,11 +118,11 @@ Check out `mix phx.gen.auth` for more details, such as using a different passwor
 
 The following links have more information regarding the motivation and design of the code this generates.
 
-  * Berenice Medel's blog post on generating LiveViews for authentication (rather than conventional Controllers & Views) - [Bringing Phoenix Authentication to Life](https://fly.io/phoenix-files/phx-gen-auth/)
-  * José Valim's blog post - [An upcoming authentication solution for Phoenix](https://dashbit.co/blog/a-new-authentication-solution-for-phoenix)
-  * The [original `phx_gen_auth` repo][phx_gen_auth repo] (for Phoenix 1.5 applications) - This is a great resource to see discussions around decisions that have been made in earlier versions of the project.
-  * [Original pull request on bare Phoenix app][auth PR]
-  * [Original design spec](https://github.com/dashbitco/mix_phx_gen_auth_demo/blob/auth/README.md)
+- Berenice Medel's blog post on generating LiveViews for authentication (rather than conventional Controllers & Views) - [Bringing Phoenix Authentication to Life](https://fly.io/phoenix-files/phx-gen-auth/)
+- José Valim's blog post - [An upcoming authentication solution for Phoenix](https://dashbit.co/blog/a-new-authentication-solution-for-phoenix)
+- The [original `phx_gen_auth` repo][phx_gen_auth repo] (for Phoenix 1.5 applications) - This is a great resource to see discussions around decisions that have been made in earlier versions of the project.
+- [Original pull request on bare Phoenix app][auth PR]
+- [Original design spec](https://github.com/dashbitco/mix_phx_gen_auth_demo/blob/auth/README.md)
 
 [phx_gen_auth repo]: https://github.com/aaronrenner/phx_gen_auth
 [auth PR]: https://github.com/dashbitco/mix_phx_gen_auth_demo/pull/1

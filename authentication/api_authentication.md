@@ -6,8 +6,8 @@ This guide shows how to add API authentication on top of `mix phx.gen.auth`. Sin
 
 We will break this guide in two parts: augmenting the context and the plug implementation. We will assume that the following `mix phx.gen.auth` command was executed:
 
-```
-$ mix phx.gen.auth Accounts User users
+```shell
+mix phx.gen.auth Accounts User users
 ```
 
 If you ran something else, it should be trivial to adapt the names.

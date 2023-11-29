@@ -1,7 +1,7 @@
 # JSON and APIs
 
-> **Requirement**: This guide expects that you have gone through the [introductory guides](installation.html) and got a Phoenix application [up and running](up_and_running.html).
-
+> **Requirement**: This guide expects that you have gone through the [introductory guides](installation.html) and got a Phoenix application [up and running](up_and_running.html)
+>
 > **Requirement**: This guide expects that you have gone through the [Controllers guide](controllers.html).
 
 You can also use the Phoenix Framework to build [Web APIs](https://en.wikipedia.org/wiki/Web_API). By default Phoenix supports JSON but you can bring any other rendering format you desire.
@@ -12,8 +12,8 @@ For this guide let's create a simple JSON API to store our favourite links, that
 
 For this guide, we will use Phoenix generators to scaffold our API infrastructure:
 
-```console
-mix phx.gen.json Urls Url urls link:string title:string
+```shell
+$ mix phx.gen.json Urls Url urls link:string title:string
 * creating lib/hello_web/controllers/url_controller.ex
 * creating lib/hello_web/controllers/url_json.ex
 * creating lib/hello_web/controllers/changeset_json.ex
@@ -31,10 +31,10 @@ mix phx.gen.json Urls Url urls link:string title:string
 
 We will break those files into four categories:
 
-  * Files in `lib/hello_web` responsible for effectively rendering JSON
-  * Files in `lib/hello` responsible for defining our context and logic to persist links to the database
-  * Files in `priv/repo/migrations` responsible for updating our database
-  * Files in `test` to test our controllers and contexts
+- Files in `lib/hello_web` responsible for effectively rendering JSON
+- Files in `lib/hello` responsible for defining our context and logic to persist links to the database
+- Files in `priv/repo/migrations` responsible for updating our database
+- Files in `test` to test our controllers and contexts
 
 In this guide, we will explore only the first category of files. To learn more about how Phoenix stores and manage data, check out [the Ecto guide](ecto.md) and [the Contexts guide](contexts.md) for more information. We also have a whole section dedicated to testing.
 
@@ -51,7 +51,7 @@ The API scope uses the `:api` pipeline, which will run specific steps such as en
 
 Then we need to update our repository by running migrations:
 
-```console
+```shell
 mix ecto.migrate
 ```
 
@@ -61,19 +61,19 @@ Before we go ahead and change those files, let's take a look at how our API beha
 
 First, we need to start the server:
 
-```console
+```shell
 mix phx.server
 ```
 
 Next, let's make a smoke test to check our API is working with:
 
-```console
+```shell
 curl -i http://localhost:4000/api/urls
 ```
 
 If everything went as planned we should get a `200` response:
 
-```console
+```log
 HTTP/1.1 200 OK
 cache-control: max-age=0, private, must-revalidate
 content-length: 11
@@ -87,7 +87,7 @@ x-request-id: Fuyg-wMl4S-hAfsAAAUk
 
 We didn't get any data because we haven't populated the database with any yet. So let's add some links:
 
-```console
+```shell
 curl -iX POST http://localhost:4000/api/urls \
    -H 'Content-Type: application/json' \
    -d '{"url": {"link":"https://phoenixframework.org", "title":"Phoenix Framework"}}'
@@ -99,19 +99,19 @@ curl -iX POST http://localhost:4000/api/urls \
 
 Now we can retrieve all links:
 
-```console
+```shell
 curl -i http://localhost:4000/api/urls
 ```
 
 Or we can just retrieve a link by its `id`:
 
-```console
+```shell
 curl -i http://localhost:4000/api/urls/1
 ```
 
 Next, we can update a link with:
 
-```console
+```shell
 curl -iX PUT http://localhost:4000/api/urls/2 \
    -H 'Content-Type: application/json' \
    -d '{"url": {"title":"Elixir Programming Language"}}'
@@ -121,7 +121,7 @@ The response should be a `200` with the updated link in the body.
 
 Finally, we need to try out the removal of a link:
 
-```console
+```shell
 curl -iX DELETE http://localhost:4000/api/urls/2 \
    -H 'Content-Type: application/json'
 ```
@@ -290,7 +290,7 @@ As we can see, it will convert the errors into a data structure, which will be r
 
 As you can see, the changeset requires both link and title to be given. This means we can try posting a url with no link and title and see how our API responds:
 
-```console
+```shell
 curl -iX POST http://localhost:4000/api/urls \
    -H 'Content-Type: application/json' \
    -d '{"url": {}}'
@@ -309,7 +309,7 @@ for the REST API.
 
 From your terminal run:
 
-```console
+```shell
 mix help phx.new
 ```
 

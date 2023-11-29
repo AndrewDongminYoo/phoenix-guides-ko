@@ -1,9 +1,9 @@
 # Testing Channels
 
 > **Requirement**: This guide expects that you have gone through the [introductory guides](installation.html) and got a Phoenix application [up and running](up_and_running.html).
-
+>
 > **Requirement**: This guide expects that you have gone through the [Introduction to Testing guide](testing.html).
-
+>
 > **Requirement**: This guide expects that you have gone through the [Channels guide](channels.html).
 
 In the Channels guide, we saw that a "Channel" is a layered system with different components. Given this, there would be cases when writing unit tests for our Channel functions may not be enough. We may want to verify that its different moving parts are working together as we expect. This integration testing would assure us that we correctly defined our channel route, the channel module, and its callbacks; and that the lower-level layers such as the PubSub and Transport are configured correctly and are working as intended.
@@ -12,7 +12,7 @@ In the Channels guide, we saw that a "Channel" is a layered system with differen
 
 As we progress through this guide, it would help to have a concrete example we could work off of. Phoenix comes with a Mix task for generating a basic channel and tests. These generated files serve as a good reference for writing channels and their corresponding tests. Let's go ahead and generate our Channel:
 
-```console
+```shell
 $ mix phx.gen.channel Room
 * creating lib/hello_web/channels/room_channel.ex
 * creating test/hello_web/channels/room_channel_test.exs
@@ -20,7 +20,7 @@ $ mix phx.gen.channel Room
 
 The default socket handler - HelloWeb.UserSocket - was not found.
 
-Do you want to create it? [Yn]  
+Do you want to create it? [Yn]
 * creating lib/hello_web/channels/user_socket.ex
 * creating assets/js/user_socket.js
 

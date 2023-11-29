@@ -8,7 +8,7 @@ Plug lives at the heart of Phoenix's HTTP layer, and Phoenix puts Plug front and
 
 [Plug](https://github.com/elixir-lang/plug) is a specification for composable modules in between web applications. It is also an abstraction layer for connection adapters of different web servers. The basic idea of Plug is to unify the concept of a "connection" that we operate on. This differs from other HTTP middleware layers such as Rack, where the request and response are separated in the middleware stack.
 
-At the simplest level, the Plug specification comes in two flavors: *function plugs* and *module plugs*.
+At the simplest level, the Plug specification comes in two flavors: _function plugs_ and _module plugs_.
 
 ## Function plugs
 
@@ -33,9 +33,9 @@ end
 
 This function does the following:
 
-  1. It receives a connection and options (that we do not use)
-  2. It prints some connection information to the terminal
-  3. It returns the connection
+1. It receives a connection and options (that we do not use)
+2. It prints some connection information to the terminal
+3. It returns the connection
 
 Pretty simple, right? Let's see this function in action by adding it to our endpoint in `lib/hello_web/endpoint.ex`. We can plug it anywhere, so let's do it by inserting `plug :introspect` right before we delegate the request to the router:
 
@@ -60,7 +60,7 @@ end
 
 Function plugs are plugged by passing the function name as an atom. To try the plug out, go back to your browser and fetch [http://localhost:4000](http://localhost:4000). You should see something like this printed in your shell terminal:
 
-```console
+```log
 Verb: "GET"
 Host: "localhost"
 Headers: [...]
@@ -97,7 +97,7 @@ defmodule HelloWeb.Plugs.Locale do
 end
 ```
 
-To give it a try, let's add this module plug to our router, by appending `plug HelloWeb.Plugs.Locale, "en"`  to our `:browser` pipeline in `lib/hello_web/router.ex`:
+To give it a try, let's add this module plug to our router, by appending `plug HelloWeb.Plugs.Locale, "en"` to our `:browser` pipeline in `lib/hello_web/router.ex`:
 
 ```elixir
 defmodule HelloWeb.Router do
@@ -146,7 +146,7 @@ The default endpoint plugs do quite a lot of work. Here they are in order:
 
 - `Plug.Static` - serves static assets. Since this plug comes before the logger, requests for static assets are not logged.
 
-- `Phoenix.LiveDashboard.RequestLogger` - sets up the *Request Logger* for Phoenix LiveDashboard, this will allow you to have the option to either pass a query parameter to stream requests logs or to enable/disable a cookie that streams requests logs from your dashboard.
+- `Phoenix.LiveDashboard.RequestLogger` - sets up the _Request Logger_ for Phoenix LiveDashboard, this will allow you to have the option to either pass a query parameter to stream requests logs or to enable/disable a cookie that streams requests logs from your dashboard.
 
 - `Plug.RequestId` - generates a unique request ID for each request.
 
@@ -173,9 +173,9 @@ In the middle of the endpoint, there is also a conditional block:
 
 This block is only executed in development. It enables:
 
-* live reloading - if you change a CSS file, they are updated in-browser without refreshing the page;
-* [code reloading](`Phoenix.CodeReloader`) - so we can see changes to our application without restarting the server;
-* check repo status - which makes sure our database is up to date, raising a readable and actionable error otherwise.
+- live reloading - if you change a CSS file, they are updated in-browser without refreshing the page;
+- [code reloading](`Phoenix.CodeReloader`) - so we can see changes to our application without restarting the server;
+- check repo status - which makes sure our database is up to date, raising a readable and actionable error otherwise.
 
 ### Router plugs
 

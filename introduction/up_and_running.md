@@ -6,16 +6,16 @@ Before we begin, please take a minute to read the [Installation Guide](installat
 
 We can run `mix phx.new` from any directory in order to bootstrap our Phoenix application. Phoenix will accept either an absolute or relative path for the directory of our new project. Assuming that the name of our application is `hello`, let's run the following command:
 
-```console
-$ mix phx.new hello
+```shell
+mix phx.new hello
 ```
 
 > A note about [Ecto](ecto.html): Ecto allows our Phoenix application to communicate with a data store, such as PostgreSQL, MySQL, and others. If our application will not require this component we can skip this dependency by passing the `--no-ecto` flag to `mix phx.new`.
-
+>
 > To learn more about `mix phx.new` you can read the [Mix Tasks Guide](mix_tasks.html#phoenix-specific-mix-tasks).
 
-```console
-mix phx.new hello
+```shell
+$ mix phx.new hello
 * creating hello/config/config.exs
 * creating hello/config/dev.exs
 * creating hello/config/prod.exs
@@ -30,7 +30,7 @@ Phoenix generates the directory structure and all the files we will need for our
 
 When it's done, it will ask us if we want it to install our dependencies for us. Let's say yes to that.
 
-```console
+```log
 Fetch and install dependencies? [Yn] Y
 * running mix deps.get
 * running mix assets.setup
@@ -59,13 +59,13 @@ Phoenix assumes that our PostgreSQL database will have a `postgres` user account
 
 Ok, let's give it a try. First, we'll `cd` into the `hello/` directory we've just created:
 
-```console
-$ cd hello
+```shell
+cd hello
 ```
 
 Now we'll create our database:
 
-```console
+```shell
 $ mix ecto.create
 Compiling 13 files (.ex)
 Generated hello app
@@ -78,7 +78,7 @@ In case the database could not be created, see the guides for the [`mix ecto.cre
 
 And finally, we'll start the Phoenix server:
 
-```console
+```shell
 $ mix phx.server
 [info] Running HelloWeb.Endpoint with cowboy 2.9.0 at 127.0.0.1:4000 (http)
 [info] Access HelloWeb.Endpoint at http://localhost:4000
@@ -88,7 +88,7 @@ $ mix phx.server
 
 If we choose not to have Phoenix install our dependencies when we generate a new application, the `mix phx.new` task will prompt us to take the necessary steps when we do want to install them.
 
-```console
+```log
 Fetch and install dependencies? [Yn] n
 
 We are almost there! The following steps are missing:

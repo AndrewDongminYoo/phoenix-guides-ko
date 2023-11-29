@@ -1,7 +1,7 @@
 # Routing
 
 > **Requirement**: This guide expects that you have gone through the [introductory guides](installation.html) and got a Phoenix application [up and running](up_and_running.html).
-
+>
 > **Requirement**: This guide expects that you have gone through the [Request life-cycle guide](request_lifecycle.html).
 
 Routers are the main hubs of Phoenix applications. They match HTTP requests to controller actions, wire up real-time channel handlers, and define a series of pipeline transformations scoped to a set of routes.
@@ -59,7 +59,7 @@ Phoenix provides an excellent tool for investigating routes in an application: `
 
 Let's see how this works. Go to the root of a newly-generated Phoenix application and run `mix phx.routes`. You should see something like the following, generated with all routes you currently have:
 
-```console
+```shell
 $ mix phx.routes
 GET  /  HelloWeb.PageController :home
 ...
@@ -85,7 +85,7 @@ For now it doesn't matter that we don't actually have a `HelloWeb.UserController
 
 Run `mix phx.routes` once again at the root of your project. You should see something like the following:
 
-```console
+```log
 ...
 GET     /users           HelloWeb.UserController :index
 GET     /users/:id/edit  HelloWeb.UserController :edit
@@ -119,7 +119,7 @@ resources "/posts", PostController, only: [:index, :show]
 
 Running `mix phx.routes` shows that we now only have the routes to the index and show actions defined.
 
-```console
+```log
 GET     /posts      HelloWeb.PostController :index
 GET     /posts/:id  HelloWeb.PostController :show
 ```
@@ -132,7 +132,7 @@ resources "/comments", CommentController, except: [:delete]
 
 Running `mix phx.routes` now shows that we have all the routes except the DELETE request to the delete action.
 
-```console
+```log
 GET    /comments           HelloWeb.CommentController :index
 GET    /comments/:id/edit  HelloWeb.CommentController :edit
 GET    /comments/new       HelloWeb.CommentController :new
@@ -255,7 +255,7 @@ Scopes are a way to group routes under a common path prefix and scoped set of pl
 
 The paths to the user-facing reviews would look like a standard resource.
 
-```console
+```log
 /reviews
 /reviews/1234
 /reviews/1234/edit
@@ -264,7 +264,7 @@ The paths to the user-facing reviews would look like a standard resource.
 
 The administration review paths can be prefixed with `/admin`.
 
-```console
+```log
 /admin/reviews
 /admin/reviews/1234
 /admin/reviews/1234/edit
@@ -285,7 +285,7 @@ We define a new scope where all routes are prefixed with `/admin` and all contro
 
 Running `mix phx.routes` again, in addition to the previous set of routes we get the following:
 
-```console
+```log
 ...
 GET     /admin/reviews           HelloWeb.Admin.ReviewController :index
 GET     /admin/reviews/:id/edit  HelloWeb.Admin.ReviewController :edit
@@ -317,7 +317,7 @@ end
 
 and we run `mix phx.routes`, we get output for each scoped route:
 
-```console
+```log
 ...
 GET     /reviews                 HelloWeb.ReviewController :index
 GET     /reviews/:id/edit        HelloWeb.ReviewController :edit
@@ -352,7 +352,7 @@ end
 
 Here's what `mix phx.routes` tells us:
 
-```console
+```log
 ...
 GET     /admin/images            HelloWeb.Admin.ImageController :index
 GET     /admin/images/:id/edit   HelloWeb.Admin.ImageController :edit
@@ -421,7 +421,7 @@ end
 
 If we do duplicate a route — which means two routes having the same path — we'll get this familiar warning:
 
-```console
+```log
 warning: this clause cannot match because a previous clause at line 16 always matches
 ```
 

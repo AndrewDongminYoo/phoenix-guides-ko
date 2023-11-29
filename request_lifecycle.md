@@ -10,11 +10,11 @@ Let's get on with our first new Phoenix page!
 
 When your browser accesses [http://localhost:4000/](http://localhost:4000/), it sends a HTTP request to whatever service is running on that address, in this case our Phoenix application. The HTTP request is made of a verb and a path. For example, the following browser requests translate into:
 
-| Browser address bar                 | Verb | Path          |
-|:------------------------------------|:-----|:--------------|
-| <http://localhost:4000/>            | GET  | /             |
-| <http://localhost:4000/hello>       | GET  | /hello        |
-| <http://localhost:4000/hello/world> | GET  | /hello/world  |
+| Browser address bar                 | Verb | Path         |
+| :---------------------------------- | :--- | :----------- |
+| <http://localhost:4000/>            | GET  | /            |
+| <http://localhost:4000/hello>       | GET  | /hello       |
+| <http://localhost:4000/hello/world> | GET  | /hello/world |
 
 There are other HTTP verbs. For example, submitting a form typically uses the POST verb.
 
@@ -155,7 +155,7 @@ Note the controller name (`HelloController`), the view name (`HelloHTML`), and t
 
 > **Note**: We can rename the `hello_html` directory to whatever we want and put it in a subdirectory of `lib/hello_web/controllers`, as long as we update the `embed_templates` setting accordingly. However, it's best to keep the same naming convention to prevent any confusion.
 
-```
+```log
 lib/hello_web
 ├── controllers
 │   ├── hello_controller.ex
@@ -215,13 +215,13 @@ Each of these plugs have a specific responsibility that we will learn later. The
 
 At this moment, you may be thinking this can be a lot of steps to simply render a page. However, as our application grows in complexity, we will see that each layer serves a distinct purpose:
 
-  * endpoint (`Phoenix.Endpoint`) - the endpoint contains the common and initial path that all requests go through. If you want something to happen on all requests, it goes to the endpoint.
+- endpoint (`Phoenix.Endpoint`) - the endpoint contains the common and initial path that all requests go through. If you want something to happen on all requests, it goes to the endpoint.
 
-  * router (`Phoenix.Router`) - the router is responsible for dispatching verb/path to controllers. The router also allows us to scope functionality. For example, some pages in your application may require user authentication, others may not.
+- router (`Phoenix.Router`) - the router is responsible for dispatching verb/path to controllers. The router also allows us to scope functionality. For example, some pages in your application may require user authentication, others may not.
 
-  * controller (`Phoenix.Controller`) - the job of the controller is to retrieve request information, talk to your business domain, and prepare data for the presentation layer.
+- controller (`Phoenix.Controller`) - the job of the controller is to retrieve request information, talk to your business domain, and prepare data for the presentation layer.
 
-  * view - the view handles the structured data from the controller and converts it to a presentation to be shown to users. Views are often named after the content format they are rendering.
+- view - the view handles the structured data from the controller and converts it to a presentation to be shown to users. Views are often named after the content format they are rendering.
 
 Let's do a quick recap on how the last three components work together by adding another page.
 

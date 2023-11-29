@@ -6,23 +6,23 @@ Most web applications today need some form of data validation and persistence. I
 
 Phoenix uses Ecto to provide builtin support to the following databases:
 
-* PostgreSQL (via [`postgrex`](https://github.com/elixir-ecto/postgrex))
-* MySQL (via [`myxql`](https://github.com/elixir-ecto/myxql))
-* MSSQL (via [`tds`](https://github.com/livehelpnow/tds))
-* ETS (via [`etso`](https://github.com/evadne/etso))
-* SQLite3 (via [`ecto_sqlite3`](https://github.com/elixir-sqlite/ecto_sqlite3))
+- PostgreSQL (via [`postgrex`](https://github.com/elixir-ecto/postgrex))
+- MySQL (via [`myxql`](https://github.com/elixir-ecto/myxql))
+- MSSQL (via [`tds`](https://github.com/livehelpnow/tds))
+- ETS (via [`etso`](https://github.com/evadne/etso))
+- SQLite3 (via [`ecto_sqlite3`](https://github.com/elixir-sqlite/ecto_sqlite3))
 
 Newly generated Phoenix projects include Ecto with the PostgreSQL adapter by default. You can pass the `--database` option to change or `--no-ecto` flag to exclude this.
 
 Ecto also provides support for other databases and it has many learning resources available. Please check out [Ecto's README](https://github.com/elixir-ecto/ecto) for general information.
 
-This guide assumes that we have generated our new application with Ecto integration and that we will be using PostgreSQL. The introductory guides cover how to get your first application up and running. For instructions on switching to MySQL, please see the [Using MySQL](#using-mysql) section.
+This guide assumes that we have generated our new application with Ecto integration and that we will be using PostgreSQL. The introductory guides cover how to get your first application up and running. For instructions on switching to MySQL, please see the [Using MySQL](/ecto.md#using-mysql) section.
 
 ## Using the schema and migration generator
 
-Once we have Ecto and PostgreSQL installed and configured, the easiest way to use Ecto is to generate an Ecto *schema* through the `phx.gen.schema` task. Ecto schemas are a way for us to specify how Elixir data types map to and from external sources, such as database tables. Let's generate a `User` schema with `name`, `email`, `bio`, and `number_of_pets` fields.
+Once we have Ecto and PostgreSQL installed and configured, the easiest way to use Ecto is to generate an Ecto _schema_ through the `phx.gen.schema` task. Ecto schemas are a way for us to specify how Elixir data types map to and from external sources, such as database tables. Let's generate a `User` schema with `name`, `email`, `bio`, and `number_of_pets` fields.
 
-```console
+```shell
 $ mix phx.gen.schema User users name:string email:string \
 bio:string number_of_pets:integer
 
@@ -38,8 +38,8 @@ A couple of files were generated with this task. First, we have a `user.ex` file
 
 With our files in place, let's follow the instructions and run our migration:
 
-```console
-$ mix ecto.migrate
+```shell
+mix ecto.migrate
 Compiling 1 file (.ex)
 Generated hello app
 
@@ -54,8 +54,8 @@ Mix assumes that we are in the development environment unless we tell it otherwi
 
 If we log in to our database server, and connect to our `hello_dev` database, we should see our `users` table. Ecto assumes that we want an integer column called `id` as our primary key, so we should see a sequence generated for that as well.
 
-```console
-$ psql -U postgres
+```shell
+psql -U postgres
 
 Type "help" for help.
 
@@ -93,8 +93,8 @@ end
 
 And here's what that translates to in the actual `users` table.
 
-```console
-$ psql
+```shell
+psql
 hello_dev=# \d users
 Table "public.users"
 Column         |            Type             | Modifiers
@@ -198,8 +198,8 @@ Next, `Ecto.Changeset.validate_required/3` checks that this list of fields is pr
 
 We can verify this functionality in `IEx`. Let's fire up our application inside IEx by running `iex -S mix`. In order to minimize typing and make this easier to read, let's alias our `Hello.User` struct.
 
-```console
-$ iex -S mix
+```shell
+iex -S mix
 
 iex> alias Hello.User
 Hello.User
@@ -513,8 +513,8 @@ Phoenix applications are configured to use PostgreSQL by default, but what if we
 
 If we are about to create a new application, configuring our application to use MySQL is easy. We can simply pass the `--database mysql` flag to `phx.new` and everything will be configured correctly.
 
-```console
-$ mix phx.new hello_phoenix --database mysql
+```shell
+mix phx.new hello_phoenix --database mysql
 ```
 
 This will set up all the correct dependencies and configuration for us automatically. Once we install those dependencies with `mix deps.get`, we'll be ready to begin working with Ecto in our application.
@@ -560,21 +560,21 @@ The last change is to open up `lib/hello_phoenix/repo.ex` and make sure to set t
 
 Now all we need to do is fetch our new dependency, and we'll be ready to go.
 
-```console
-$ mix deps.get
+```shell
+mix deps.get
 ```
 
 With our new adapter installed and configured, we're ready to create our database.
 
-```console
-$ mix ecto.create
+```shell
+mix ecto.create
 ```
 
 The database for HelloPhoenix.Repo has been created.
 We're also ready to run any migrations, or do anything else with Ecto that we may choose.
 
-```console
-$ mix ecto.migrate
+```shell
+mix ecto.migrate
 [info] == Running HelloPhoenix.Repo.Migrations.CreateUser.change/0 forward
 [info] create table users
 [info] == Migrated in 0.2s

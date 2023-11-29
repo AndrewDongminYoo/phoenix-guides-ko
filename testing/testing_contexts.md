@@ -1,23 +1,23 @@
 # Testing Contexts
 
 > **Requirement**: This guide expects that you have gone through the [introductory guides](installation.html) and got a Phoenix application [up and running](up_and_running.html).
-
+>
 > **Requirement**: This guide expects that you have gone through the [Introduction to Testing guide](testing.html).
-
+>
 > **Requirement**: This guide expects that you have gone through the [Contexts guide](contexts.html).
 
 At the end of the Introduction to Testing guide, we generated an HTML resource for posts using the following command:
 
-```console
-$ mix phx.gen.html Blog Post posts title body:text
+```shell
+mix phx.gen.html Blog Post posts title body:text
 ```
 
 This gave us a number of modules for free, including a Blog context and a Post schema, alongside their respective test files. As we have learned in the Context guide, the Blog context is simply a module with functions to a particular area of our business domain, while Post schema maps to a particular table in our database.
 
 In this guide, we are going to explore the tests generated for our contexts and schemas. Before we do anything else, let's run `mix test` to make sure our test suite runs cleanly.
 
-```console
-$ mix test
+```shell
+mix test
 ................
 
 Finished in 0.6 seconds
@@ -59,8 +59,8 @@ Next, we define an alias, so we can refer to `Hello.Blog` simply as `Blog`.
 
 Then we start a `describe "posts"` block. A `describe` block is a feature in ExUnit that allows us to group similar tests. The reason why we have grouped all post related tests together is because contexts in Phoenix are capable of grouping multiple schemas together. For example, if we ran this command:
 
-```console
-$ mix phx.gen.html Blog Comment comments post_id:references:posts body:text
+```shell
+mix phx.gen.html Blog Comment comments post_id:references:posts body:text
 ```
 
 We will get a bunch of new functions in the `Hello.Blog` context, plus a whole new `describe "comments"` block in our test file.

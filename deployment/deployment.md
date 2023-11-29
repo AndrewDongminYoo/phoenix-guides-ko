@@ -4,13 +4,13 @@ Once we have a working application, we're ready to deploy it. If you're not quit
 
 When preparing an application for deployment, there are three main steps:
 
-  * Handling of your application secrets
-  * Compiling your application assets
-  * Starting your server in production
+- Handling of your application secrets
+- Compiling your application assets
+- Starting your server in production
 
 In this guide, we will learn how to get the production environment running locally. You can use the same techniques in this guide to run your application in production, but depending on your deployment infrastructure, extra steps will be necessary.
 
-As an example of deploying to other infrastructures, we also discuss four different approaches in our guides: using [Elixir's releases](releases.html) with `mix release`, [using Gigalixir](gigalixir.html), [using Fly](fly.html), and [using Heroku](heroku.html). We've also included links to deploying Phoenix on other platforms under [Community Deployment Guides](#community-deployment-guides). Finally, the release guide has a sample Dockerfile you can use if you prefer to deploy with container technologies.
+As an example of deploying to other infrastructures, we also discuss four different approaches in our guides: using [Elixir's releases](releases.html) with `mix release`, [using Gigalixir](gigalixir.html), [using Fly](fly.html), and [using Heroku](heroku.html). We've also included links to deploying Phoenix on other platforms under [Community Deployment Guides](/deployment.md#community-deployment-guides). Finally, the release guide has a sample Dockerfile you can use if you prefer to deploy with container technologies.
 
 Let's explore those steps above one by one.
 
@@ -20,11 +20,11 @@ All Phoenix applications have data that must be kept secure, for example, the us
 
 Therefore, you need to make sure the proper relevant variables are set in production:
 
-```console
+```shell
 $ mix phx.gen.secret
 REALLY_LONG_SECRET
-$ export SECRET_KEY_BASE=REALLY_LONG_SECRET
-$ export DATABASE_URL=ecto://USER:PASS@HOST/database
+export SECRET_KEY_BASE=REALLY_LONG_SECRET
+export DATABASE_URL=ecto://USER:PASS@HOST/database
 ```
 
 Do not copy those values directly, set `SECRET_KEY_BASE` according to the result of `mix phx.gen.secret` and `DATABASE_URL` according to your database address.
@@ -35,17 +35,17 @@ With your secret information properly secured, it is time to configure assets!
 
 Before taking this step, we need to do one bit of preparation. Since we will be readying everything for production, we need to do some setup in that environment by getting our dependencies and compiling.
 
-```console
-$ mix deps.get --only prod
-$ MIX_ENV=prod mix compile
+```shell
+mix deps.get --only prod
+MIX_ENV=prod mix compile
 ```
 
 ## Compiling your application assets
 
 This step is required only if you have compilable assets like JavaScript and stylesheets. By default, Phoenix uses `esbuild` but everything is encapsulated in a single `mix assets.deploy` task defined in your `mix.exs`:
 
-```console
-$ MIX_ENV=prod mix assets.deploy
+```shell
+MIX_ENV=prod mix assets.deploy
 Check your digested files at "priv/static".
 ```
 
@@ -55,8 +55,8 @@ And that is it! The Mix task by default builds the assets and then generates dig
 
 Keep in mind that, if you by any chance forget to run the steps above, Phoenix will show an error message:
 
-```console
-$ PORT=4001 MIX_ENV=prod mix phx.server
+```shell
+PORT=4001 MIX_ENV=prod mix phx.server
 10:50:18.732 [info] Running MyAppWeb.Endpoint with Cowboy on http://example.com
 10:50:18.735 [error] Could not find static manifest at "my_app/_build/prod/lib/foo/priv/static/cache_manifest.json". Run "mix phx.digest" after building your static files or remove the configuration from "config/prod.exs".
 ```
@@ -67,23 +67,23 @@ The error message is quite clear: it says Phoenix could not find a static manife
 
 To run Phoenix in production, we need to set the `PORT` and `MIX_ENV` environment variables when invoking `mix phx.server`:
 
-```console
-$ PORT=4001 MIX_ENV=prod mix phx.server
+```shell
+PORT=4001 MIX_ENV=prod mix phx.server
 10:59:19.136 [info] Running MyAppWeb.Endpoint with Cowboy on http://example.com
 ```
 
 To run in detached mode so that the Phoenix server does not stop and continues to run even if you close the terminal:
 
-```console
-$ PORT=4001 MIX_ENV=prod elixir --erl "-detached" -S mix phx.server
+```shell
+PORT=4001 MIX_ENV=prod elixir --erl "-detached" -S mix phx.server
 ```
 
 In case you get an error message, please read it carefully, and open up a bug report if it is still not clear how to address it.
 
 You can also run your application inside an interactive shell:
 
-```console
-$ PORT=4001 MIX_ENV=prod iex -S mix phx.server
+```shell
+PORT=4001 MIX_ENV=prod iex -S mix phx.server
 10:59:19.136 [info] Running MyAppWeb.Endpoint with Cowboy on http://example.com
 ```
 
@@ -93,28 +93,28 @@ The previous sections give an overview about the main steps required to deploy y
 
 Overall, here is a script you can use as a starting point:
 
-```console
+```shell
 # Initial setup
-$ mix deps.get --only prod
-$ MIX_ENV=prod mix compile
+mix deps.get --only prod
+MIX_ENV=prod mix compile
 
 # Compile assets
-$ MIX_ENV=prod mix assets.deploy
+MIX_ENV=prod mix assets.deploy
 
 # Custom tasks (like DB migrations)
-$ MIX_ENV=prod mix ecto.migrate
+MIX_ENV=prod mix ecto.migrate
 
 # Finally run the server
-$ PORT=4001 MIX_ENV=prod mix phx.server
+PORT=4001 MIX_ENV=prod mix phx.server
 ```
 
 And that's it. Next, you can use one of our official guides to deploy:
 
-  * [with Elixir's releases](releases.html)
-  * [to Gigalixir](gigalixir.html), an Elixir-centric Platform as a Service (PaaS)
-  * [to Fly.io](fly.html), a PaaS that deploys your servers close to your users with built-in distribution support
-  * and [to Heroku](heroku.html), one of the most popular PaaS.
+- [with Elixir's releases](releases.html)
+- [to Gigalixir](gigalixir.html), an Elixir-centric Platform as a Service (PaaS)
+- [to Fly.io](fly.html), a PaaS that deploys your servers close to your users with built-in distribution support
+- and [to Heroku](heroku.html), one of the most popular PaaS.
 
 ## Community Deployment Guides
 
-  * [Render](https://render.com) has first class support for Phoenix applications. There are guides for hosting Phoenix with [Mix releases](https://render.com/docs/deploy-phoenix), [Distillery](https://render.com/docs/deploy-phoenix-distillery), and as a [Distributed Elixir Cluster](https://render.com/docs/deploy-elixir-cluster).
+- [Render](https://render.com) has first class support for Phoenix applications. There are guides for hosting Phoenix with [Mix releases](https://render.com/docs/deploy-phoenix), [Distillery](https://render.com/docs/deploy-phoenix-distillery), and as a [Distributed Elixir Cluster](https://render.com/docs/deploy-elixir-cluster).

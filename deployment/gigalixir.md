@@ -25,10 +25,10 @@ Let's separate this process into a few steps, so we can keep track of where we a
 
 If you haven't already, we'll need to commit our files to git. We can do so by running the following commands in our project directory:
 
-```console
-$ git init
-$ git add .
-$ git commit -m "Initial commit"
+```shell
+git init
+git add .
+git commit -m "Initial commit"
 ```
 
 ## Installing the Gigalixir CLI
@@ -39,22 +39,22 @@ Follow the instructions [here](https://gigalixir.readthedocs.io/en/latest/gettin
 
 We can sign up for an account at [gigalixir.com](https://www.gigalixir.com) or with the CLI. Let's use the CLI.
 
-```console
-$ gigalixir signup
+```shell
+gigalixir signup
 ```
 
 Gigalixir’s free tier does not require a credit card and comes with 1 app instance and 1 PostgreSQL database for free, but please consider upgrading to a paid plan if you are running a production application.
 
 Next, let's login
 
-```console
-$ gigalixir login
+```shell
+gigalixir login
 ```
 
 And verify
 
-```console
-$ gigalixir account
+```shell
+gigalixir account
 ```
 
 ## Creating and setting up our Gigalixir application
@@ -65,32 +65,32 @@ There are three different ways to deploy a Phoenix app on Gigalixir: with mix, w
 
 Let's create a Gigalixir application
 
-```console
-$ gigalixir create -n "your_app_name"
+```shell
+gigalixir create -n "your_app_name"
 ```
 
 Note: the app name cannot be changed afterwards. A random name is used if you do not provide one.
 
 Verify the app was created
 
-```console
-$ gigalixir apps
+```shell
+gigalixir apps
 ```
 
-Verify that a git remote was created 
+Verify that a git remote was created
 
-```console
-$ git remote -v
+```shell
+git remote -v
 ```
 
 ### Specifying versions
 
 The buildpacks we use default to Elixir, Erlang, and Node.js versions that are quite old and it's generally a good idea to run the same version in production as you do in development, so let's do that.
 
-```console
-$ echo 'elixir_version=1.14.3' > elixir_buildpack.config
-$ echo 'erlang_version=24.3' >> elixir_buildpack.config
-$ echo 'node_version=12.16.3' > phoenix_static_buildpack.config
+```shell
+echo 'elixir_version=1.14.3' > elixir_buildpack.config
+echo 'erlang_version=24.3' >> elixir_buildpack.config
+echo 'node_version=12.16.3' > phoenix_static_buildpack.config
 ```
 
 Phoenix v1.6 uses `esbuild` to compile your assets, but all Gigalixir images come with `npm`, so we will configure `npm` directly to deploy our assets. Add a `assets/package.json` file if you don't have any with the following:
@@ -105,9 +105,9 @@ Phoenix v1.6 uses `esbuild` to compile your assets, but all Gigalixir images com
 
 Finally, don't forget to commit:
 
-```console
-$ git add elixir_buildpack.config phoenix_static_buildpack.config assets/package.json
-$ git commit -m "Set Elixir, Erlang, and Node version"
+```shell
+git add elixir_buildpack.config phoenix_static_buildpack.config assets/package.json
+git commit -m "Set Elixir, Erlang, and Node version"
 ```
 
 ## Making our Project ready for Gigalixir
@@ -120,61 +120,61 @@ You may also want to use SSL for your database connection. For that, uncomment t
 
 Let's provision a database for our app
 
-```console
-$ gigalixir pg:create --free
+```shell
+gigalixir pg:create --free
 ```
 
 Verify the database was created
 
-```console
-$ gigalixir pg
+```shell
+gigalixir pg
 ```
 
 Verify that a `DATABASE_URL` and `POOL_SIZE` were created
 
-```console
-$ gigalixir config
+```shell
+gigalixir config
 ```
 
-## Deploy Time!
+## Deploy Time
 
 Our project is now ready to be deployed on Gigalixir.
 
-```console
-$ git push gigalixir
+```shell
+git push gigalixir
 ```
 
 Check the status of your deploy and wait until the app is `Healthy`
 
-```console
-$ gigalixir ps
+```shell
+gigalixir ps
 ```
 
 Run migrations
 
-```console
-$ gigalixir run mix ecto.migrate
+```shell
+gigalixir run mix ecto.migrate
 ```
 
 Check your app logs
 
-```console
-$ gigalixir logs
+```shell
+gigalixir logs
 ```
 
 If everything looks good, let's take a look at your app running on Gigalixir
 
-```console
-$ gigalixir open
+```shell
+gigalixir open
 ```
 
 ## Useful Gigalixir Commands
 
 Open a remote console
 
-```console
-$ gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_rsa.pub)"
-$ gigalixir ps:remote_console
+```shell
+gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_rsa.pub)"
+gigalixir ps:remote_console
 ```
 
 To open a remote observer, see [Remote Observer](https://gigalixir.readthedocs.io/en/latest/runtime.html#how-to-launch-a-remote-observer)

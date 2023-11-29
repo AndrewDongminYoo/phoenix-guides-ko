@@ -8,7 +8,7 @@ The only thing we'll need for this guide is a working Phoenix application. For t
 
 Our main goal for this guide is to package your Phoenix application into a self-contained directory that includes the Erlang VM, Elixir, all of your code and dependencies. This package can then be dropped into a production machine.
 
-## Releases, assemble!
+## Releases, assemble
 
 If you are not familiar with Elixir releases yet, we recommend you to read [Elixir's excellent docs](https://hexdocs.pm/mix/Mix.Tasks.Release.html) before continuing.
 
@@ -16,27 +16,27 @@ Once that is done, you can assemble a release by going through all of the steps 
 
 First set the environment variables:
 
-```console
+```shell
 $ mix phx.gen.secret
 REALLY_LONG_SECRET
-$ export SECRET_KEY_BASE=REALLY_LONG_SECRET
-$ export DATABASE_URL=ecto://USER:PASS@HOST/database
+export SECRET_KEY_BASE=REALLY_LONG_SECRET
+export DATABASE_URL=ecto://USER:PASS@HOST/database
 ```
 
 Then load dependencies to compile code and assets:
 
-```console
+```shell
 # Initial setup
-$ mix deps.get --only prod
-$ MIX_ENV=prod mix compile
+mix deps.get --only prod
+MIX_ENV=prod mix compile
 
 # Compile assets
-$ MIX_ENV=prod mix assets.deploy
+MIX_ENV=prod mix assets.deploy
 ```
 
 And now run `mix phx.gen.release`:
 
-```console
+```shell
 $ mix phx.gen.release
 ==> my_app
 * creating rel/overlays/bin/server
@@ -70,14 +70,14 @@ To list all commands:
 
 ```
 
-The `phx.gen.release` task generated a few files for us to assist in releases. First, it created `server` and `migrate` *overlay* scripts for conveniently running the phoenix server inside a release or invoking migrations from a release. The files in the `rel/overlays` directory are copied into every release environment. Next, it generated a `release.ex` file which is used to invoke Ecto migrations without a dependency on `mix` itself.
+The `phx.gen.release` task generated a few files for us to assist in releases. First, it created `server` and `migrate` _overlay_ scripts for conveniently running the phoenix server inside a release or invoking migrations from a release. The files in the `rel/overlays` directory are copied into every release environment. Next, it generated a `release.ex` file which is used to invoke Ecto migrations without a dependency on `mix` itself.
 
-*Note*: If you are a Docker user, you can pass the `--docker` flag to `mix phx.gen.release` to generate a Dockerfile ready for deployment.
+_Note_: If you are a Docker user, you can pass the `--docker` flag to `mix phx.gen.release` to generate a Dockerfile ready for deployment.
 
 Next, we can invoke `mix release` to build the release:
 
-```console
-$ MIX_ENV=prod mix release
+```shell
+MIX_ENV=prod mix release
 Generated my_app app
 * assembling my_app-0.1.0 on MIX_ENV=prod
 * using config/runtime.exs to configure the release at runtime
@@ -98,7 +98,7 @@ But before we finish this guide, there is one more feature from releases that mo
 
 ## Ecto migrations and custom commands
 
-A common need in production systems is to execute custom commands required to set up the production environment. One of such commands is precisely migrating the database. Since we don't have `Mix`, a *build* tool, inside releases, which are a production artifact, we need to bring said commands directly into the release.
+A common need in production systems is to execute custom commands required to set up the production environment. One of such commands is precisely migrating the database. Since we don't have `Mix`, a _build_ tool, inside releases, which are a production artifact, we need to bring said commands directly into the release.
 
 The `phx.gen.release` command created the following `release.ex` file in your project `lib/my_app/release.ex`, with the following content:
 
@@ -133,8 +133,8 @@ Where you replace the first two lines by your application names.
 
 Now you can assemble a new release with `MIX_ENV=prod mix release` and you can invoke any code, including the functions in the module above, by calling the `eval` command:
 
-```console
-$ _build/prod/rel/my_app/bin/my_app eval "MyApp.Release.migrate"
+```shell
+_build/prod/rel/my_app/bin/my_app eval "MyApp.Release.migrate"
 ```
 
 And that's it! If you peek inside the `migrate` script, you'll see it wraps exactly this invocation.

@@ -4,7 +4,7 @@ In this guide, we will show you how to instrument and report
 on `:telemetry` events in your Phoenix application.
 
 > `te·lem·e·try` - the process of recording and transmitting
-the readings of an instrument.
+> the readings of an instrument.
 
 As you follow along with this guide, we will introduce you to
 the core concepts of Telemetry, you will initialize a
@@ -118,26 +118,26 @@ application lifecycle.
 
 A Telemetry event is made up of the following:
 
-  * `name` - A string (e.g. `"my_app.worker.stop"`) or a
-    list of atoms that uniquely identifies the event.
+- `name` - A string (e.g. `"my_app.worker.stop"`) or a
+  list of atoms that uniquely identifies the event.
 
-  * `measurements` - A map of atom keys (e.g. `:duration`)
-    and numeric values.
+- `measurements` - A map of atom keys (e.g. `:duration`)
+  and numeric values.
 
-  * `metadata` - A map of key-value pairs that can be used
-    for tagging metrics.
+- `metadata` - A map of key-value pairs that can be used
+  for tagging metrics.
 
 ### A Phoenix Example
 
 Here is an example of an event from your endpoint:
 
-* `[:phoenix, :endpoint, :stop]` - dispatched by
+- `[:phoenix, :endpoint, :stop]` - dispatched by
   `Plug.Telemetry`, one of the default plugs in your endpoint, whenever the response is
   sent
 
-  * Measurement: `%{duration: native_time}`
+  - Measurement: `%{duration: native_time}`
 
-  * Metadata: `%{conn: Plug.Conn.t}`
+  - Metadata: `%{conn: Plug.Conn.t}`
 
 This means that after each request, `Plug`, via `:telemetry`,
 will emit a "stop" event, with a measurement of how long it
@@ -188,13 +188,13 @@ and this is but one of _many_ telemetry events emitted by
 the Phoenix framework! We'll discuss more of these events,
 as well as specific patterns for extracting valuable data
 from Phoenix/Plug events in the
-[Phoenix Metrics](#phoenix-metrics) section later in this
+[Phoenix Metrics](/telemetry.md#phoenix-metrics) section later in this
 guide.
 
 > The full list of `:telemetry` events emitted from Phoenix,
-along with their measurements and metadata, is available in
-the "Instrumentation" section of the `Phoenix.Logger` module
-documentation.
+> along with their measurements and metadata, is available in
+> the "Instrumentation" section of the `Phoenix.Logger` module
+> documentation.
 
 ### An Ecto Example
 
@@ -204,11 +204,11 @@ and database layers using the same tools.
 
 Here is an example of a Telemetry event executed by Ecto when an Ecto repository starts:
 
-* `[:ecto, :repo, :init]` - dispatched by `Ecto.Repo`
+- `[:ecto, :repo, :init]` - dispatched by `Ecto.Repo`
 
-  * Measurement: `%{system_time: native_time}`
+  - Measurement: `%{system_time: native_time}`
 
-  * Metadata: `%{repo: Ecto.Repo, opts: Keyword.t()}`
+  - Metadata: `%{repo: Ecto.Repo, opts: Keyword.t()}`
 
 This means that whenever the `Ecto.Repo` starts, it will emit an event, via `:telemetry`,
 with a measurement of the time at start-up.
@@ -237,9 +237,9 @@ Telemetry.Metrics.distribution("my_app.repo.query.queue_time",
 ```
 
 > You can learn more about Ecto Telemetry in the "Telemetry
-Events" section of the
-[`Ecto.Repo`](https://hexdocs.pm/ecto/Ecto.Repo.html) module
-documentation.
+> Events" section of the
+> [`Ecto.Repo`](https://hexdocs.pm/ecto/Ecto.Repo.html) module
+> documentation.
 
 So far we have seen some of the Telemetry events common to
 Phoenix applications, along with some examples of their
@@ -302,13 +302,13 @@ _and_ method?
 Let's take a look at another event emitted during the HTTP
 request lifecycle, this time from `Phoenix.Router`:
 
-* `[:phoenix, :router_dispatch, :stop]` - dispatched by
+- `[:phoenix, :router_dispatch, :stop]` - dispatched by
   Phoenix.Router after successfully dispatching to a matched
   route
 
-  * Measurement: `%{duration: native_time}`
+  - Measurement: `%{duration: native_time}`
 
-  * Metadata: `%{conn: Plug.Conn.t, route: binary, plug: module, plug_opts: term, path_params: map, pipe_through: [atom]}`
+  - Metadata: `%{conn: Plug.Conn.t, route: binary, plug: module, plug_opts: term, path_params: map, pipe_through: [atom]}`
 
 Let's start by grouping these events by route. Add the
 following (if it does not already exist) to the `metrics/0`
@@ -348,15 +348,15 @@ properties in `conn`?
 Fortunately, `Telemetry.Metrics` provides the following
 options to help you classify your events:
 
-* `:tags` - A list of metadata keys for grouping;
+- `:tags` - A list of metadata keys for grouping;
 
-* `:tag_values` - A function which transforms the metadata
+- `:tag_values` - A function which transforms the metadata
   into the desired shape; Note that this function is called
   for each event, so it's important to keep it fast if the
   rate of events is high.
 
 > Learn about all the available metrics options in the
-`Telemetry.Metrics` module documentation.
+> `Telemetry.Metrics` module documentation.
 
 Let's find out how to extract more tags from events that
 include a `conn` in their metadata.
@@ -506,7 +506,7 @@ end
 ```
 
 > You will implement MyApp.MyServer in the
-[Custom Events](#custom-events) section.
+> [Custom Events](/telemetry.md#custom-events) section.
 
 ## Libraries using Telemetry
 
@@ -517,14 +517,14 @@ libraries currently emitting `:telemetry` events.
 Library authors are actively encouraged to send a PR adding
 their own (in alphabetical order, please):
 
-* [Absinthe](https://hexdocs.pm/absinthe) - [Events](https://hexdocs.pm/absinthe/telemetry.html)
-* [Ash Framework](https://hexdocs.pm/ash) - [Events](https://hexdocs.pm/ash/monitoring.html)
-* [Broadway](https://hexdocs.pm/broadway) - [Events](https://hexdocs.pm/broadway/Broadway.html#module-telemetry)
-* [Ecto](https://hexdocs.pm/ecto) - [Events](https://hexdocs.pm/ecto/Ecto.Repo.html#module-telemetry-events)
-* [Oban](https://hexdocs.pm/oban) - [Events](https://hexdocs.pm/oban/Oban.Telemetry.html)
-* [Phoenix](https://hexdocs.pm/phoenix) - [Events](https://hexdocs.pm/phoenix/Phoenix.Logger.html#module-instrumentation)
-* [Plug](https://hexdocs.pm/plug) - [Events](https://hexdocs.pm/plug/Plug.Telemetry.html)
-* [Tesla](https://hexdocs.pm/tesla) - [Events](https://hexdocs.pm/tesla/Tesla.Middleware.Telemetry.html)
+- [Absinthe](https://hexdocs.pm/absinthe) - [Events](https://hexdocs.pm/absinthe/telemetry.html)
+- [Ash Framework](https://hexdocs.pm/ash) - [Events](https://hexdocs.pm/ash/monitoring.html)
+- [Broadway](https://hexdocs.pm/broadway) - [Events](https://hexdocs.pm/broadway/Broadway.html#module-telemetry)
+- [Ecto](https://hexdocs.pm/ecto) - [Events](https://hexdocs.pm/ecto/Ecto.Repo.html#module-telemetry-events)
+- [Oban](https://hexdocs.pm/oban) - [Events](https://hexdocs.pm/oban/Oban.Telemetry.html)
+- [Phoenix](https://hexdocs.pm/phoenix) - [Events](https://hexdocs.pm/phoenix/Phoenix.Logger.html#module-instrumentation)
+- [Plug](https://hexdocs.pm/plug) - [Events](https://hexdocs.pm/plug/Plug.Telemetry.html)
+- [Tesla](https://hexdocs.pm/tesla) - [Events](https://hexdocs.pm/tesla/Tesla.Middleware.Telemetry.html)
 
 ## Custom Events
 

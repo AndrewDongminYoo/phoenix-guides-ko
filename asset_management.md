@@ -17,13 +17,13 @@ If you want to import JavaScript dependencies, you have at least three options t
 1. Vendor those dependencies inside your project and import them in your "assets/js/app.js" using a relative path:
 
    ```js
-   import topbar from "../vendor/topbar"
+   import topbar from "../vendor/topbar";
    ```
 
 2. Call `npm install topbar --save` inside your assets directory and `esbuild` will be able to automatically pick them up:
 
    ```js
-   import topbar from "topbar"
+   import topbar from "topbar";
    ```
 
 3. Use Mix to track the dependency from a source repository:
@@ -40,7 +40,7 @@ If you want to import JavaScript dependencies, you have at least three options t
    Run `mix deps.get` to fetch the dependency and then import it:
 
    ```js
-   import topbar from "../../deps/topbar"
+   import topbar from "../../deps/topbar";
    ```
 
    New applications use this third approach to import Heroicons, avoiding
@@ -55,12 +55,12 @@ If you want to import JavaScript dependencies, you have at least three options t
 By default, Phoenix generates CSS with the `tailwind` library, but esbuild has basic support for CSS which you can use if you aren't using tailwind. If you import a `.css` file at the top of your main `.js` file, `esbuild` will bundle it, and write it to the same directory as your final `app.js`.
 
 ```js
-import "../css/app.css"
+import "../css/app.css";
 ```
 
 However, if you want to use a CSS framework, you will need to use a separate tool. Here are some options to do so:
 
-  * You can use `esbuild` plugins (requires `npm`). See the "Esbuild plugins" section below
+- You can use `esbuild` plugins (requires `npm`). See the "Esbuild plugins" section below
 
 Don't forget to remove the `import "../css/app.css"` from your JavaScript file when doing so.
 
@@ -98,16 +98,16 @@ The following is an example of a custom build using esbuild via Node.JS. First o
 
 Then you'll need to add `esbuild` to your Node.js packages and the Phoenix packages. Inside the `assets` directory, run:
 
-```console
-$ npm install esbuild --save-dev
-$ npm install ../deps/phoenix ../deps/phoenix_html ../deps/phoenix_live_view --save
+```shell
+npm install esbuild --save-dev
+npm install ../deps/phoenix ../deps/phoenix_html ../deps/phoenix_live_view --save
 ```
 
 or, for Yarn:
 
-```console
-$ yarn add --dev esbuild
-$ yarn add ../deps/phoenix ../deps/phoenix_html ../deps/phoenix_live_view
+```shell
+yarn add --dev esbuild
+yarn add ../deps/phoenix ../deps/phoenix_html ../deps/phoenix_live_view
 ```
 
 Next, add a custom JavaScript build script. We'll call the example `assets/build.js`:
@@ -116,8 +116,8 @@ Next, add a custom JavaScript build script. We'll call the example `assets/build
 const esbuild = require("esbuild");
 
 const args = process.argv.slice(2);
-const watch = args.includes('--watch');
-const deploy = args.includes('--deploy');
+const watch = args.includes("--watch");
+const deploy = args.includes("--deploy");
 
 const loader = {
   // Add loaders for images/fonts/etc, e.g. { '.svg': 'file' }
@@ -204,6 +204,6 @@ If you are writing an API, or for some other reason you do not need to serve any
 3. Remove the `esbuild` dependency from `mix.exs`,
 4. Unlock the `esbuild` dependency:
 
-```console
-$ mix deps.unlock esbuild
+```shell
+mix deps.unlock esbuild
 ```

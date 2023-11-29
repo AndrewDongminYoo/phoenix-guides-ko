@@ -1,7 +1,7 @@
 # Presence
 
 > **Requirement**: This guide expects that you have gone through the [introductory guides](installation.html) and got a Phoenix application [up and running](up_and_running.html).
-
+>
 > **Requirement**: This guide expects that you have gone through the [Channels guide](channels.html).
 
 Phoenix Presence is a feature which allows you to register process information on a topic and replicate it transparently across a cluster. It's a combination of both a server-side and client-side library, which makes it simple to implement. A simple use-case would be showing which users are currently online in an application.
@@ -12,8 +12,8 @@ Phoenix Presence is special for a number of reasons. It has no single point of f
 
 We are going to use Presence to track which users are connected on the server and send updates to the client as users join and leave. We will deliver those updates via Phoenix Channels. Therefore, let's create a `RoomChannel`, as we did in the channels guides:
 
-```console
-$ mix phx.gen.channel Room
+```shell
+mix phx.gen.channel Room
 ```
 
 Follow the steps after the generator and you are ready to start tracking presence.
@@ -22,7 +22,7 @@ Follow the steps after the generator and you are ready to start tracking presenc
 
 To get started with Presence, we'll first need to generate a presence module. We can do this with the `mix phx.gen.presence` task:
 
-```console
+```shell
 $ mix phx.gen.presence
 * creating lib/hello_web/channels/presence.ex
 
@@ -91,28 +91,30 @@ To iterate users, we use the `presences.list()` function which accepts a callbac
 We can see presence working by adding the following to `assets/js/app.js`:
 
 ```javascript
-import {Socket, Presence} from "phoenix"
+import { Socket, Presence } from "phoenix";
 
-let socket = new Socket("/socket", {params: {token: window.userToken}})
-let channel = socket.channel("room:lobby", {name: window.location.search.split("=")[1]})
-let presence = new Presence(channel)
+let socket = new Socket("/socket", { params: { token: window.userToken } });
+let channel = socket.channel("room:lobby", {
+  name: window.location.search.split("=")[1],
+});
+let presence = new Presence(channel);
 
 function renderOnlineUsers(presence) {
-  let response = ""
+  let response = "";
 
-  presence.list((id, {metas: [first, ...rest]}) => {
-    let count = rest.length + 1
-    response += `<br>${id} (count: ${count})</br>`
-  })
+  presence.list((id, { metas: [first, ...rest] }) => {
+    let count = rest.length + 1;
+    response += `<br>${id} (count: ${count})</br>`;
+  });
 
-  document.querySelector("main").innerHTML = response
+  document.querySelector("main").innerHTML = response;
 }
 
-socket.connect()
+socket.connect();
 
-presence.onSync(() => renderOnlineUsers(presence))
+presence.onSync(() => renderOnlineUsers(presence));
 
-channel.join()
+channel.join();
 ```
 
 We can ensure this is working by opening 3 browser tabs. If we navigate to <http://localhost:4000/?name=Alice> on two browser tabs and <http://localhost:4000/?name=Bob> then we should see:

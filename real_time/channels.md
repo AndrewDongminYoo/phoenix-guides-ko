@@ -38,7 +38,7 @@ Servers are able to broadcast messages to all clients subscribed to a certain to
 Broadcasts work even if the application runs on several nodes/computers. That is, if two clients have their socket connected to different application nodes and are subscribed to the same topic `T`, both of them will receive messages broadcasted to `T`. That is possible thanks to an internal PubSub mechanism.
 
 Channels can support any kind of client: a browser, native app, smart watch, embedded device, or anything else that can connect to a network.
-All the client needs is a suitable library; see the [Client Libraries](#client-libraries) section below.
+All the client needs is a suitable library; see the [Client Libraries](/channels.md#client-libraries) section below.
 Each client library communicates using one of the "transports" that Channels understand.
 Currently, that's either Websockets or long polling, but other transports may be added in the future.
 
@@ -117,7 +117,7 @@ Phoenix comes with two default transports: websocket and longpoll. You can confi
 On the client side, you will establish a socket connection to the route above:
 
 ```javascript
-let socket = new Socket("/socket", {params: {token: window.userToken}})
+let socket = new Socket("/socket", { params: { token: window.userToken } });
 ```
 
 On the server, Phoenix will invoke `HelloWeb.UserSocket.connect/2`, passing your parameters and the initial socket state. Within the socket, you can authenticate and identify a socket connection and set default socket assigns. The socket is also where you define your channel routes.
@@ -173,18 +173,18 @@ Phoenix ships with a JavaScript client that is available when generating a new P
 
 #### 3rd Party
 
-+ Swift (iOS)
+- Swift (iOS)
   - [SwiftPhoenix](https://github.com/davidstump/SwiftPhoenixClient)
-+ Java (Android)
+- Java (Android)
   - [JavaPhoenixChannels](https://github.com/eoinsha/JavaPhoenixChannels)
-+ Kotlin (Android)
+- Kotlin (Android)
   - [JavaPhoenixClient](https://github.com/dsrees/JavaPhoenixClient)
-+ C#
+- C#
   - [PhoenixSharp](https://github.com/Mazyod/PhoenixSharp)
-+ Elixir
+- Elixir
   - [phoenix_gen_socket_client](https://github.com/Aircloak/phoenix_gen_socket_client)
   - [slipstream](https://hexdocs.pm/slipstream/Slipstream.html)
-+ GDScript (Godot Game Engine)
+- GDScript (Godot Game Engine)
   - [GodotPhoenixChannels](https://github.com/alfredbaudisch/GodotPhoenixChannels)
 
 ## Tying it all together
@@ -195,8 +195,8 @@ Let's tie all these ideas together by building a simple chat application. Make s
 
 Let's invoke the socket generator to get started:
 
-```console
-$ mix phx.gen.socket User
+```shell
+mix phx.gen.socket User
 ```
 
 It will create two files, the client code in `assets/js/user_socket.js` and the server counter-part in `lib/hello_web/channels/user_socket.ex`. After running, the generator will also ask to add the following line to `lib/hello_web/endpoint.ex`:
@@ -258,22 +258,27 @@ We can use that library to connect to our socket and join our channel, we just n
 ```javascript
 // assets/js/user_socket.js
 // ...
-socket.connect()
+socket.connect();
 
 // Now that you are connected, you can join channels with a topic:
-let channel = socket.channel("room:lobby", {})
-channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
+let channel = socket.channel("room:lobby", {});
+channel
+  .join()
+  .receive("ok", (resp) => {
+    console.log("Joined successfully", resp);
+  })
+  .receive("error", (resp) => {
+    console.log("Unable to join", resp);
+  });
 
-export default socket
+export default socket;
 ```
 
 After that, we need to make sure `assets/js/user_socket.js` gets imported into our application JavaScript file. To do that, uncomment this line in `assets/js/app.js`.
 
 ```javascript
 // ...
-import "./user_socket.js"
+import "./user_socket.js";
 ```
 
 Save the file and your browser should auto refresh, thanks to the Phoenix live reloader. If everything worked, we should see "Joined successfully" in the browser's JavaScript console. Our client and server are now talking over a persistent connection. Now let's make it useful by enabling chat.
@@ -289,50 +294,60 @@ Now let's add a couple of event listeners to `assets/js/user_socket.js`:
 
 ```javascript
 // ...
-let channel           = socket.channel("room:lobby", {})
-let chatInput         = document.querySelector("#chat-input")
-let messagesContainer = document.querySelector("#messages")
+let channel = socket.channel("room:lobby", {});
+let chatInput = document.querySelector("#chat-input");
+let messagesContainer = document.querySelector("#messages");
 
-chatInput.addEventListener("keypress", event => {
-  if(event.key === 'Enter'){
-    channel.push("new_msg", {body: chatInput.value})
-    chatInput.value = ""
+chatInput.addEventListener("keypress", (event) => {
+  if (event.key === "Enter") {
+    channel.push("new_msg", { body: chatInput.value });
+    chatInput.value = "";
   }
-})
+});
 
-channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
+channel
+  .join()
+  .receive("ok", (resp) => {
+    console.log("Joined successfully", resp);
+  })
+  .receive("error", (resp) => {
+    console.log("Unable to join", resp);
+  });
 
-export default socket
+export default socket;
 ```
 
 All we had to do is detect that enter was pressed and then `push` an event over the channel with the message body. We named the event `"new_msg"`. With this in place, let's handle the other piece of a chat application, where we listen for new messages and append them to our messages container.
 
 ```javascript
 // ...
-let channel           = socket.channel("room:lobby", {})
-let chatInput         = document.querySelector("#chat-input")
-let messagesContainer = document.querySelector("#messages")
+let channel = socket.channel("room:lobby", {});
+let chatInput = document.querySelector("#chat-input");
+let messagesContainer = document.querySelector("#messages");
 
-chatInput.addEventListener("keypress", event => {
-  if(event.key === 'Enter'){
-    channel.push("new_msg", {body: chatInput.value})
-    chatInput.value = ""
+chatInput.addEventListener("keypress", (event) => {
+  if (event.key === "Enter") {
+    channel.push("new_msg", { body: chatInput.value });
+    chatInput.value = "";
   }
-})
+});
 
-channel.on("new_msg", payload => {
-  let messageItem = document.createElement("p")
-  messageItem.innerText = `[${Date()}] ${payload.body}`
-  messagesContainer.appendChild(messageItem)
-})
+channel.on("new_msg", (payload) => {
+  let messageItem = document.createElement("p");
+  messageItem.innerText = `[${Date()}] ${payload.body}`;
+  messagesContainer.appendChild(messageItem);
+});
 
-channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
+channel
+  .join()
+  .receive("ok", (resp) => {
+    console.log("Joined successfully", resp);
+  })
+  .receive("error", (resp) => {
+    console.log("Unable to join", resp);
+  });
 
-export default socket
+export default socket;
 ```
 
 We listen for the `"new_msg"` event using `channel.on`, and then append the message body to the DOM. Now let's handle the incoming and outgoing events on the server to complete the picture.
@@ -436,7 +451,7 @@ end
 In our JavaScript, we can use the token set previously when constructing the Socket:
 
 ```javascript
-let socket = new Socket("/socket", {params: {token: window.userToken}})
+let socket = new Socket("/socket", { params: { token: window.userToken } });
 ```
 
 We used `Phoenix.Token.verify/4` to verify the user token provided by the client. `Phoenix.Token.verify/4` returns either `{:ok, user_id}` or `{:error, reason}`. We can pattern match on that return in a `case` statement. With a verified token, we set the user's id as the value to `:current_user` in the socket. Otherwise, we return `:error`.
@@ -446,19 +461,24 @@ We used `Phoenix.Token.verify/4` to verify the user token provided by the client
 With authentication set up, we can connect to sockets and channels from JavaScript.
 
 ```javascript
-let socket = new Socket("/socket", {params: {token: window.userToken}})
-socket.connect()
+let socket = new Socket("/socket", { params: { token: window.userToken } });
+socket.connect();
 ```
 
 Now that we are connected, we can join channels with a topic:
 
 ```javascript
-let channel = socket.channel("topic:subtopic", {})
-channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
+let channel = socket.channel("topic:subtopic", {});
+channel
+  .join()
+  .receive("ok", (resp) => {
+    console.log("Joined successfully", resp);
+  })
+  .receive("error", (resp) => {
+    console.log("Unable to join", resp);
+  });
 
-export default socket
+export default socket;
 ```
 
 Note that token authentication is preferable since it's transport agnostic and well-suited for long running-connections like channels, as opposed to using sessions or other authentication approaches.

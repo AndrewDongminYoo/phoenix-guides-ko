@@ -8,19 +8,19 @@ If you are already familiar with Elixir, great! If not, there are a number of pl
 
 The guides that you are currently looking at provide an overview of all parts that make Phoenix. Here is a rundown of what they provide:
 
-  * Introduction - the guides you are currently reading. They will cover how to get your first application up and running
+- Introduction - the guides you are currently reading. They will cover how to get your first application up and running
 
-  * Guides - in-depth guides covering the main components in Phoenix and Phoenix applications
+- Guides - in-depth guides covering the main components in Phoenix and Phoenix applications
 
-  * Authentication - in-depth guide covering how to use `mix phx.gen.auth`
+- Authentication - in-depth guide covering how to use `mix phx.gen.auth`
 
-  * Real-time components - in-depth guides covering Phoenix's built-in real-time components
+- Real-time components - in-depth guides covering Phoenix's built-in real-time components
 
-  * Testing - in-depth guides about testing
+- Testing - in-depth guides about testing
 
-  * Deployment - in-depth guides about deployment
+- Deployment - in-depth guides about deployment
 
-  * How-to's - a collection of articles on how to achieve certain things with Phoenix
+- How-to's - a collection of articles on how to achieve certain things with Phoenix
 
 If you would prefer to read these guides as an EPUB, [click here!](Phoenix.epub)
 

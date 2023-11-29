@@ -15,7 +15,9 @@ A client must join at least one topic to begin sending and receiving messages, a
 To establish a WebSocket connection to Phoenix Channels, first make note of the `socket` declaration in the application's `Endpoint` module.
 For example, if you see: `socket "/mobile", MyAppWeb.MobileSocket`, the path for the initial HTTP request is:
 
-    [host]:[port]/mobile/websocket?vsn=2.0.0
+```log
+[host]:[port]/mobile/websocket?vsn=2.0.0
+```
 
 Passing `&vsn=2.0.0` specifies `Phoenix.Socket.V2.JSONSerializer`, which is built into Phoenix, and which expects and returns messages in the form of lists.
 
@@ -30,7 +32,7 @@ For these examples, `Phoenix.Socket.V2.JSONSerializer` is assumed.
 
 The general format for messages a client sends to a Phoenix Channel is as follows:
 
-```
+```log
 [join_reference, message_reference, topic_name, event_name, payload]
 ```
 
@@ -45,7 +47,7 @@ There are three events that are understood by every Phoenix application.
 First, `phx_join` is used join a channel. For example, to join the `miami:weather` channel:
 
 ```json
-["0", "0", "miami:weather", "phx_join", {"some": "param"}]
+["0", "0", "miami:weather", "phx_join", { "some": "param" }]
 ```
 
 Second, `phx_leave` is used to leave a channel. For example, to leave the `miami:weather` channel:
@@ -55,7 +57,6 @@ Second, `phx_leave` is used to leave a channel. For example, to leave the `miami
 ```
 
 Third, `heartbeat` is used to maintain the WebSocket connection. For example:
-
 
 ```json
 [null, "2", "phoenix", "heartbeat", {}]
@@ -77,5 +78,5 @@ end
 ...a client could send:
 
 ```json
-[null, "3", "miami:weather", "report_emergency", {"category": "sharknado"}]
+[null, "3", "miami:weather", "report_emergency", { "category": "sharknado" }]
 ```
