@@ -290,9 +290,8 @@ defmodule HelloWeb.ChangesetJSON do
   Renders changeset errors.
   """
   def error(%{changeset: changeset}) do
-    # When encoded, the changeset returns its errors
-    # as a JSON object.
-    So we just pass it forward.
+    # 인코딩되면 변경 집합은 오류를 JSON 객체로 반환합니다.
+    # 그래서 그냥 전달하면 됩니다.
     %{errors: Ecto.Changeset.traverse_errors(changeset, &translate_error/1)}
   end
 end
@@ -339,25 +338,15 @@ mix help phx.new
 The output should contain the following:
 
 ```shell
-  • --no-assets - equivalent to --no-esbuild and --no-tailwind
-  • --no-dashboard - do not include Phoenix.LiveDashboard
-  • --no-ecto - do not generate Ecto files
-  • --no-esbuild - do not include esbuild dependencies and
-    assets.
-    We do not recommend setting this option, unless for API
-    only applications, as doing so requires you to manually add and
-    track JavaScript dependencies
-  • --no-gettext - do not generate gettext files
-  • --no-html - do not generate HTML views
-  • --no-live - comment out LiveView socket setup in
-    assets/js/app.js.
-    Automatically disabled if --no-html is given
-  • --no-mailer - do not generate Swoosh mailer files
-  • --no-tailwind - do not include tailwind dependencies and
-    assets.
-    The generated markup will still include Tailwind CSS
-    classes, those are left-in as reference for the subsequent
-    styling of your layout and components
+  • --no-assets - `--no-esbuild && --no-tailwind` 에 해당합니다.
+  • --no-dashboard - Phoenix.LiveDashboard를 포함하지 않습니다.
+  • --no-ecto - 엑토 파일을 생성하지 않습니다.
+  • --no-esbuild - esbuild 종속성 및 에셋을 포함하지 않습니다. 이 옵션을 설정하면 자바스크립트 종속성을 수동으로 추가하고 추적해야 하므로, API 전용 애플리케이션이 아닌 한 이 옵션을 설정하지 않는 것이 좋습니다.
+  • --no-gettext - gettext 파일을 생성하지 않음
+  • --no-html - HTML 보기를 생성하지 않습니다.
+  • --no-live - assets/js/app.js에서 라이브뷰 소켓 설정을 주석 처리합니다. no-html을 지정하면 자동으로 비활성화됩니다.
+  • --no-mailer - 스우시 메일러 파일을 생성하지 않습니다.
+  • --no-tailwind - 테일윈드 의존성 및 에셋을 포함하지 않습니다. 생성된 마크업에는 여전히 테일윈드 CSS 클래스가 포함되며, 이는 이후 레이아웃 및 컴포넌트 스타일링에 참조할 수 있도록 남겨집니다.
 ```
 
 The `--no-html` is the obvious one we want to use when creating any Phoenix application for an API in order to leave out all the unnecessary HTML scaffolding.

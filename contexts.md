@@ -6,61 +6,61 @@
 >
 > **Requirement**: This guide expects that you have gone through the [Ecto guide](ecto.html).
 
-So far, we've built pages, wired up controller actions through our routers, and learned how Ecto allows data to be validated and persisted.
-Now it's time to tie it all together by writing web-facing features that interact with our greater Elixir application.
+지금까지 페이지를 만들고, 라우터를 통해 컨트롤러 동작을 연결하고, Ecto를 통해 데이터를 검증하고 지속시키는 방법을 배웠습니다.
+이제 더 큰 Elixir 애플리케이션과 상호 작용하는 웹 기능을 작성하여 이 모든 것을 하나로 묶을 차례입니다.
 
-When building a Phoenix project, we are first and foremost building an Elixir application.
-Phoenix's job is to provide a web interface into our Elixir application.
-Naturally, we compose our applications with modules and functions, but simply defining a module with a few functions isn't enough when designing an application.
-We need to consider the boundaries between modules and how to group functionality.
-In other words, it's vital to think about application design when writing code.
+Phoenix 프로젝트를 구축할 때, 우리는 무엇보다도 먼저 Elixir 애플리케이션을 구축합니다.
+Phoenix의 역할은 Elixir 애플리케이션에 웹 인터페이스를 제공하는 것입니다.
+당연히 모듈과 함수로 애플리케이션을 구성하지만, 애플리케이션을 설계할 때 단순히 몇 가지 기능으로 모듈을 정의하는 것만으로는 충분하지 않습니다.
+모듈 간의 경계와 기능을 그룹화하는 방법을 고려해야 합니다.
+즉, 코드를 작성할 때 애플리케이션 디자인에 대해 생각하는 것이 중요합니다.
 
 ## Thinking about design
 
-Contexts are dedicated modules that expose and group related functionality.
-For example, anytime you call Elixir's standard library, be it `Logger.info/1` or `Stream.map/2`, you are accessing different contexts.
-Internally, Elixir's logger is made of multiple modules, but we never interact with those modules directly.
-We call the `Logger` module the context, exactly because it exposes and groups all of the logging functionality.
+컨텍스트는 관련 기능을 노출하고 그룹화하는 전용 모듈입니다.
+예를 들어, `Logger.info/1` 또는 `Stream.map/2` 등 Elixir의 표준 라이브러리를 호출할 때마다 서로 다른 컨텍스트에 액세스하게 됩니다.
+내부적으로 Elixir의 로거는 여러 모듈로 구성되어 있지만, 이러한 모듈과 직접 상호작용하지는 않습니다.
+우리는 '로거' 모듈을 컨텍스트라고 부르는데, 바로 이 모듈이 모든 로깅 기능을 노출하고 그룹화하기 때문입니다.
 
-By giving modules that expose and group related functionality the name **contexts**, we help developers identify these patterns and talk about them.
-At the end of the day, contexts are just modules, as are your controllers, views, etc.
+관련 기능을 노출하고 그룹화하는 모듈에 **컨텍스트**라는 이름을 부여함으로써 개발자가 이러한 패턴을 식별하고 이에 대해 이야기할 수 있도록 돕습니다.
+결국 컨텍스트는 컨트롤러, 뷰 등과 마찬가지로 모듈에 불과합니다.
 
-In Phoenix, contexts often encapsulate data access and data validation.
-They often talk to a database or APIs.
-Overall, think of them as boundaries to decouple and isolate parts of your application.
-Let's use these ideas to build out our web application.
-Our goal is to build an ecommerce system where we can showcase products, allow users to add products to their cart, and complete their orders.
+Phoenix에서 컨텍스트는 종종 데이터 액세스와 데이터 유효성 검사를 캡슐화합니다.
+컨텍스트는 종종 데이터베이스 또는 API와 통신합니다.
+전반적으로 애플리케이션의 일부를 분리하고 격리하는 경계라고 생각하면 됩니다.
+이러한 아이디어를 사용하여 웹 애플리케이션을 구축해 봅시다.
+우리의 목표는 제품을 전시하고, 사용자가 장바구니에 제품을 추가하고, 주문을 완료할 수 있는 전자상거래 시스템을 구축하는 것입니다.
 
 > How to read this guide: Using the context generators is a great way for beginners and intermediate Elixir programmers alike to get up and running quickly while thoughtfully designing their applications.
 > This guide focuses on those readers.
 
 ### Adding a Catalog Context
 
-An ecommerce platform has wide-reaching coupling across a codebase so it's important to think upfront about writing well-defined interfaces.
-With that in mind, our goal is to build a product catalog API that handles creating, updating, and deleting the products available in our system.
-We'll start off with the basic features of showcasing our products, and we will add shopping cart features later.
-We'll see how starting with a solid foundation with isolated boundaries allows us to grow our application naturally as we add functionality.
+전자상거래 플랫폼은 코드베이스 전반에 걸쳐 광범위하게 결합되어 있으므로 잘 정의된 인터페이스를 작성하는 것에 대해 미리 생각하는 것이 중요합니다.
+이를 염두에 두고 시스템에서 사용 가능한 제품의 생성, 업데이트, 삭제를 처리하는 제품 카탈로그 API를 구축하는 것이 목표입니다.
+먼저 제품을 보여주는 기본 기능부터 시작하고 나중에 쇼핑 카트 기능을 추가하겠습니다.
+경계를 분리한 견고한 기반에서 시작하여 기능을 추가하면서 자연스럽게 애플리케이션을 성장시키는 방법을 살펴보겠습니다.
 
-Phoenix includes the `mix phx.gen.html`, `mix phx.gen.json`, `mix phx.gen.live`, and `mix phx.gen.context` generators that apply the ideas of isolating functionality in our applications into contexts.
-These generators are a great way to hit the ground running while Phoenix nudges you in the right direction to grow your application.
-Let's put these tools to use for our new product catalog context.
+Phoenix에는 애플리케이션의 기능을 컨텍스트에 분리하는 아이디어를 적용하는 `mix phx.gen.html`, `mix phx.gen.json`, `mix phx.gen.live`, `mix phx.gen.context` 생성기가 포함되어 있습니다.
+이러한 제너레이터는 Phoenix가 애플리케이션을 성장시키는 올바른 방향으로 안내하는 동안 시작을 위한 좋은 방법입니다.
+새로운 제품 카탈로그 컨텍스트에 이러한 도구를 사용해 보겠습니다.
 
-In order to run the context generators, we need to come up with a module name that groups the related functionality that we're building.
-In the [Ecto guide](ecto.html), we saw how we can use Changesets and Repos to validate and persist user schemas, but we didn't integrate this with our application at large.
-In fact, we didn't think about where a "user" in our application should live at all.
-Let's take a step back and think about the different parts of our system.
-We know that we'll have products to showcase on pages for sale, along with descriptions, pricing, etc.
-Along with selling products, we know we'll need to support carting, order checkout, and so on.
-While the products being purchased are related to the cart and checkout processes, showcasing a product and managing the _exhibition_ of our products is distinctly different than tracking what a user has placed in their cart or how an order is placed.
-A `Catalog` context is a natural place for the management of our product details and the showcasing of those products we have for sale.
+컨텍스트 생성기를 실행하려면 빌드 중인 관련 기능을 그룹화하는 모듈 이름을 만들어야 합니다.
+[Ecto 가이드](ecto.html)에서 변경 집합과 리포지토리를 사용하여 사용자 스키마의 유효성을 검사하고 유지하는 방법을 살펴봤지만, 이를 애플리케이션 전체에 통합하지는 않았습니다.
+사실, 애플리케이션에서 'user'가 어디에 있어야 하는지 전혀 생각하지 않았습니다.
+한 걸음 물러나서 우리 시스템의 여러 부분에 대해 생각해 봅시다.
+우리는 판매 페이지에 설명, 가격 등과 함께 소개할 제품이 있다는 것을 알고 있습니다.
+제품 판매와 함께 카트, 주문 결제 등을 지원해야 한다는 것도 알고 있습니다.
+구매되는 제품은 카트 및 결제 프로세스와 관련이 있지만, 제품을 소개하고 제품의 '전시'를 관리하는 것은 사용자가 카트에 무엇을 담았는지 또는 주문이 어떻게 이루어졌는지 추적하는 것과는 분명히 다릅니다.
+`Catalog` 컨텍스트는 제품 세부 정보를 관리하고 판매 중인 제품을 전시하기 위한 자연스러운 장소입니다.
 
 > Naming things is hard.
 > If you're stuck when trying to come up with a context name when the grouped functionality in your system isn't yet clear, you can simply use the plural form of the resource you're creating.
 > For example, a `Products` context for managing products.
 > As you grow your application and the parts of your system become clear, you can simply rename the context to a more refined one.
 
-To jump-start our catalog context, we'll use `mix phx.gen.html` which creates a context module that wraps up Ecto access for creating, updating, and deleting products, along with web files like controllers and templates for the web interface into our context.
-Run the following command at your project root:
+카탈로그 컨텍스트를 시작하기 위해 `mix phx.gen.html`을 사용하여 제품 생성, 업데이트 및 삭제를 위한 엑토 액세스와 웹 인터페이스용 컨트롤러 및 템플릿과 같은 웹 파일을 컨텍스트에 래핑하는 컨텍스트 모듈을 만들겠습니다.
+프로젝트 루트에서 다음 명령을 실행합니다:
 
 ```shell
 $ mix phx.gen.html Catalog Product products title:string \
@@ -83,12 +83,12 @@ description:string price:decimal views:integer
 * creating test/support/fixtures/catalog_fixtures.ex
 * injecting test/support/fixtures/catalog_fixtures.ex
 
-Add the resource to your browser scope in lib/hello_web/router.ex:
+lib/hello_web/router.ex의 브라우저 범위에 리소스를 추가합니다:
 
     resources "/products", ProductController
 
 
-Remember to update your repository by running migrations:
+마이그레이션을 실행하여 리포지토리를 업데이트하는 것을 잊지 마세요:
 
     $ mix ecto.migrate
 ```
@@ -97,12 +97,12 @@ Remember to update your repository by running migrations:
 > In practice, modeling such systems yields more complex relationships such as product variants, optional pricing, multiple currencies, etc.
 > We'll keep things simple in this guide, but the foundations will give you a solid starting point to building such a complete system.
 
-Phoenix generated the web files as expected in `lib/hello_web/`.
-We can also see our context files were generated inside a `lib/hello/catalog.ex` file and our product schema in the directory of the same name.
-Note the difference between `lib/hello` and `lib/hello_web`.
-We have a `Catalog` module to serve as the public API for product catalog functionality, as well as a `Catalog.Product` struct, which is an Ecto schema for casting and validating product data.
-Phoenix also provided web and context tests for us, it also included test helpers for creating entities via the `Hello.Catalog` context, which we'll look at later.
-For now, let's follow the instructions and add the route according to the console instructions, in `lib/hello_web/router.ex`:
+Phoenix가 `lib/hello_web/`에서 예상대로 웹 파일을 생성했습니다.
+또한 컨텍스트 파일이 `lib/hello/catalog.ex` 파일과 같은 이름의 디렉터리에 있는 제품 스키마에 생성된 것을 확인할 수 있습니다.
+`lib/hello`와 `lib/hello_web`의 차이점에 주목하세요.
+제품 카탈로그 기능을 위한 공용 API 역할을 하는 `Catalog` 모듈과 제품 데이터의 캐스팅 및 유효성 검사를 위한 Ecto 스키마인 `Catalog.Product` 구조체가 있습니다.
+또한 Phoenix는 웹 및 컨텍스트 테스트를 제공했으며, 나중에 살펴볼 `Hello.Catalog` 컨텍스트를 통해 엔티티를 생성하기 위한 테스트 헬퍼도 포함했습니다.
+지금은 콘솔의 지침에 따라 `lib/hello_web/router.ex`에 경로를 추가해 보겠습니다:
 
 ```diff
   scope "/", HelloWeb do
@@ -113,9 +113,9 @@ For now, let's follow the instructions and add the route according to the consol
   end
 ```
 
-With the new route in place, Phoenix reminds us to update our repo by running `mix ecto.migrate`, but first we need to make a few tweaks to the generated migration in `priv/repo/migrations/*_create_products.exs`:
+새 경로가 설정되면 Phoenix는 `mix ecto.migrate`를 실행하여 리포지토리를 업데이트하라고 알려주지만, 먼저 `priv/repo/migrations/*_create_products.exs`에서 생성된 마이그레이션을 몇 가지 조정해야 합니다:
 
-```perl Elixir
+```diff Elixir
   def change do
     create table(:products) do
       add :title, :string
@@ -129,11 +129,11 @@ With the new route in place, Phoenix reminds us to update our repo by running `m
     end
 ```
 
-We modified our price column to a specific precision of 15, scale of 6, along with a not-null constraint.
-This ensures we store currency with proper precision for any mathematical operations we may perform.
-Next, we added a default value and not-null constraint to our views count.
-With our changes in place, we're ready to migrate up our database.
-Let's do that now:
+가격 열을 특정 정밀도 15, 스케일 6으로 수정하고 null이 아닌 제약 조건을 적용했습니다.
+이렇게 하면 수행할 수 있는 모든 수학적 연산에 적합한 정밀도로 통화를 저장할 수 있습니다.
+다음으로 조회 수에 기본값과 null이 아닌 제약 조건을 추가했습니다.
+변경 사항을 적용했으므로 데이터베이스를 마이그레이션할 준비가 되었습니다.
+이제 마이그레이션을 해보겠습니다:
 
 ```shell
 mix ecto.migrate
@@ -144,39 +144,39 @@ mix ecto.migrate
 14:09:02.273 [info] == Migrated 20210201185747 in 0.0s
 ```
 
-Before we jump into the generated code, let's start the server with `mix phx.server` and visit [http://localhost:4000/products](http://localhost:4000/products).
-Let's follow the "New Product" link and click the "Save" button without providing any input.
-We should be greeted with the following output:
+생성된 코드를 살펴보기 전에 `mix phx.server`로 서버를 시작하고 [http://localhost:4000/products](http://localhost:4000/products)를 방문해 보겠습니다.
+"새 제품" 링크를 따라 아무 입력 없이 "저장" 버튼을 클릭합니다.
+다음과 같은 출력이 표시되어야 합니다:
 
 ```shell
-Oops, something went wrong! Please check the errors below.
+문제가 발생했습니다! 아래에서 오류를 확인해 보세요.
 ```
 
-When we submit the form, we can see all the validation errors inline with the inputs.
-Nice! Out of the box, the context generator included the schema fields in our form template and we can see our default validations for required inputs are in effect.
-Let's enter some example product data and resubmit the form:
+양식을 제출하면 입력과 함께 모든 유효성 검사 오류가 인라인으로 표시되는 것을 볼 수 있습니다.
+멋지네요! 컨텍스트 생성기는 기본적으로 양식 템플릿에 스키마 필드를 포함했으며 필수 입력에 대한 기본 유효성 검사가 적용되고 있음을 알 수 있습니다.
+몇 가지 예제 제품 데이터를 입력하고 양식을 다시 제출해 보겠습니다:
 
 ```shell
-Product created successfully.
+제품이 성공적으로 만들어졌습니다.
 
-Title: Metaprogramming Elixir
-Description: Write Less Code, Get More Done (and Have Fun!)
-Price: 15.000000
-Views: 0
+Title: 메타프로그래밍 엘릭서
+설명: 코드 작성은 줄이고, 더 많은 작업을 수행하세요(그리고 재미있게!).
+가격: 15.000000
+조회수 0
 ```
 
-If we follow the "Back" link, we get a list of all products, which should contain the one we just created.
-Likewise, we can update this record or delete it.
-Now that we've seen how it works in the browser, it's time to take a look at the generated code.
+"뒤로" 링크를 따라가면 모든 제품 목록이 표시되며, 여기에는 방금 만든 제품이 포함되어야 합니다.
+마찬가지로 이 기록을 업데이트하거나 삭제할 수 있습니다.
+이제 브라우저에서 어떻게 작동하는지 살펴봤으니 생성된 코드를 살펴볼 차례입니다.
 
 ## Starting With Generators
 
-That little `mix phx.gen.html` command packed a surprising punch.
-We got a lot of functionality out-of-the-box for creating, updating, and deleting products in our catalog.
-This is far from a full-featured app, but remember, generators are first and foremost learning tools and a starting point for you to begin building real features.
-Code generation can't solve all your problems, but it will teach you the ins and outs of Phoenix and nudge you towards the proper mindset when designing your application.
+이 작은 `mix phx.gen.html` 명령에는 놀라운 기능이 담겨 있습니다.
+카탈로그에서 제품을 생성, 업데이트, 삭제할 수 있는 많은 기능을 바로 사용할 수 있습니다.
+모든 기능을 갖춘 앱과는 거리가 멀지만, 생성기는 무엇보다도 학습 도구이자 실제 기능을 구축하기 위한 출발점이라는 점을 기억하세요.
+코드 생성이 모든 문제를 해결할 수는 없지만, Phoenix의 모든 것을 알려주고 애플리케이션을 설계할 때 올바른 사고방식을 갖도록 도와줄 것입니다.
 
-Let's first check out the `ProductController` that was generated in `lib/hello_web/controllers/product_controller.ex`:
+먼저 `lib/hello_web/controllers/product_controller.ex`에서 생성된 `ProductController`를 확인해 보겠습니다:
 
 ```perl Elixir
 defmodule HelloWeb.ProductController do
@@ -215,21 +215,21 @@ defmodule HelloWeb.ProductController do
 end
 ```
 
-We've seen how controllers work in our [controller guide](controllers.html), so the code probably isn't too surprising.
-What is worth noticing is how our controller calls into the `Catalog` context.
-We can see that the `index` action fetches a list of products with `Catalog.list_products/0`, and how products are persisted in the `create` action with `Catalog.create_product/1`.
-We haven't yet looked at the catalog context, so we don't yet know how product fetching and creation is happening under the hood – _but that's the point_.
-Our Phoenix controller is the web interface into our greater application.
-It shouldn't be concerned with the details of how products are fetched from the database or persisted into storage.
-We only care about telling our application to perform some work for us.
-This is great because our business logic and storage details are decoupled from the web layer of our application.
-If we move to a full-text storage engine later for fetching products instead of a SQL query, our controller doesn't need to be changed.
-Likewise, we can reuse our context code from any other interface in our application, be it a channel, mix task, or long-running process importing CSV data.
+컨트롤러가 어떻게 작동하는지 [컨트롤러 가이드](controllers.html)에서 살펴봤으므로 이 코드가 그리 놀랍지 않을 것입니다.
+주목할 만한 점은 컨트롤러가 `Catalog` 컨텍스트에서 호출하는 방식입니다.
+`index` 액션이 `Catalog.list_products/0`으로 제품 목록을 가져오고, `create` 액션에서 `Catalog.create_product/1`로 제품이 어떻게 유지되는지 알 수 있습니다.
+아직 카탈로그 컨텍스트를 살펴보지 않았기 때문에 내부에서 제품 가져오기 및 생성이 어떻게 이루어지는지 아직 알 수 없지만, 중요한 것은 그 점입니다.
+Phoenix 컨트롤러는 더 큰 애플리케이션에 대한 웹 인터페이스입니다.
+데이터베이스에서 제품을 가져오는 방법이나 스토리지에 저장하는 방법에 대한 세부 사항은 신경 쓰지 않아야 합니다.
+우리는 애플리케이션에 몇 가지 작업을 수행하도록 지시하는 것만 신경 쓰면 됩니다.
+비즈니스 로직과 스토리지 세부 정보가 애플리케이션의 웹 계층에서 분리되어 있기 때문에 이 점이 좋습니다.
+나중에 SQL 쿼리 대신 제품을 가져오기 위해 전체 텍스트 스토리지 엔진으로 이동하는 경우 컨트롤러를 변경할 필요가 없습니다.
+마찬가지로 채널, 믹스 작업 또는 CSV 데이터를 가져오는 장기 실행 프로세스 등 애플리케이션의 다른 인터페이스에서 컨텍스트 코드를 재사용할 수 있습니다.
 
-In the case of our `create` action, when we successfully create a product, we use `Phoenix.Controller.put_flash/3` to show a success message, and then we redirect to the router's product show page.
-Conversely, if `Catalog.create_product/1` fails, we render our `"new.html"` template and pass along the Ecto changeset for the template to lift error messages from.
+`create` 액션의 경우, 제품을 성공적으로 만들면 `Phoenix.Controller.put_flash/3`을 사용하여 성공 메시지를 표시한 다음 라우터의 제품 표시 페이지로 리디렉션합니다.
+반대로 `Catalog.create_product/1`이 실패하면 `"new.html"` 템플릿을 렌더링하고 템플릿에서 오류 메시지를 가져올 Ecto 변경 집합을 전달합니다.
 
-Next, let's dig deeper and check out our `Catalog` context in `lib/hello/catalog.ex`:
+다음으로, `lib/hello/catalog.ex`에서 `Catalog` 컨텍스트를 더 자세히 살펴보겠습니다:
 
 ```perl Elixir
 defmodule Hello.Catalog do
@@ -258,18 +258,18 @@ defmodule Hello.Catalog do
 end
 ```
 
-This module will be the public API for all product catalog functionality in our system.
-For example, in addition to product detail management, we may also handle product category classification and product variants for things like optional sizing, trims, etc.
-If we look at the `list_products/0` function, we can see the private details of product fetching.
-And it's super simple.
-We have a call to `Repo.all(Product)`.
-We saw how Ecto repo queries worked in the [Ecto guide](ecto.html), so this call should look familiar.
-Our `list_products` function is a generalized function name specifying the _intent_ of our code – namely to list products.
-The details of that intent where we use our Repo to fetch the products from our PostgreSQL database is hidden from our callers.
-This is a common theme we'll see re-iterated as we use the Phoenix generators.
-Phoenix will push us to think about where we have different responsibilities in our application, and then to wrap up those different areas behind well-named modules and functions that make the intent of our code clear, while encapsulating the details.
+이 모듈은 우리 시스템의 모든 제품 카탈로그 기능을 위한 공용 API가 됩니다.
+예를 들어, 제품 세부 정보 관리 외에도 제품 카테고리 분류 및 옵션 사이즈, 트림 등의 제품 이형 상품도 처리할 수 있습니다.
+`list_products/0` 함수를 보면 제품 가져오기의 비공개 세부 정보를 볼 수 있습니다.
+매우 간단합니다.
+`Repo.all(Product)`에 대한 호출이 있습니다.
+엑토 리포지토리 쿼리가 어떻게 작동하는지 [엑토 가이드](ecto.html)에서 보았으므로 이 호출은 익숙하게 보일 것입니다.
+`list_products` 함수는 코드의 _intent_, 즉 제품을 나열하는 것을 지정하는 일반화된 함수 이름입니다.
+리포지토리를 사용하여 PostgreSQL 데이터베이스에서 제품을 가져오는 의도의 세부 사항은 호출자에게 숨겨져 있습니다.
+이는 Phoenix 생성기를 사용하면서 반복적으로 보게 될 일반적인 주제입니다.
+Phoenix를 사용하면 애플리케이션에서 서로 다른 책임이 있는 부분을 생각한 다음, 코드의 의도를 명확하게 하면서도 세부 사항을 캡슐화하는 잘 명명된 모듈과 함수로 이러한 다양한 영역을 마무리할 수 있습니다.
 
-Now we know how data is fetched, but how are products persisted? Let's take a look at the `Catalog.create_product/1` function:
+이제 데이터를 가져오는 방법은 알았지만 제품을 유지하는 방법은 어떻게 될까요? `Catalog.create_product/1` 함수를 살펴봅시다:
 
 ```perl Elixir
   @doc """
@@ -291,12 +291,12 @@ Now we know how data is fetched, but how are products persisted? Let's take a lo
   end
 ```
 
-There's more documentation than code here, but a couple of things are important to highlight.
-First, we can see again that our Ecto Repo is used under the hood for database access.
-You probably also noticed the call to `Product.changeset/2`.
-We talked about changesets before, and now we see them in action in our context.
+여기에는 코드보다 문서가 더 많지만 몇 가지를 강조할 필요가 있습니다.
+먼저, 데이터베이스 액세스를 위해 내부적으로 Ecto Repo가 사용된다는 것을 다시 한 번 확인할 수 있습니다.
+또한 `Product.changeset/2`에 대한 호출을 눈치채셨을 것입니다.
+앞서 변경 집합에 대해 이야기했는데, 이제 컨텍스트에서 변경 집합이 실제로 작동하는 것을 볼 수 있습니다.
 
-If we open up the `Product` schema in `lib/hello/catalog/product.ex`, it will look immediately familiar:
+`lib/hello/catalog/product.ex`에서 `Product` 스키마를 열면 즉시 익숙하게 보일 것입니다:
 
 ```perl Elixir
 defmodule Hello.Catalog.Product do
@@ -321,51 +321,51 @@ defmodule Hello.Catalog.Product do
 end
 ```
 
-This is just what we saw before when we ran `mix phx.gen.schema`, except here we see a `@doc false` above our `changeset/2` function.
-This tells us that while this function is publicly callable, it's not part of the public context API.
-Callers that build changesets do so via the context API.
-For example, `Catalog.create_product/1` calls into our `Product.changeset/2` to build the changeset from user input.
-Callers, such as our controller actions, do not access `Product.changeset/2` directly.
-All interaction with our product changesets is done through the public `Catalog` context.
+이것은 앞서 `mix phx.gen.schema`를 실행했을 때 보았던 것과 같지만, 여기서는 `changeset/2` 함수 위에 `@doc false`가 있습니다.
+이는 이 함수가 공개적으로 호출 가능하지만 공용 컨텍스트 API의 일부가 아님을 알려줍니다.
+변경 집합을 빌드하는 호출자는 컨텍스트 API를 통해 변경 집합을 빌드합니다.
+예를 들어, `Catalog.create_product/1`은 `Product.changeset/2`를 호출하여 사용자 입력으로부터 변경 집합을 빌드합니다.
+컨트롤러 액션과 같은 호출자는 `Product.changeset/2`에 직접 액세스하지 않습니다.
+제품 변경 집합과의 모든 상호 작용은 공용 `Catalog` 컨텍스트를 통해 이루어집니다.
 
 ## Adding Catalog functions
 
-As we've seen, your context modules are dedicated modules that expose and group related functionality.
-Phoenix generates generic functions, such as `list_products` and `update_product`, but they only serve as a basis for you to grow your business logic and application from.
-Let's add one of the basic features of our catalog by tracking product page view count.
+지금까지 살펴본 것처럼 컨텍스트 모듈은 관련 기능을 노출하고 그룹화하는 전용 모듈입니다.
+Phoenix는 `list_products` 및 `update_product`와 같은 일반 함수를 생성하지만, 이는 비즈니스 로직과 애플리케이션을 확장할 수 있는 기반 역할을 할 뿐입니다.
+제품 페이지 조회 수를 추적하여 카탈로그의 기본 기능 중 하나를 추가해 보겠습니다.
 
-For any ecommerce system, the ability to track how many times a product page has been viewed is essential for marketing, suggestions, ranking, etc.
-While we could try to use the existing `Catalog.update_product` function, along the lines of `Catalog.update_product(product, %{views: product.views + 1})`, this would not only be prone to race conditions, but it would also require the caller to know too much about our Catalog system.
-To see why the race condition exists, let's walk through the possible execution of events:
+모든 전자상거래 시스템에서 제품 페이지 조회 횟수를 추적하는 기능은 마케팅, 제안, 랭킹 등을 위해 필수적입니다.
+기존의 `Catalog.update_product` 함수를 사용할 수도 있지만, `Catalog.update_product(product, %{views: product.views + 1})`와 같이 호출자가 카탈로그 시스템에 대해 너무 많은 것을 알고 있어야 한다는 단점이 있습니다.
+경쟁 조건이 존재하는 이유를 알아보기 위해 가능한 이벤트 실행을 살펴봅시다:
 
-Intuitively, you would assume the following events:
+직관적으로 다음과 같은 이벤트를 가정할 수 있습니다:
 
 1.  User 1 loads the product page with count of 13
 2.  User 1 saves the product page with count of 14
 3.  User 2 loads the product page with count of 14
 4.  User 2 saves the product page with count of 15
 
-While in practice this would happen:
+실제로는 이런 일이 발생할 수 있습니다:
 
 1.  User 1 loads the product page with count of 13
 2.  User 2 loads the product page with count of 13
 3.  User 1 saves the product page with count of 14
 4.  User 2 saves the product page with count of 14
 
-The race conditions would make this an unreliable way to update the existing table since multiple callers may be updating out of date view values.
-There's a better way.
+여러 호출자가 오래된 뷰 값을 업데이트할 수 있으므로 경쟁 조건은 기존 테이블을 업데이트하는 신뢰할 수 없는 방법이 될 수 있습니다.
+더 좋은 방법이 있습니다.
 
-Let's think of a function that describes what we want to accomplish.
-Here's how we would like to use it:
+우리가 수행하고자 하는 작업을 설명하는 함수를 생각해 봅시다.
+이 함수를 사용하는 방법은 다음과 같습니다:
 
 ```perl Elixir
 product = Catalog.inc_page_views(product)
 ```
 
-That looks great.
-Our callers will have no confusion over what this function does, and we can wrap up the increment in an atomic operation to prevent race conditions.
+멋져 보입니다.
+호출자는 이 함수가 수행하는 작업에 대해 혼동할 필요가 없으며, 경쟁 조건을 방지하기 위해 원자 연산으로 증분을 마무리할 수 있습니다.
 
-Open up your catalog context (`lib/hello/catalog.ex`), and add this new function:
+카탈로그 컨텍스트(`lib/hello/catalog.ex`)를 열고 이 새 함수를 추가합니다:
 
 ```perl Elixir
   def inc_page_views(%Product{} = product) do
@@ -377,13 +377,13 @@ Open up your catalog context (`lib/hello/catalog.ex`), and add this new function
   end
 ```
 
-We built a query for fetching the current product given its ID which we pass to `Repo.update_all`.
-Ecto's `Repo.update_all` allows us to perform batch updates against the database, and is perfect for atomically updating values, such as incrementing our views count.
-The result of the repo operation returns the number of updated records, along with the selected schema values specified by the `select` option.
-When we receive the new product views, we use `put_in(product.views, views)` to place the new view count within the product struct.
+ID가 주어진 현재 제품을 가져오는 쿼리를 작성하여 `Repo.update_all`에 전달합니다.
+Ecto의 `Repo.update_all`을 사용하면 데이터베이스에 대한 일괄 업데이트를 수행할 수 있으며, 조회 수 증가와 같이 값을 원자적으로 업데이트하는 데 적합합니다.
+리포지토리 작업의 결과는 `select` 옵션으로 지정된 선택된 스키마 값과 함께 업데이트된 레코드 수를 반환합니다.
+새 제품 보기를 받으면 `put_in(product.views, views)`을 사용하여 제품 구조체 내에 새 보기 수를 배치합니다.
 
-With our context function in place, let's make use of it in our product controller.
-Update your `show` action in `lib/hello_web/controllers/product_controller.ex` to call our new function:
+컨텍스트 함수가 준비되었으므로 이제 제품 컨트롤러에서 이를 활용해 보겠습니다.
+`lib/hello_web/controllers/product_controller.ex`에서 `show` 액션을 업데이트하여 새 함수를 호출합니다:
 
 ```perl Elixir
   def show(conn, %{"id" => id}) do
@@ -396,37 +396,37 @@ Update your `show` action in `lib/hello_web/controllers/product_controller.ex` t
   end
 ```
 
-We modified our `show` action to pipe our fetched product into `Catalog.inc_page_views/1`, which will return the updated product.
-Then we rendered our template just as before.
-Let's try it out.
-Refresh one of your product pages a few times and watch the view count increase.
+`show` 액션을 수정하여 가져온 제품을 업데이트된 제품을 반환하는 `Catalog.inc_page_views/1`로 파이프했습니다.
+그런 다음 이전과 마찬가지로 템플릿을 렌더링했습니다.
+한 번 해보겠습니다.
+제품 페이지 중 하나를 몇 번 새로고침하고 조회 수가 증가하는 것을 확인합니다.
 
-We can also see our atomic update in action in the ecto debug logs:
+또한 ecto 디버그 로그에서 원자 업데이트가 작동하는 것을 확인할 수 있습니다:
 
 ```shell
 [debug] QUERY OK source="products" db=0.5ms idle=834.5ms
 UPDATE "products" AS p0 SET "views" = p0."views" + $1 WHERE (p0."id" = $2) RETURNING p0."views" [1, 1]
 ```
 
-Good work!
+잘했어요 짝짝짝!
 
-As we've seen, designing with contexts gives you a solid foundation to grow your application from.
-Using discrete, well-defined APIs that expose the intent of your system allows you to write more maintainable applications with reusable code.
-Now that we know how to start extending our context API, lets explore handling relationships within a context.
+지금까지 살펴본 바와 같이 컨텍스트를 사용한 디자인은 애플리케이션을 성장시킬 수 있는 견고한 토대를 제공합니다.
+시스템의 의도를 노출하는 개별적이고 잘 정의된 API를 사용하면 재사용 가능한 코드로 더 유지 관리하기 쉬운 애플리케이션을 작성할 수 있습니다.
+이제 컨텍스트 API 확장을 시작하는 방법을 알았으니 컨텍스트 내에서 관계를 처리하는 방법을 살펴보겠습니다.
 
 ## In-context Relationships
 
-Our basic catalog features are nice, but let's take it up a notch by categorizing products.
-Many ecommerce solutions allow products to be categorized in different ways, such as a product being marked for fashion, power tools, and so on.
-Starting with a one-to-one relationship between product and categories will cause major code changes later if we need to start supporting multiple categories.
-Let's set up a category association that will allow us to start off tracking a single category per product, but easily support more later as we grow our features.
+기본 카탈로그 기능도 훌륭하지만 제품을 분류하여 한 단계 더 발전시켜 보겠습니다.
+많은 전자상거래 솔루션에서는 제품을 패션, 전동 공구 등으로 표시하는 등 다양한 방식으로 제품을 분류할 수 있습니다.
+제품과 카테고리 간의 일대일 관계로 시작하면 나중에 여러 카테고리를 지원해야 하는 경우 코드를 크게 변경해야 합니다.
+제품당 하나의 카테고리를 추적하는 것으로 시작하지만 나중에 기능을 확장하면서 더 많은 카테고리를 쉽게 지원할 수 있는 카테고리 연결을 설정해 보겠습니다.
 
-For now, categories will contain only textual information.
-Our first order of business is to decide where categories live in the application.
-We have our `Catalog` context, which manages the exhibition of our products.
-Product categorization is a natural fit here.
-Phoenix is also smart enough to generate code inside an existing context, which makes adding new resources to a context a breeze.
-Run the following command at your project root:
+지금은 카테고리에는 텍스트 정보만 포함됩니다.
+가장 먼저 해야 할 일은 애플리케이션에서 카테고리의 위치를 결정하는 것입니다.
+저희는 제품 전시를 관리하는 `Catalog` 컨텍스트가 있습니다.
+제품 분류는 여기에 자연스럽게 적합합니다.
+또한 Phoenix는 기존 컨텍스트 내에서 코드를 생성할 수 있을 정도로 똑똑하기 때문에 컨텍스트에 새로운 리소스를 쉽게 추가할 수 있습니다.
+프로젝트 루트에서 다음 명령을 실행하세요:
 
 > Sometimes it may be tricky to determine if two resources belong to the same context or not.
 > In those cases, prefer distinct contexts per resource and refactor later if necessary.
@@ -438,27 +438,27 @@ Run the following command at your project root:
 $ mix phx.gen.context Catalog Category categories \
 title:string:unique
 
-You are generating into an existing context.
+기존 컨텍스트에서 생성 중입니다.
 ...
-Would you like to proceed? [Yn] y
+계속 진행하시겠습니까? [Yn] y
 * creating lib/hello/catalog/category.ex
 * creating priv/repo/migrations/20210203192325_create_categories.exs
 * injecting lib/hello/catalog.ex
 * injecting test/hello/catalog_test.exs
 * injecting test/support/fixtures/catalog_fixtures.ex
 
-Remember to update your repository by running migrations:
+마이그레이션을 실행하여 리포지토리를 업데이트하는 것을 잊지 마세요:
 
     $ mix ecto.migrate
 ```
 
-This time around, we used `mix phx.gen.context`, which is just like `mix phx.gen.html`, except it doesn't generate the web files for us.
-Since we already have controllers and templates for managing products, we can integrate the new category features into our existing web form and product show page.
-We can see we now have a new `Category` schema alongside our product schema at `lib/hello/catalog/category.ex`, and Phoenix told us it was _injecting_ new functions in our existing Catalog context for the category functionality.
-The injected functions will look very familiar to our product functions, with new functions like `create_category`, `list_categories`, and so on.
-Before we migrate up, we need to do a second bit of code generation.
-Our category schema is great for representing an individual category in the system, but we need to support a many-to-many relationship between products and categories.
-Fortunately, ecto allows us to do this simply with a join table, so let's generate that now with the `ecto.gen.migration` command:
+이번에는 웹 파일을 생성하지 않는다는 점을 제외하면 `mix phx.gen.context`를 사용했는데, 이는 `mix phx.gen.html`과 비슷합니다.
+이미 제품 관리를 위한 컨트롤러와 템플릿이 있으므로 새 카테고리 기능을 기존 웹 양식과 제품 쇼 페이지에 통합할 수 있습니다.
+이제 제품 스키마와 함께 새로운 `Category` 스키마가 `lib/hello/catalog/category.ex`에 있는 것을 볼 수 있으며, Phoenix는 카테고리 기능을 위해 기존 카탈로그 컨텍스트에 새로운 함수를 _injecting_ 한다고 알려주었습니다.
+삽입된 함수는 제품 함수와 매우 유사하며, `create_category`, `list_categories` 등과 같은 새로운 함수가 포함되어 있습니다.
+마이그레이션하기 전에 두 번째 코드 생성을 수행해야 합니다.
+카테고리 스키마는 시스템에서 개별 카테고리를 표현하는 데는 훌륭하지만, 제품과 카테고리 간의 다대다 관계를 지원해야 합니다.
+다행히도 ecto를 사용하면 조인 테이블을 사용하여 간단히 이 작업을 수행할 수 있으므로 이제 `ecto.gen.migration` 명령을 사용하여 생성해 보겠습니다:
 
 ```shell
 mix ecto.gen.migration create_product_categories
@@ -466,7 +466,7 @@ mix ecto.gen.migration create_product_categories
 * creating priv/repo/migrations/20210203192958_create_product_categories.exs
 ```
 
-Next, let's open up the new migration file and add the following code to the `change` function:
+다음으로, 새 마이그레이션 파일을 열고 `change` 함수에 다음 코드를 추가합니다:
 
 ```perl Elixir
 
@@ -485,15 +485,15 @@ defmodule Hello.Repo.Migrations.CreateProductCategories do
 end
 ```
 
-We created a `product_categories` table and used the `primary_key: false` option since our join table does not need a primary key.
-Next we defined our `:product_id` and `:category_id` foreign key fields, and passed `on_delete: :delete_all` to ensure the database prunes our join table records if a linked product or category is deleted.
-By using a database constraint, we enforce data integrity at the database level, rather than relying on ad-hoc and error-prone application logic.
+조인 테이블에 기본 키가 필요하지 않으므로 `product_categories` 테이블을 만들고 `primary_key: false` 옵션을 사용했습니다.
+다음으로 `:product_id` 및 `:category_id` 외래 키 필드를 정의하고, 연결된 제품 또는 카테고리가 삭제될 경우 데이터베이스가 조인 테이블 레코드를 정리하도록 `on_delete: :delete_all`을 전달했습니다.
+데이터베이스 제약 조건을 사용하면 오류가 발생하기 쉬운 임시 애플리케이션 로직에 의존하지 않고 데이터베이스 수준에서 데이터 무결성을 강화할 수 있습니다.
 
-Next, we created indexes for our foreign keys, one of which is a unique index to ensure a product cannot have duplicate categories.
-Note that we do not necessarily need single-column index for `category_id` because it is in the leftmost prefix of multicolumn index, which is enough for the database optimizer.
-Adding a redundant index, on the other hand, only adds overhead on write.
+다음으로, 외래 키에 대한 인덱스를 만들었는데, 그 중 하나는 고유 인덱스로서 제품이 중복된 카테고리를 가질 수 없도록 보장합니다.
+`category_id`는 다중 열 인덱스의 가장 왼쪽 접두사에 있기 때문에 데이터베이스 최적화 프로그램에서 단일 열 인덱스가 반드시 필요한 것은 아닙니다.
+반면에 중복 인덱스를 추가하면 쓰기 오버헤드만 추가됩니다.
 
-With our migrations in place, we can migrate up.
+마이그레이션이 준비되었으므로 이제 마이그레이션할 수 있습니다.
 
 ```shell
 mix ecto.migrate
@@ -517,10 +517,10 @@ mix ecto.migrate
 18:20:36.562 [info] == Migrated 20210222231930 in 0.0s
 ```
 
-Now that we have a `Catalog.Product` schema and a join table to associate products and categories, we're nearly ready to start wiring up our new features.
-Before we dive in, we first need real categories to select in our web UI.
-Let's quickly seed some new categories in the application.
-Add the following code to your seeds file in `priv/repo/seeds.exs`:
+이제 제품과 카테고리를 연결하기 위한 `Catalog.Product` 스키마와 조인 테이블이 생겼으므로 새 기능을 연결할 준비가 거의 완료되었습니다.
+본격적으로 시작하기 전에 먼저 웹 UI에서 선택할 실제 카테고리가 필요합니다.
+애플리케이션에 몇 가지 새로운 카테고리를 빠르게 시딩해 보겠습니다.
+`priv/repo/seeds.exs`의 시드 파일에 다음 코드를 추가합니다:
 
 ```perl Elixir
 for title <- ["Home Improvement", "Power Tools", "Gardening", "Books", "Education"] do
@@ -528,8 +528,8 @@ for title <- ["Home Improvement", "Power Tools", "Gardening", "Books", "Educatio
 end
 ```
 
-We simply enumerate over a list of category titles and use the generated `create_category/1` function of our catalog context to persist the new records.
-We can run the seeds with `mix run`:
+카테고리 제목 목록을 열거하고 카탈로그 컨텍스트의 생성된 `create_category/1` 함수를 사용하여 새 레코드를 유지합니다.
+`mix run`으로 시드를 실행할 수 있습니다:
 
 ```shell
 mix run priv/repo/seeds.exs
@@ -544,9 +544,9 @@ INSERT INTO "categories" ("title","inserted_at","updated_at") VALUES ($1,$2,$3) 
 INSERT INTO "categories" ("title","inserted_at","updated_at") VALUES ($1,$2,$3) RETURNING "id" ["Books", ~N[2021-02-03 19:39:53], ~N[2021-02-03 19:39:53]]
 ```
 
-Perfect.
-Before we integrate categories in the web layer, we need to let our context know how to associate products and categories.
-First, open up `lib/hello/catalog/product.ex` and add the following association:
+완벽합니다.
+웹 레이어에서 카테고리를 통합하기 전에 컨텍스트에 제품과 카테고리를 연결하는 방법을 알려야 합니다.
+먼저 `lib/hello/catalog/product.ex`를 열고 다음 연관을 추가합니다:
 
 ```diff
 + alias Hello.Catalog.Category
@@ -564,13 +564,13 @@ First, open up `lib/hello/catalog/product.ex` and add the following association:
 
 ```
 
-We used `Ecto.Schema`'s `many_to_many` macro to let Ecto know how to associate our product to multiple categories through the `"product_categories"` join table.
-We also used the `on_replace: :delete` option to declare that any existing join records should be deleted when we are changing our categories.
+`Ecto.Schema`의 `many_to_many` 매크로를 사용하여 `"product_categories"` 조인 테이블을 통해 제품을 여러 범주에 연결하는 방법을 Ecto에 알렸습니다.
+또한 `on_replace: :delete` 옵션을 사용하여 카테고리를 변경할 때 기존 조인 레코드가 삭제되어야 함을 선언했습니다.
 
-With our schema associations set up, we can implement the selection of categories in our product form.
-To do so, we need to translate the user input of catalog IDs from the front-end to our many-to-many association.
-Fortunately Ecto makes this a breeze now that our schema is set up.
-Open up your catalog context and make the following changes:
+스키마 연결이 설정되었으므로 이제 제품 양식에서 카테고리 선택을 구현할 수 있습니다.
+그러기 위해서는 프론트엔드에서 카탈로그 ID의 사용자 입력을 다대다 연결로 변환해야 합니다.
+다행히 Ecto를 사용하면 스키마가 설정되었으므로 이 작업이 매우 간편합니다.
+카탈로그 컨텍스트를 열고 다음과 같이 변경합니다:
 
 ```diff
 + alias Hello.Catalog.Category
@@ -610,17 +610,17 @@ Open up your catalog context and make the following changes:
 + end
 ```
 
-First, we added `Repo.preload` to preload our categories when we fetch a product.
-This will allow us to reference `product.categories` in our controllers, templates, and anywhere else we want to make use of category information.
-Next, we modified our `create_product` and `update_product` functions to call into our existing `change_product` function to produce a changeset.
-Within `change_product` we added a lookup to find all categories if the `"category_ids"` attribute is present.
-Then we preloaded categories and called `Ecto.Changeset.put_assoc` to place the fetched categories into the changeset.
-Finally, we implemented the `list_categories_by_id/1` function to query the categories matching the category IDs, or return an empty list if no `"category_ids"` attribute is present.
-Now our `create_product` and `update_product` functions receive a changeset with the category associations all ready to go once we attempt an insert or update against our repo.
+먼저, 제품을 가져올 때 카테고리를 미리 로드하기 위해 `Repo.preload`를 추가했습니다.
+이렇게 하면 컨트롤러, 템플릿 및 카테고리 정보를 사용하려는 다른 모든 곳에서 `product.categories`를 참조할 수 있습니다.
+다음으로, 기존 `change_product` 함수를 호출하여 변경 집합을 생성하도록 `create_product` 및 `update_product` 함수를 수정했습니다.
+`change_product` 내에 `"category_ids"` 속성이 있는 경우 모든 카테고리를 찾을 수 있는 조회를 추가했습니다.
+그런 다음 카테고리를 미리 로드하고 `Ecto.Changeset.put_assoc`을 호출하여 가져온 카테고리를 변경 집합에 배치했습니다.
+마지막으로 `list_categories_by_id/1` 함수를 구현하여 카테고리 ID와 일치하는 카테고리를 쿼리하거나 `"category_ids"` 속성이 없는 경우 빈 목록을 반환합니다.
+이제 `create_product` 및 `update_product` 함수는 리포지토리에 대한 삽입 또는 업데이트를 시도하면 카테고리 연결이 모두 준비된 변경 집합을 받습니다.
 
-Next, let's expose our new feature to the web by adding the category input to our product form.
-To keep our form template tidy, let's write a new function to wrap up the details of rendering a category select input for our product.
-Open up your `ProductHTML` view in `lib/hello_web/controllers/product_html.ex` and key this in:
+다음으로, 제품 양식에 카테고리 입력을 추가하여 새 기능을 웹에 노출해 보겠습니다.
+양식 템플릿을 깔끔하게 유지하기 위해 제품에 대한 카테고리 선택 입력을 렌더링하는 세부 사항을 마무리하는 새 함수를 작성해 보겠습니다.
+`lib/hello_web/controllers/product_html.ex`에서 `ProductHTML` 뷰를 열고 이 값을 입력합니다:
 
 ```perl Elixir
   def category_opts(changeset) do
@@ -634,12 +634,12 @@ Open up your `ProductHTML` view in `lib/hello_web/controllers/product_html.ex` a
   end
 ```
 
-We added a new `category_opts/1` function which generates the select options for a multiple select tag we will add soon.
-We calculated the existing category IDs from our changeset, then used those values when we generate the select options for the input tag.
-We did this by enumerating over all of our categories and returning the appropriate `key`, `value`, and `selected` values.
-We marked an option as selected if the category ID was found in those category IDs in our changeset.
+곧 추가할 다중 선택 태그에 대한 선택 옵션을 생성하는 새로운 `category_opts/1` 함수를 추가했습니다.
+변경 집합에서 기존 카테고리 ID를 계산한 다음 입력 태그의 선택 옵션을 생성할 때 해당 값을 사용했습니다.
+이를 위해 모든 카테고리를 열거하고 적절한 'key', 'value' 및 'selected' 값을 반환하는 방식으로 수행했습니다.
+변경 집합의 카테고리 ID에서 해당 카테고리 ID가 발견되면 옵션을 선택된 것으로 표시했습니다.
 
-With our `category_opts` function in place, we can open up `lib/hello_web/controllers/product_html/product_form.html.heex` and add:
+`category_opts` 함수가 준비되었으므로 `lib/hello_web/controllers/product_html/product_form.html.heex`를 열고 추가할 수 있습니다:
 
 ```diff
   ...
@@ -652,10 +652,10 @@ With our `category_opts` function in place, we can open up `lib/hello_web/contro
   </:actions>
 ```
 
-We added a `category_select` above our save button.
-Now let's try it out.
-Next, let's show the product's categories in the product show template.
-Add the following code to the list in `lib/hello_web/controllers/product_html/show.html.heex`:
+저장 버튼 위에 `category_select`를 추가했습니다.
+이제 사용해 봅시다.
+다음으로 제품 표시 템플릿에서 제품의 카테고리를 표시해 보겠습니다.
+`lib/hello_web/controllers/product_html/show.html.heex`의 목록에 다음 코드를 추가합니다:
 
 ```perl HEEx
 <.list>
@@ -669,46 +669,46 @@ Add the following code to the list in `lib/hello_web/controllers/product_html/sh
 </.list>
 ```
 
-Now if we start the server with `mix phx.server` and visit [http://localhost:4000/products/new](http://localhost:4000/products/new), we'll see the new category multiple select input.
-Enter some valid product details, select a category or two, and click save.
+이제 `mix phx.server`로 서버를 시작하고 [http://localhost:4000/products/new](http://localhost:4000/products/new)를 방문하면 새 카테고리 다중 선택 입력란이 표시됩니다.
+유효한 제품 세부 정보를 입력하고 카테고리를 한두 개 선택한 다음 저장을 클릭합니다.
 
 ```shell
-Title: Elixir Flashcards
-Description: Flash card set for the Elixir programming language
-Price: 5.000000
-Views: 0
-Categories:
-Education
-Books
+제목: 엘릭서 플래시카드
+설명: 엘릭서 프로그래밍 언어용 플래시 카드 세트입니다.
+가격: 5.000000
+조회 수 0
+카테고리:
+교육
+도서
 ```
 
-It's not much to look at yet, but it works! We added relationships within our context complete with data integrity enforced by the database.
-Not bad.
-Let's keep building!
+아직 보기에는 별거 아니지만 작동합니다! 데이터베이스에 의해 강화된 데이터 무결성을 갖춘 컨텍스트 내 관계를 추가했습니다.
+나쁘지 않네요.
+계속 구축해 봅시다!
 
 ## Cross-context dependencies
 
-Now that we have the beginnings of our product catalog features, let's begin to work on the other main features of our application – carting products from the catalog.
-In order to properly track products that have been added to a user's cart, we'll need a new place to persist this information, along with point-in-time product information like the price at time of carting.
-This is necessary so we can detect product price changes in the future.
-We know what we need to build, but now we need to decide where the cart functionality lives in our application.
+이제 제품 카탈로그 기능의 시작을 알았으니 애플리케이션의 다른 주요 기능인 카탈로그에서 제품을 카트화하는 작업을 시작해 보겠습니다.
+사용자의 카트에 추가된 제품을 제대로 추적하려면 카트 시점의 가격과 같은 특정 시점의 제품 정보와 함께 이 정보를 유지할 새로운 공간이 필요합니다.
+이는 향후 제품 가격 변화를 감지하기 위해 필요합니다.
+무엇을 구축해야 하는지 알았으니 이제 애플리케이션에서 카트 기능을 어디에 배치할지 결정해야 합니다.
 
-If we take a step back and think about the isolation of our application, the exhibition of products in our catalog distinctly differs from the responsibilities of managing a user's cart.
-A product catalog shouldn't care about the rules of our shopping cart system, and vice-versa.
-There's a clear need here for a separate context to handle the new cart responsibilities.
-Let's call it `ShoppingCart`.
+한 걸음 물러서서 애플리케이션의 고립성에 대해 생각해 보면 카탈로그의 제품 전시와 사용자의 카트 관리는 분명히 다릅니다.
+제품 카탈로그는 장바구니 시스템의 규칙을 신경 쓰지 않아야 하며, 그 반대의 경우도 마찬가지입니다.
+따라서 새로운 카트 책임을 처리하기 위한 별도의 컨텍스트가 분명히 필요합니다.
+이를 `ShoppingCart`라고 부르겠습니다.
 
-Let's create a `ShoppingCart` context to handle basic cart duties.
-Before we write code, let's imagine we have the following feature requirements:
+기본적인 카트 업무를 처리할 `ShoppingCart` 컨텍스트를 만들어 보겠습니다.
+코드를 작성하기 전에 다음과 같은 기능 요구 사항이 있다고 가정해 보겠습니다:
 
 1.  Add products to a user's cart from the product show page
 2.  Store point-in-time product price information at time of carting
 3.  Store and update quantities in cart
 4.  Calculate and display sum of cart prices
 
-From the description, it's clear we need a `Cart` resource for storing the user's cart, along with a `CartItem` to track products in the cart.
-With our plan set, let's get to work.
-Run the following command to generate our new context:
+설명을 보면 사용자의 장바구니를 저장하기 위한 `Cart` 리소스와 장바구니의 제품을 추적하기 위한 `CartItem`이 필요하다는 것을 알 수 있습니다.
+계획이 정해졌으니 이제 작업을 시작하겠습니다.
+다음 명령을 실행하여 새 컨텍스트를 생성합니다:
 
 ```shell
 $ mix phx.gen.context ShoppingCart Cart carts user_uuid:uuid:unique
@@ -722,46 +722,46 @@ $ mix phx.gen.context ShoppingCart Cart carts user_uuid:uuid:unique
 * creating test/support/fixtures/shopping_cart_fixtures.ex
 * injecting test/support/fixtures/shopping_cart_fixtures.ex
 
-Some of the generated database columns are unique.
-Please provide unique implementations for the following fixture function(s) in
+생성된 데이터베이스 열 중 일부는 고유합니다.
+다음 고정 함수(들)에 대해 고유한 구현을 제공하세요.
 test/support/fixtures/shopping_cart_fixtures.ex:
 
     def unique_cart_user_uuid do
       raise "implement the logic to generate a unique cart user_uuid"
     end
 
-Remember to update your repository by running migrations:
+마이그레이션을 실행하여 리포지토리를 업데이트하는 것을 잊지 마세요:
 
     $ mix ecto.migrate
 ```
 
-We generated our new context `ShoppingCart`, with a new `ShoppingCart.Cart` schema to tie a user to their cart which holds cart items.
-We don't have real users yet, so for now our cart will be tracked by an anonymous user UUID that we'll add to our plug session in a moment.
-With our cart in place, let's generate our cart items:
+사용자를 카트 항목이 있는 카트에 연결하기 위해 새로운 `ShoppingCart.Cart` 스키마가 포함된 새 컨텍스트 `ShoppingCart`를 생성했습니다.
+아직 실제 사용자가 없으므로 지금은 잠시 후 플러그 세션에 추가할 익명 사용자 UUID로 카트를 추적할 것입니다.
+카트가 준비되었으니 이제 카트 항목을 생성해 보겠습니다:
 
 ```shell
 $ mix phx.gen.context ShoppingCart CartItem cart_items \
 cart_id:references:carts product_id:references:products \
 price_when_carted:decimal quantity:integer
 
-You are generating into an existing context.
+기존 컨텍스트에서 생성하고 있습니다.
 ...
-Would you like to proceed? [Yn] y
+계속 진행하시겠습니까? [Yn] y
 * creating lib/hello/shopping_cart/cart_item.ex
 * creating priv/repo/migrations/20210205213410_create_cart_items.exs
 * injecting lib/hello/shopping_cart.ex
 * injecting test/hello/shopping_cart_test.exs
 * injecting test/support/fixtures/shopping_cart_fixtures.ex
 
-Remember to update your repository by running migrations:
+마이그레이션을 실행하여 리포지토리를 업데이트하는 것을 잊지 마세요:
 
     $ mix ecto.migrate
 
 ```
 
-We generated a new resource inside our `ShoppingCart` named `CartItem`.
-This schema and table will hold references to a cart and product, along with the price at the time we added the item to our cart, and the quantity the user wishes to purchase.
-Let's touch up the generated migration file in `priv/repo/migrations/*_create_cart_items.ex`:
+`ShoppingCart` 내부에 '카트 항목'이라는 새 리소스를 생성했습니다.
+이 스키마와 테이블에는 카트 및 제품에 대한 참조와 함께 카트에 항목을 추가한 시점의 가격 및 사용자가 구매하고자 하는 수량이 포함됩니다.
+생성된 마이그레이션 파일을 `priv/repo/migrations/*_create_cart_items.ex`에서 수정해 보겠습니다:
 
 ```perl Elixir
     create table(:cart_items) do
@@ -781,12 +781,12 @@ Let's touch up the generated migration file in `priv/repo/migrations/*_create_ca
 +   create unique_index(:cart_items, [:cart_id, :product_id])
 ```
 
-We used the `:delete_all` strategy again to enforce data integrity.
-This way, when a cart or product is deleted from the application, we don't have to rely on application code in our `ShoppingCart` or `Catalog` contexts to worry about cleaning up the records.
-This keeps our application code decoupled and the data integrity enforcement where it belongs – in the database.
-We also added a unique constraint to ensure a duplicate product is not allowed to be added to a cart.
-As with the `product_categories` table, using a multi-column index lets us remove the separate index for the leftmost field (`cart-id`).
-With our database tables in place, we can now migrate up:
+데이터 무결성을 강화하기 위해 `:delete_all` 전략을 다시 사용했습니다.
+이렇게 하면 애플리케이션에서 카트나 제품이 삭제될 때 `ShoppingCart` 또는 `Catalog` 컨텍스트의 애플리케이션 코드에 의존하여 레코드 정리를 걱정할 필요가 없습니다.
+이렇게 하면 애플리케이션 코드가 분리되어 있고 데이터 무결성 적용이 데이터베이스의 원래 위치에 유지됩니다.
+또한 고유한 제약 조건을 추가하여 중복된 제품을 카트에 추가할 수 없도록 했습니다.
+`product_categories` 테이블과 마찬가지로 다중 열 인덱스를 사용하면 가장 왼쪽 필드(`cart-id`)에 대한 별도의 인덱스를 제거할 수 있습니다.
+데이터베이스 테이블이 준비되었으므로 이제 마이그레이션할 수 있습니다:
 
 ```shell
 mix ecto.migrate
@@ -812,23 +812,23 @@ mix ecto.migrate
 16:59:52.002 [info] == Migrated 20210205213410 in 0.0s
 ```
 
-Our database is ready to go with new `carts` and `cart_items` tables, but now we need to map that back into application code.
-You may be wondering how we can mix database foreign keys across different tables and how that relates to the context pattern of isolated, grouped functionality.
-Let's jump in and discuss the approaches and their tradeoffs.
+데이터베이스에 새로운 `carts` 및 `cart_items` 테이블을 사용할 준비가 되었지만 이제 이를 애플리케이션 코드에 다시 매핑해야 합니다.
+서로 다른 테이블에서 데이터베이스 외래 키를 혼합하는 방법과 이것이 격리되고 그룹화된 기능의 컨텍스트 패턴과 어떤 관련이 있는지 궁금할 것입니다.
+지금부터 접근 방식과 그 장단점에 대해 논의해 보겠습니다.
 
 ### Cross-context data
 
-So far, we've done a great job isolating the two main contexts of our application from each other, but now we have a necessary dependency to handle.
+지금까지 애플리케이션의 두 가지 주요 컨텍스트를 서로 분리하는 작업을 훌륭하게 수행했지만 이제 처리해야 할 종속성이 생겼습니다.
 
-Our `Catalog.Product` resource serves to keep the responsibilities of representing a product inside the catalog, but ultimately for an item to exist in the cart, a product from the catalog must be present.
-Given this, our `ShoppingCart` context will have a data dependency on the `Catalog` context.
-With that in mind, we have two options.
-One is to expose APIs on the `Catalog` context that allows us to efficiently fetch product data for use in the `ShoppingCart` system, which we would manually stitch together.
-Or we can use database joins to fetch the dependent data.
-Both are valid options given your tradeoffs and application size, but joining data from the database when you have a hard data dependency is just fine for a large class of applications and is the approach we will take here.
+우리의 `Catalog.Product` 리소스는 카탈로그 내에서 제품을 나타내는 역할을 하지만, 궁극적으로 카트에 항목이 존재하려면 카탈로그의 제품이 있어야 합니다.
+이를 감안할 때 `ShoppingCart` 컨텍스트는 `Catalog` 컨텍스트에 대한 데이터 종속성을 갖게 됩니다.
+이를 염두에 두고 두 가지 옵션이 있습니다.
+하나는 `Catalog` 컨텍스트에 API를 노출하여 `ShoppingCart` 시스템에서 사용할 제품 데이터를 효율적으로 가져와서 수동으로 연결할 수 있도록 하는 것입니다.
+또는 데이터베이스 조인을 사용하여 종속 데이터를 가져올 수 있습니다.
+두 가지 방법 모두 장단점과 애플리케이션 규모를 고려할 때 유효한 옵션이지만, 데이터 종속성이 심한 경우 데이터베이스에서 데이터를 조인하는 것이 대규모 애플리케이션에 적합하며 여기서는 이 방법을 사용하겠습니다.
 
-Now that we know where our data dependencies exist, let's add our schema associations so we can tie shopping cart items to products.
-First, let's make a quick change to our cart schema in `lib/hello/shopping_cart/cart.ex` to associate a cart to its items:
+이제 데이터 종속성이 어디에 있는지 알았으니 스키마 연결을 추가하여 장바구니에 있는 항목을 제품에 연결해 보겠습니다.
+먼저 `lib/hello/shopping_cart/cart.ex`에서 카트 스키마를 간단히 변경하여 카트를 해당 항목에 연결해 보겠습니다:
 
 ```perl Elixir
   schema "carts" do
@@ -840,7 +840,7 @@ First, let's make a quick change to our cart schema in `lib/hello/shopping_cart/
   end
 ```
 
-Now that our cart is associated to the items we place in it, let's set up the cart item associations inside `lib/hello/shopping_cart/cart_item.ex`:
+이제 카트가 장바구니에 넣은 품목과 연결되었으므로 `lib/hello/shopping_cart/cart_item.ex`에서 카트 품목 연결을 설정해 보겠습니다:
 
 ```perl Elixir
   schema "cart_items" do
@@ -864,27 +864,27 @@ Now that our cart is associated to the items we place in it, let's set up the ca
   end
 ```
 
-First, we replaced the `cart_id` field with a standard `belongs_to` pointing at our `ShoppingCart.Cart` schema.
-Next, we replaced our `product_id` field by adding our first cross-context data dependency with a `belongs_to` for the `Catalog.Product` schema.
-Here, we intentionally coupled the data boundaries because it provides exactly what we need: an isolated context API with the bare minimum knowledge necessary to reference a product in our system.
-Next, we added a new validation to our changeset.
-With `validate_number/3`, we ensure any quantity provided by user input is between 0 and 100.
+먼저, `cart_id` 필드를 `ShoppingCart.Cart` 스키마를 가리키는 표준 `belongs_to`로 대체했습니다.
+다음으로, 첫 번째 교차 컨텍스트 데이터 종속성을 `Catalog.Product` 스키마에 대한 `belongs_to`로 추가하여 `product_id` 필드를 대체했습니다.
+여기서 의도적으로 데이터 경계를 연결한 이유는 시스템에서 제품을 참조하는 데 필요한 최소한의 지식만 있으면 격리된 컨텍스트 API를 정확히 제공할 수 있기 때문입니다.
+다음으로, 변경 집합에 새로운 유효성 검사를 추가했습니다.
+`validate_number/3`을 사용하여 사용자 입력에 의해 제공된 수량이 0에서 100 사이인지 확인합니다.
 
-With our schemas in place, we can start integrating the new data structures and `ShoppingCart` context APIs into our web-facing features.
+스키마가 준비되었으므로 새로운 데이터 구조와 `ShoppingCart` 컨텍스트 API를 웹 대면 기능에 통합할 수 있습니다.
 
 ### Adding Shopping Cart functions
 
-As we mentioned before, the context generators are only a starting point for our application.
-We can and should write well-named, purpose built functions to accomplish the goals of our context.
-We have a few new features to implement.
-First, we need to ensure every user of our application is granted a cart if one does not yet exist.
-From there, we can then allow users to add items to their cart, update item quantities, and calculate cart totals.
-Let's get started!
+앞서 언급했듯이 컨텍스트 생성기는 애플리케이션의 시작점일 뿐입니다.
+우리는 컨텍스트의 목표를 달성하기 위해 잘 명명된 목적에 맞는 함수를 작성할 수 있고 작성해야 합니다.
+구현해야 할 몇 가지 새로운 기능이 있습니다.
+먼저, 애플리케이션의 모든 사용자에게 아직 카트가 없는 경우 카트가 부여되도록 해야 합니다.
+그런 다음 사용자가 카트에 항목을 추가하고, 항목 수량을 업데이트하고, 카트 총액을 계산할 수 있도록 허용할 수 있습니다.
+이제 시작해보겠습니다!
 
-We won't focus on a real user authentication system at this point, but by the time we're done, you'll be able to naturally integrate one with what we've written here.
-To simulate a current user session, open up your `lib/hello_web/router.ex` and key this in:
+지금은 실제 사용자 인증 시스템에 초점을 맞추지 않겠지만, 이 과정이 끝나면 여기에서 작성한 내용을 자연스럽게 통합할 수 있을 것입니다.
+현재 사용자 세션을 시뮬레이션하려면 `lib/hello_web/router.ex`를 열고 이 값을 입력합니다:
 
-```perl Elixir
+```diff Elixir
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -920,17 +920,17 @@ To simulate a current user session, open up your `lib/hello_web/router.ex` and k
 + end
 ```
 
-We added a new `:fetch_current_user` and `:fetch_current_cart` plug to our browser pipeline to run on all browser-based requests.
-Next, we implemented the `fetch_current_user` plug which simply checks the session for a user UUID that was previously added.
-If we find one, we add a `current_uuid` assign to the connection and we're done.
-In the case we haven't yet identified this visitor, we generate a unique UUID with `Ecto.UUID.generate()`, then we place that value in the `current_uuid` assign, along with a new session value to identify this visitor on future requests.
-A random, unique ID isn't much to represent a user, but it's enough for us to track and identify a visitor across requests, which is all we need for now.
-Later as our application becomes more complete, you'll be ready to migrate to a complete user authentication solution.
-With a guaranteed current user, we then implemented the `fetch_current_cart` plug which either finds a cart for the user UUID or creates a cart for the current user and assigns the result in the connection assigns.
-We'll need to implement our `ShoppingCart.get_cart_by_user_uuid/1` and modify the create cart function to accept a UUID, but let's add our routes first.
+모든 브라우저 기반 요청에서 실행되도록 브라우저 파이프라인에 새로운 `:fetch_current_user` 및 `:fetch_current_cart` 플러그를 추가했습니다.
+다음으로, 세션에서 이전에 추가한 사용자 UUID가 있는지 간단히 확인하는 `fetch_current_user` 플러그를 구현했습니다.
+이를 찾으면 연결에 `current_uuid` 할당을 추가하면 완료됩니다.
+아직 이 방문자를 식별하지 못한 경우 `Ecto.UUID.generate()`로 고유 UUID를 생성한 다음, 이 값을 새 세션 값과 함께 `current_uuid` 할당에 배치하여 향후 요청에서 이 방문자를 식별합니다.
+임의의 고유 ID는 사용자를 대표하기에는 부족하지만, 여러 요청에서 방문자를 추적하고 식별하는 데는 충분하므로 현재로서는 이 정도면 충분합니다.
+나중에 애플리케이션이 더 완성되면 완전한 사용자 인증 솔루션으로 마이그레이션할 수 있습니다.
+현재 사용자가 보장된 상태에서 사용자 UUID에 대한 장바구니를 찾거나 현재 사용자에 대한 장바구니를 생성하고 그 결과를 연결 할당에 할당하는 `fetch_current_cart` 플러그를 구현했습니다.
+`ShoppingCart.get_cart_by_user_uuid/1`을 구현하고 카트 생성 함수를 수정하여 UUID를 받도록 해야 하지만 먼저 경로를 추가해 보겠습니다.
 
-We'll need to implement a cart controller for handling cart operations like viewing a cart, updating quantities, and initiating the checkout process, as well as a cart items controller for adding and removing individual items to and from the cart.
-Add the following routes to your router in `lib/hello_web/router.ex`:
+카트 보기, 수량 업데이트, 결제 프로세스 시작과 같은 카트 작업을 처리하기 위한 카트 컨트롤러와 카트에 개별 품목을 추가 및 제거하기 위한 카트 품목 컨트롤러를 구현해야 합니다.
+`lib/hello_web/router.ex`에서 라우터에 다음 경로를 추가합니다:
 
 ```diff
   scope "/", HelloWeb do
@@ -946,13 +946,13 @@ Add the following routes to your router in `lib/hello_web/router.ex`:
   end
 ```
 
-We added a `resources` declaration for a `CartItemController`, which will wire up the routes for a create and delete action for adding and removing individual cart items.
-Next, we added two new routes pointing at a `CartController`.
-The first route, a GET request, will map to our show action, to show the cart contents.
-The second route, a PUT request, will handle the submission of a form for updating our cart quantities.
+카트 아이템 컨트롤러`에 대한 `resources` 선언을 추가하여 개별 카트 아이템의 추가 및 제거를 위한 생성 및 삭제 작업의 경로를 연결합니다.
+다음으로 `CartController`를 가리키는 두 개의 새 경로를 추가했습니다.
+첫 번째 경로인 GET 요청은 카트 콘텐츠를 표시하기 위해 show 액션에 매핑됩니다.
+두 번째 경로인 PUT 요청은 카트 수량을 업데이트하기 위한 양식 제출을 처리합니다.
 
-With our routes in place, let's add the ability to add an item to our cart from the product show page.
-Create a new file at `lib/hello_web/controllers/cart_item_controller.ex` and key this in:
+경로가 준비되었으므로 제품 표시 페이지에서 카트에 상품을 추가하는 기능을 추가해 보겠습니다.
+`lib/hello_web/controllers/cart_item_controller.ex`에 새 파일을 생성하고 이 파일을 입력합니다:
 
 ```perl Elixir
 defmodule HelloWeb.CartItemController do
@@ -981,14 +981,14 @@ defmodule HelloWeb.CartItemController do
 end
 ```
 
-We defined a new `CartItemController` with the create and delete actions that we declared in our router.
-For `create`, we call a `ShoppingCart.add_item_to_cart/2` function which we'll implement in a moment.
-If successful, we show a flash successful message and redirect to the cart show page; else, we show a flash error message and redirect to the cart show page.
-For `delete`, we'll call a `remove_item_from_cart` function which we'll implement on our `ShoppingCart` context and then redirect back to the cart show page.
-We haven't implemented these two shopping cart functions yet, but notice how their names scream their intent: `add_item_to_cart` and `remove_item_from_cart` make it obvious what we are accomplishing here.
-It also allows us to spec out our web layer and context APIs without thinking about all the implementation details at once.
+라우터에서 선언한 생성 및 삭제 액션을 사용하여 새로운 `CartItemController`를 정의했습니다.
+`create`의 경우, 잠시 후에 구현할 `ShoppingCart.add_item_to_cart/2` 함수를 호출합니다.
+성공하면 플래시 성공 메시지를 표시하고 카트 표시 페이지로 리디렉션하고, 그렇지 않으면 플래시 오류 메시지를 표시하고 카트 표시 페이지로 리디렉션합니다.
+`delete`의 경우 `ShoppingCart` 컨텍스트에서 구현할 `remove_item_from_cart` 함수를 호출한 다음 카트 표시 페이지로 다시 리디렉션합니다.
+이 두 가지 쇼핑 카트 함수는 아직 구현하지 않았지만 이름에서 그 의도를 알 수 있습니다: 장바구니에 항목 추가`와 `카트에서 항목 제거`는 여기서 수행하려는 작업이 무엇인지 명확하게 보여줍니다.
+또한 모든 구현 세부 사항을 한꺼번에 생각하지 않고도 웹 계층과 컨텍스트 API를 지정할 수 있습니다.
 
-Let's implement the new interface for the `ShoppingCart` context API in `lib/hello/shopping_cart.ex`:
+이제 `lib/hello/shopping_cart.ex`에서 `ShoppingCart` 컨텍스트 API를 위한 새로운 인터페이스를 구현해 보겠습니다:
 
 ```perl Elixir
 +  alias Hello.Catalog
@@ -1048,21 +1048,21 @@ Let's implement the new interface for the `ShoppingCart` context API in `lib/hel
 +  end
 ```
 
-We started by implementing `get_cart_by_user_uuid/1` which fetches our cart and joins the cart items, and their products so that we have the full cart populated with all preloaded data.
-Next, we modified our `create_cart` function to accept a user UUID instead of attributes, which we used to populate the `user_uuid` field.
-If the insert is successful, we reload the cart contents by calling a private `reload_cart/1` function, which simply calls `get_cart_by_user_uuid/1` to refetch data.
+먼저 카트를 가져오고 카트 항목과 해당 제품을 결합하여 전체 카트가 미리 로드된 모든 데이터로 채워지도록 하는 `get_cart_by_user_uuid/1`을 구현했습니다.
+다음으로, `create_cart` 함수를 수정하여 속성 대신 사용자 UUID를 받아들이고 이를 `user_uuid` 필드를 채우는 데 사용했습니다.
+삽입에 성공하면 비공개 `reload_cart/1` 함수를 호출하여 카트 콘텐츠를 다시 로드하고, 이 함수는 `get_cart_by_user_uuid/1`을 호출하여 데이터를 다시 가져옵니다.
 
-Next, we wrote our new `add_item_to_cart/2` function which accepts a cart struct and a product id.
-We proceed to fetch the product with `Catalog.get_product!/1`, showing how contexts can naturally invoke other contexts if required.
-You could also have chosen to receive the product as argument and you would achieve similar results.
-Then we used an upsert operation against our repo to either insert a new cart item into the database, or increase the quantity by one if it already exists in the cart.
-This is accomplished via the `on_conflict` and `conflict_target` options, which tells our repo how to handle an insert conflict.
+다음으로, 카트 구조체와 제품 ID를 받는 새로운 `add_item_to_cart/2` 함수를 작성했습니다.
+카탈로그.get_product!/1`로 제품을 가져와서 필요한 경우 컨텍스트가 다른 컨텍스트를 자연스럽게 호출할 수 있는 방법을 보여줍니다.
+제품을 인수로 받도록 선택해도 비슷한 결과를 얻을 수 있습니다.
+그런 다음 저장소에 대한 업서트 작업을 사용하여 데이터베이스에 새 카트 항목을 삽입하거나 카트에 이미 있는 경우 수량을 하나씩 늘렸습니다.
+이 작업은 `on_conflict` 및 `conflict_target` 옵션을 통해 수행되며, 이는 삽입 충돌을 처리하는 방법을 레포에 알려줍니다.
 
-Finally, we implemented `remove_item_from_cart/2` where we simply issue a `Repo.delete_all` call with a query to delete the cart item in our cart that matches the product ID.
-Finally, we reload the cart contents by calling `reload_cart/1`.
+마지막으로, 제품 ID와 일치하는 카트 내 카트 항목을 삭제하는 쿼리와 함께 `Repo.delete_all` 호출을 실행하는 `remove_item_from_cart/2`를 구현했습니다.
+마지막으로 `reload_cart/1`을 호출하여 카트 콘텐츠를 다시 로드합니다.
 
-With our new cart functions in place, we can now expose the "Add to cart" button on the product catalog show page.
-Open up your template in `lib/hello_web/controllers/product_html/show.html.heex` and make the following changes:
+새로운 카트 함수가 적용되었으므로 이제 제품 카탈로그 쇼 페이지에 '카트에 추가' 버튼을 노출할 수 있습니다.
+`lib/hello_web/controllers/product_html/show.html.heex`에서 템플릿을 열고 다음과 같이 변경합니다:
 
 ```diff
 ...
@@ -1075,12 +1075,12 @@ Open up your template in `lib/hello_web/controllers/product_html/show.html.heex`
 ...
 ```
 
-The `link` function component from `Phoenix.Component` accepts a `:method` attribute to issue an HTTP verb when clicked, instead of the default GET request.
-With this link in place, the "Add to cart" link will issue a POST request, which will be matched by the route we defined in router which dispatches to the `CartItemController.create/2` function.
+`Phoenix.Component`의 `link` 함수 컴포넌트는 기본 GET 요청 대신 클릭 시 HTTP 동사를 발행하는 `:method` 속성을 허용합니다.
+이 링크를 사용하면 "장바구니에 추가" 링크가 POST 요청을 발행하고, 이 요청은 라우터에서 정의한 경로와 일치하여 `CartItemController.create/2` 함수로 디스패치됩니다.
 
-Let's try it out.
-Start your server with `mix phx.server` and visit a product page.
-If we try clicking the add to cart link, we'll be greeted by an error page with the following logs in the console:
+한 번 해보겠습니다.
+`mix phx.server`로 서버를 시작하고 제품 페이지를 방문합니다.
+장바구니에 추가 링크를 클릭하면 콘솔에 다음과 같은 로그가 포함된 오류 페이지가 표시됩니다:
 
 ```shell
 [info] POST /cart_items
@@ -1104,15 +1104,15 @@ Request: GET /cart
        ...
 ```
 
-It's working! Kind of.
-If we follow the logs, we see our POST to the `/cart_items` path.
-Next, we can see our `ShoppingCart.add_item_to_cart` function successfully inserted a row into the `cart_items` table, and then we issued a redirect to `/cart`.
-Before our error, we also see a query to the `carts` table, which means we're fetching the current user's cart.
-So far so good.
-We know our `CartItem` controller and new `ShoppingCart` context functions are doing their jobs, but we've hit our next unimplemented feature when the router attempts to dispatch to a nonexistent cart controller.
-Let's create the cart controller, view, and template to display and manage user carts.
+작동 중입니다! 일종의.
+로그를 따라가 보면 `/cart_items` 경로에 대한 POST를 확인할 수 있습니다.
+다음으로, `ShoppingCart.add_item_to_cart` 함수가 `cart_items` 테이블에 행을 성공적으로 삽입한 다음 `/cart`로 리디렉션한 것을 볼 수 있습니다.
+오류가 발생하기 전에 `carts` 테이블에 대한 쿼리도 표시되며, 이는 현재 사용자의 카트를 가져오고 있음을 의미합니다.
+지금까지는 괜찮습니다.
+`CartItem` 컨트롤러와 새로운 `ShoppingCart` 컨텍스트 함수가 제대로 작동하고 있지만, 라우터가 존재하지 않는 장바구니 컨트롤러로 디스패치하려고 시도할 때 구현되지 않은 다음 기능에 부딪혔습니다.
+사용자 카트를 표시하고 관리하기 위한 카트 컨트롤러, 뷰, 템플릿을 만들어 보겠습니다.
 
-Create a new file at `lib/hello_web/controllers/cart_controller.ex` and key this in:
+`lib/hello_web/controllers/cart_controller.ex`에 새 파일을 생성하고 이를 입력합니다:
 
 ```perl Elixir
 defmodule HelloWeb.CartController do
@@ -1126,14 +1126,14 @@ defmodule HelloWeb.CartController do
 end
 ```
 
-We defined a new cart controller to handle the `get "/cart"` route.
-For showing a cart, we render a `"show.html"` template which we'll create in a moment.
-We know we need to allow the cart items to be changed by quantity updates, so right away we know we'll need a cart changeset.
-Fortunately, the context generator included a `ShoppingCart.change_cart/1` function, which we'll use.
-We pass it our cart struct which is already in the connection assigns thanks to the `fetch_current_cart` plug we defined in the router.
+`get "/cart"` 경로를 처리할 새 카트 컨트롤러를 정의했습니다.
+카트를 표시하기 위해 잠시 후에 생성할 `"show.html"` 템플릿을 렌더링합니다.
+수량 업데이트를 통해 카트 항목을 변경할 수 있도록 허용해야 하므로 바로 카트 변경 집합이 필요하다는 것을 알고 있습니다.
+다행히 컨텍스트 생성기에는 `ShoppingCart.change_cart/1` 함수가 포함되어 있으므로 이 함수를 사용하겠습니다.
+라우터에서 정의한 `fetch_current_cart` 플러그 덕분에 이미 연결 할당에 있는 카트 구조체를 전달합니다.
 
-Next, we can implement the view and template.
-Create a new view file at `lib/hello_web/controllers/cart_html.ex` with the following content:
+다음으로 뷰와 템플릿을 구현할 수 있습니다.
+`lib/hello_web/controllers/cart_html.ex`에 다음 내용으로 새 뷰 파일을 생성합니다:
 
 ```perl Elixir
 defmodule HelloWeb.CartHTML do
@@ -1147,10 +1147,10 @@ defmodule HelloWeb.CartHTML do
 end
 ```
 
-We created a view to render our `show.html` template and aliased our `ShoppingCart` context so it will be in scope for our template.
-We'll need to display the cart prices like product item price, cart total, etc, so we defined a `currency_to_str/1` which takes our decimal struct, rounds it properly for display, and prepends a USD dollar sign.
+`show.html` 템플릿을 렌더링하는 보기를 만들고 `ShoppingCart` 컨텍스트에 별칭을 지정하여 템플릿의 범위에 포함되도록 했습니다.
+제품 품목 가격, 카트 총액 등과 같은 카트 가격을 표시해야 하므로 10진수 구조체를 가져와서 표시를 위해 적절하게 반올림하고 USD 달러 기호를 추가하는 `currency_to_str/1`을 정의했습니다.
 
-Next we can create the template at `lib/hello_web/controllers/cart_html/show.html.heex`:
+다음으로 `lib/hello_web/controllers/cart_html/show.html.heex`에서 템플릿을 만들 수 있습니다:
 
 ```perl HEEx
 <%= if @cart.items == [] do %>
@@ -1180,19 +1180,19 @@ Next we can create the template at `lib/hello_web/controllers/cart_html/show.htm
 <.back navigate={~p"/products"}>Back to products</.back>
 ```
 
-We started by showing the empty cart message if our preloaded `cart.items` is empty.
-If we have items, we use the `simple_form` component provided by our `HelloWeb.CoreComponents` to take our cart changeset that we assigned in the `CartController.show/2` action and create a form which maps to our cart controller `update/2` action.
-Within the form, we use the [`inputs_for`](`Phoenix.Component.inputs_for/1`) component to render inputs for the nested cart items.
-This will allow us to map item inputs back together when the form is submitted.
-Next, we display a number input for the item quantity and label it with the product title.
-We finish the item form by converting the item price to string.
-We haven't written the `ShoppingCart.total_item_price/1` function yet, but again we employed the idea of clear, descriptive public interfaces for our contexts.
-After rendering inputs for all the cart items, we show an "update cart" submit button, along with the total price of the entire cart.
-This is accomplished with another new `ShoppingCart.total_cart_price/1` function which we'll implement in a moment.
-Finally, we added a `back` component to go back to our products page.
+먼저 미리 로드된 `cart.items`이 비어 있는 경우 빈 카트 메시지를 표시합니다.
+항목이 있는 경우 `HelloWeb.CoreComponents`에서 제공하는 `simple_form` 컴포넌트를 사용하여 `CartController.show/2` 액션에서 할당된 카트 변경 집합을 가져와 카트 컨트롤러 `update/2` 액션에 매핑되는 폼을 생성합니다.
+폼 내에서 [`inputs_for`](`Phoenix.Component.inputs_for/1`) 컴포넌트를 사용하여 중첩된 카트 항목에 대한 입력을 렌더링합니다.
+이렇게 하면 양식이 제출될 때 항목 입력을 다시 매핑할 수 있습니다.
+다음으로 품목 수량에 대한 숫자 입력을 표시하고 제품 제목으로 레이블을 지정합니다.
+품목 가격을 문자열로 변환하여 품목 양식을 완성합니다.
+아직 `ShoppingCart.total_item_price/1` 함수를 작성하지는 않았지만, 컨텍스트에 맞는 명확하고 설명적인 공용 인터페이스라는 아이디어를 다시 한 번 사용했습니다.
+모든 카트 항목에 대한 입력을 렌더링한 후 전체 카트의 총 가격과 함께 '카트 업데이트' 제출 버튼을 표시합니다.
+이는 곧 구현할 또 다른 새로운 `ShoppingCart.total_cart_price/1` 함수를 통해 이루어집니다.
+마지막으로 제품 페이지로 돌아가는 `back` 컴포넌트를 추가했습니다.
 
-We're almost ready to try out our cart page, but first we need to implement our new currency calculation functions.
-Open up your shopping cart context at `lib/hello/shopping_cart.ex` and add these new functions:
+장바구니 페이지를 사용해 볼 준비가 거의 다 되었지만 먼저 새로운 통화 계산 함수를 구현해야 합니다.
+`lib/hello/shopping_cart.ex`에서 장바구니 컨텍스트를 열고 이 새 함수를 추가합니다:
 
 ```perl Elixir
   def total_item_price(%CartItem{} = item) do
@@ -1208,18 +1208,18 @@ Open up your shopping cart context at `lib/hello/shopping_cart.ex` and add these
   end
 ```
 
-We implemented `total_item_price/1` which accepts a `%CartItem{}` struct.
-To calculate the total price, we simply take the preloaded product's price and multiply it by the item's quantity.
-We used `Decimal.mult/2` to take our decimal currency struct and multiply it with proper precision.
-Similarly for calculating the total cart price, we implemented a `total_cart_price/1` function which accepts the cart and sums the preloaded product prices for items in the cart.
-We again make use of the `Decimal` functions to add our decimal structs together.
+총 가격을 계산하는 함수는 `%CartItem{}` 구조체를 받아들이는 `total_item_price/1`을 구현했습니다.
+총 가격을 계산하려면 미리 로드된 제품의 가격에 품목의 수량을 곱하기만 하면 됩니다.
+십진수 통화 구조체에서 적절한 정밀도로 곱하기 위해 `Decimal.mult/2`를 사용했습니다.
+마찬가지로 총 카트 가격을 계산하기 위해 카트를 받아 카트에 미리 로드된 품목의 제품 가격을 합산하는 `total_cart_price/1` 함수를 구현했습니다.
+다시 `Decimal` 함수를 사용하여 십진수 구조를 더합니다.
 
-Now that we can calculate price totals, let's try it out! Visit [`http://localhost:4000/cart`](http://localhost:4000/cart) and you should already see your first item in the cart.
-Going back to the same product and clicking "add to cart" will show our upsert in action.
-Your quantity should now be two.
-Nice work!
+이제 가격 합계를 계산할 수 있게 되었으니 직접 사용해 보겠습니다! [http://localhost:4000/cart](http://localhost:4000/cart)를 방문하면 장바구니에 첫 번째 품목이 이미 표시되어 있을 것입니다.
+동일한 제품으로 돌아가서 "장바구니에 추가"를 클릭하면 업서트가 작동하는 것을 볼 수 있습니다.
+이제 수량이 2개로 표시됩니다.
+수고하셨습니다!
 
-Our cart page is almost complete, but submitting the form will yield yet another error.
+장바구니 페이지가 거의 완성되었지만 양식을 제출하면 또 다른 오류가 발생합니다.
 
 ```shell
 Request: POST /cart
@@ -1227,7 +1227,7 @@ Request: POST /cart
     ** (UndefinedFunctionError) function HelloWeb.CartController.update/2 is undefined or private
 ```
 
-Let's head back to our `CartController` at `lib/hello_web/controllers/cart_controller.ex` and implement the update action:
+이제 `lib/hello_web/controllers/cart_controller.ex`의 `CartController`로 돌아가서 업데이트 작업을 구현해 봅시다:
 
 ```perl Elixir
   def update(conn, %{"cart" => cart_params}) do
@@ -1243,14 +1243,14 @@ Let's head back to our `CartController` at `lib/hello_web/controllers/cart_contr
   end
 ```
 
-We started by plucking out the cart params from the form submit.
-Next, we call our existing `ShoppingCart.update_cart/2` function which was added by the context generator.
-We'll need to make some changes to this function, but the interface is good as is.
-If the update is successful, we redirect back to the cart page, otherwise we show a flash error message and send the user back to the cart page to fix any mistakes.
-Out-of-the-box, our `ShoppingCart.update_cart/2` function only concerned itself with casting the cart params into a changeset and updates it against our repo.
-For our purposes, we now need it to handle nested cart item associations, and most importantly, business logic for how to handle quantity updates like zero-quantity items being removed from the cart.
+먼저 양식 제출에서 카트 매개변수를 추출하는 것으로 시작했습니다.
+다음으로 컨텍스트 생성기가 추가한 기존 `ShoppingCart.update_cart/2` 함수를 호출합니다.
+이 함수에 약간의 변경이 필요하지만 인터페이스는 그대로 사용해도 좋습니다.
+업데이트가 성공하면 카트 페이지로 리디렉션하고, 그렇지 않으면 플래시 오류 메시지를 표시하고 사용자를 카트 페이지로 다시 보내 실수를 수정합니다.
+기본적으로 `ShoppingCart.update_cart/2` 함수는 카트 매개변수를 변경 집합으로 캐스팅하고 리포지토리에 대해 업데이트하는 데만 관여합니다.
+이제 중첩된 카트 항목 연결을 처리하고, 가장 중요한 것은 수량 0개 품목이 카트에서 제거되는 것과 같은 수량 업데이트를 처리하는 비즈니스 로직이 필요합니다.
 
-Head back over to your shopping cart context in `lib/hello/shopping_cart.ex` and replace your `update_cart/2` function with the following implementation:
+다시 장바구니 컨텍스트의 `lib/hello/shopping_cart.ex`로 돌아가서 `update_cart/2` 함수를 다음 구현으로 바꾸세요:
 
 ```perl Elixir
   def update_cart(%Cart{} = cart, attrs) do
@@ -1272,40 +1272,40 @@ Head back over to your shopping cart context in `lib/hello/shopping_cart.ex` and
   end
 ```
 
-We started much like how our out-of-the-box code started – we take the cart struct and cast the user input to a cart changeset, except this time we use `Ecto.Changeset.cast_assoc/3` to cast the nested item data into `CartItem` changesets.
-Remember the [`<.inputs_for />`](`Phoenix.Component.inputs_for/1`) call in our cart form template? That hidden ID data is what allows Ecto's `cast_assoc` to map item data back to existing item associations in the cart.
-Next we use `Ecto.Multi.new/0`, which you may not have seen before.
-Ecto's `Multi` is a feature that allows lazily defining a chain of named operations to eventually execute inside a database transaction.
-Each operation in the multi chain receives the values from the previous steps and executes until a failed step is encountered.
-When an operation fails, the transaction is rolled back and an error is returned, otherwise the transaction is committed.
+장바구니 구조체를 가져와서 사용자 입력을 장바구니 변경 집합으로 캐스팅하지만, 이번에는 `Ecto.Changeset.cast_assoc/3`을 사용하여 중첩된 항목 데이터를 `CartItem` 변경 집합으로 캐스팅한다는 점을 제외하면 기본 코드에서 시작한 것과 매우 유사합니다.
+카트 양식 템플릿에서 [`<.inputs_for />`](`Phoenix.Component.inputs_for/1`) 호출을 기억하시나요? 이 숨겨진 ID 데이터는 Ecto의 `cast_assoc`이 아이템 데이터를 카트의 기존 아이템 연결에 다시 매핑할 수 있게 해줍니다.
+다음으로는 이전에 보지 못했을 수도 있는 `Ecto.Multi.new/0`을 사용합니다.
+Ecto의 `Multi`는 데이터베이스 트랜잭션 내에서 실행되는 일련의 명명된 작업 체인을 느리게 정의할 수 있는 기능입니다.
+멀티 체인의 각 연산은 이전 단계의 값을 받아 실패한 단계가 발생할 때까지 실행됩니다.
+연산이 실패하면 트랜잭션이 롤백되고 오류가 반환되며, 그렇지 않으면 트랜잭션이 커밋됩니다.
 
-For our multi operations, we start by issuing an update of our cart, which we named `:cart`.
-After the cart update is issued, we perform a multi `delete_all` operation, which takes the updated cart and applies our zero-quantity logic.
-We prune any items in the cart with zero quantity by returning an ecto query that finds all cart items for this cart with an empty quantity.
-Calling `Repo.transaction/1` with our multi will execute the operations in a new transaction and we return the success or failure result to the caller just like the original function.
+다중 작업의 경우 `:cart`라는 이름의 카트 업데이트를 발행하는 것으로 시작합니다.
+카트 업데이트가 발행된 후, 업데이트된 카트를 가져와서 제로 수량 로직을 적용하는 다중 `delete_all` 작업을 수행합니다.
+수량이 0인 이 카트의 모든 카트 품목을 찾는 엑토 쿼리를 반환하여 수량이 0인 카트의 모든 품목을 정리합니다.
+멀티를 사용하여 `Repo.transaction/1`을 호출하면 새 트랜잭션에서 작업이 실행되고 원래 함수와 마찬가지로 호출자에게 성공 또는 실패 결과를 반환합니다.
 
-Let's head back to the browser and try it out.
-Add a few products to your cart, update the quantities, and watch the values changes along with the price calculations.
-Setting any quantity to 0 will also remove the item.
-Pretty neat!
+이제 브라우저로 돌아가서 사용해 보겠습니다.
+장바구니에 몇 가지 제품을 추가하고 수량을 업데이트한 다음 가격 계산과 함께 값이 변경되는 것을 지켜보세요.
+수량을 0으로 설정하면 해당 품목도 제거됩니다.
+아주 깔끔하죠!
 
 ## Adding an Orders context
 
-With our `Catalog` and `ShoppingCart` contexts, we're seeing first-hand how our well-considered modules and function names are yielding clear and maintainable code.
-Our last order of business is to allow the user to initiate the checkout process.
-We won't go as far as integrating payment processing or order fulfillment, but we'll get you started in that direction.
-Like before, we need to decide where code for completing an order should live.
-Is it part of the catalog? Clearly not, but what about the shopping cart? Shopping carts are related to orders – after all, the user has to add items in order to purchase any products – but should the order checkout process be grouped here?
+`Catalog` 및 `ShoppingCart` 컨텍스트를 통해 잘 고려한 모듈과 함수 이름이 어떻게 명확하고 유지 관리하기 쉬운 코드를 생성하는지 직접 확인하고 있습니다.
+마지막 단계는 사용자가 결제 프로세스를 시작할 수 있도록 하는 것입니다.
+결제 처리나 주문 처리를 통합하는 데까지 나아가지는 않겠지만, 그 방향으로 나아갈 수 있도록 도와드리겠습니다.
+이전과 마찬가지로 주문 완료를 위한 코드를 어디에 배치할지 결정해야 합니다.
+카탈로그의 일부일까요? 분명 카탈로그는 아니지만 장바구니는 어떨까요? 장바구니는 주문과 관련이 있습니다. 결국 사용자가 제품을 구매하기 위해서는 항목을 추가해야 하는데, 주문 결제 프로세스를 여기에 그룹화해야 할까요?
 
-If we stop and consider the order process, we'll see that orders involve related, but distinctly different data from the cart contents.
-Also, business rules around the checkout process are much different than carting.
-For example, we may allow a user to add a back-ordered item to their cart, but we could not allow an order with no inventory to be completed.
-Additionally, we need to capture point-in-time product information when an order is completed, such as the price of the items _at payment transaction time_.
-This is essential because a product price may change in the future, but the line items in our order must always record and display what we charged at time of purchase.
-For these reasons, we can start to see that ordering can stand on its own with its own data concerns and business rules.
+주문 프로세스를 잠시 멈추고 생각해 보면, 주문에는 관련성이 있지만 카트 내용과는 확연히 다른 데이터가 포함된다는 것을 알 수 있습니다.
+또한 결제 프로세스와 관련된 비즈니스 규칙은 카트 작성과는 많이 다릅니다.
+예를 들어, 사용자가 이월 주문한 품목을 카트에 추가하는 것은 허용할 수 있지만 재고가 없는 주문을 완료하는 것은 허용할 수 없습니다.
+또한 주문이 완료된 시점의 제품 정보(예: 결제 거래 시점의 제품 가격)를 캡처해야 합니다.
+이는 향후 제품 가격이 변경될 수 있지만 주문의 품목은 항상 구매 시점에 청구된 금액을 기록하고 표시해야 하기 때문에 필수적입니다.
+이러한 이유로 우리는 주문이 자체적인 데이터 문제와 비즈니스 규칙을 통해 독립적으로 존재할 수 있음을 알 수 있습니다.
 
-Naming wise, `Orders` clearly defines the scope of our context, so let's get started by again taking advantage of the context generators.
-Run the following command in your console:
+이름 지정이 현명한 `Orders`은 컨텍스트의 범위를 명확하게 정의하므로 컨텍스트 생성기를 다시 활용하여 시작해 보겠습니다.
+콘솔에서 다음 명령을 실행합니다:
 
 ```shell
 $ mix phx.gen.context Orders Order orders user_uuid:uuid total_price:decimal
@@ -1319,14 +1319,14 @@ $ mix phx.gen.context Orders Order orders user_uuid:uuid total_price:decimal
 * creating test/support/fixtures/orders_fixtures.ex
 * injecting test/support/fixtures/orders_fixtures.ex
 
-Remember to update your repository by running migrations:
+마이그레이션을 실행하여 리포지토리를 업데이트하는 것을 잊지 마세요:
 
     $ mix ecto.migrate
 ```
 
-We generated an `Orders` context.
-We added a `user_uuid` field to associate our placeholder current user to an order, along with a `total_price` column.
-With our starting point in place, let's open up the newly created migration in `priv/repo/migrations/*_create_orders.exs` and make the following changes:
+`Orders` 컨텍스트를 생성했습니다.
+플레이스홀더인 현재 사용자를 주문에 연결하기 위해 `user_uuid` 필드를 추가하고 `total_price` 열을 추가했습니다.
+시작점이 마련되었으므로 `priv/repo/migrations/*_create_orders.exs`에서 새로 생성된 마이그레이션을 열고 다음과 같이 변경해 보겠습니다:
 
 ```perl Elixir
   def change do
@@ -1340,35 +1340,35 @@ With our starting point in place, let's open up the newly created migration in `
   end
 ```
 
-Like we did previously, we gave appropriate precision and scale options for our decimal column which will allow us to store currency without precision loss.
-We also added a not-null constraint to enforce all orders to have a price.
+이전에 했던 것처럼 소수점 열에 적절한 정밀도 및 스케일 옵션을 지정하여 정밀도 손실 없이 통화를 저장할 수 있도록 했습니다.
+또한 모든 주문에 가격을 적용하기 위해 null이 아닌 제약 조건을 추가했습니다.
 
-The orders table alone doesn't hold much information, but we know we'll need to store point-in-time product price information of all the items in the order.
-For that, we'll add an additional struct for this context named `LineItem`.
-Line items will capture the price of the product _at payment transaction time_.
-Please run the following command:
+주문 테이블만으로는 많은 정보를 저장할 수 없지만, 주문에 포함된 모든 품목의 특정 시점 제품 가격 정보를 저장해야 한다는 것을 알고 있습니다.
+이를 위해 이 컨텍스트에 `LineItem`이라는 이름의 구조체를 추가하겠습니다.
+라인 아이템은 _결제 거래 시점의_ 제품 가격을 캡처합니다.
+다음 명령을 실행하세요:
 
 ```shell
 $ mix phx.gen.context Orders LineItem order_line_items \
 price:decimal quantity:integer \
 order_id:references:orders product_id:references:products
 
-You are generating into an existing context.
+기존 컨텍스트로 생성하고 있습니다.
 ...
-Would you like to proceed? [Yn] y
+계속 진행하시겠습니까? [Yn] y
 * creating lib/hello/orders/line_item.ex
 * creating priv/repo/migrations/20210209215050_create_order_line_items.exs
 * injecting lib/hello/orders.ex
 * injecting test/hello/orders_test.exs
 * injecting test/support/fixtures/orders_fixtures.ex
 
-Remember to update your repository by running migrations:
+마이그레이션을 실행하여 리포지토리를 업데이트하는 것을 잊지 마세요:
 
     $ mix ecto.migrate
 ```
 
-We used the `phx.gen.context` command to generate the `LineItem` Ecto schema and inject supporting functions into our orders context.
-Like before, let's modify the migration in `priv/repo/migrations/*_create_order_line_items.exs` and make the following decimal field changes:
+`phx.gen.context` 명령을 사용하여 `LineItem` 엑토 스키마를 생성하고 지원 기능을 주문 컨텍스트에 삽입했습니다.
+이전과 마찬가지로 `priv/repo/migrations/*_create_order_line_items.exs`에서 마이그레이션을 수정하고 다음과 같이 소수점 필드를 변경해 보겠습니다:
 
 ```perl Elixir
   def change do
@@ -1387,7 +1387,7 @@ Like before, let's modify the migration in `priv/repo/migrations/*_create_order_
   end
 ```
 
-With our migration in place, let's wire up our orders and line items associations in `lib/hello/orders/order.ex`:
+마이그레이션이 완료되었으므로 이제 `lib/hello/orders/order.ex`에서 주문과 품목 연결을 연결해 보겠습니다:
 
 ```perl Elixir
   schema "orders" do
@@ -1401,10 +1401,10 @@ With our migration in place, let's wire up our orders and line items association
   end
 ```
 
-We used `has_many :line_items` to associate orders and line items, just like we've seen before.
-Next, we used the `:through` feature of `has_many`, which allows us to instruct ecto how to associate resources across another relationship.
-In this case, we can associate products of an order by finding all products through associated line items.
-Next, let's wire up the association in the other direction in `lib/hello/orders/line_item.ex`:
+앞서 살펴본 것처럼 `has_many :line_items`를 사용하여 주문과 품목을 연결했습니다.
+다음으로, 다른 관계에서 리소스를 연결하는 방법을 엑토에 지시할 수 있는 `has_many`의 `:through` 기능을 사용했습니다.
+이 경우 연관된 라인 항목을 통해 모든 제품을 찾아 주문의 제품을 연결할 수 있습니다.
+다음으로, `lib/hello/orders/line_item.ex`에서 다른 방향으로 연결을 설정해 보겠습니다:
 
 ```perl Elixir
   schema "order_line_items" do
@@ -1420,9 +1420,9 @@ Next, let's wire up the association in the other direction in `lib/hello/orders/
   end
 ```
 
-We used `belongs_to` to associate line items to orders and products.
-With our associations in place, we can start integrating the web interface into our order process.
-Open up your router `lib/hello_web/router.ex` and add the following line:
+여기서는 `belongs_to`를 사용하여 품목을 주문 및 제품에 연결했습니다.
+연결이 완료되었으므로 이제 웹 인터페이스를 주문 프로세스에 통합할 수 있습니다.
+라우터 `lib/hello_web/router.ex`를 열고 다음 줄을 추가합니다:
 
 ```perl Elixir
   scope "/", HelloWeb do
@@ -1433,8 +1433,8 @@ Open up your router `lib/hello_web/router.ex` and add the following line:
   end
 ```
 
-We wired up `create` and `show` routes for our generated `OrderController`, since these are the only actions we need at the moment.
-With our routes in place, we can now migrate up:
+현재 필요한 작업은 이 두 가지뿐이므로 생성된 `OrderController`에 대한 `create` 및 `show` 경로를 연결했습니다.
+경로가 준비되었으므로 이제 마이그레이션할 수 있습니다:
 
 ```shell
 mix ecto.migrate
@@ -1456,8 +1456,8 @@ mix ecto.migrate
 17:14:37.798 [info] == Migrated 20210209215050 in 0.0s
 ```
 
-Before we render information about our orders, we need to ensure our order data is fully populated and can be looked up by a current user.
-Open up your orders context in `lib/hello/orders.ex` and replace your `get_order!/1` function by a new `get_order!/2` definition:
+주문에 대한 정보를 렌더링하기 전에 주문 데이터가 완전히 채워져 있고 현재 사용자가 조회할 수 있는지 확인해야 합니다.
+`lib/hello/orders.ex`에서 주문 컨텍스트를 열고 `get_order!/1` 함수를 새로운 `get_order!/2` 정의로 바꿉니다:
 
 ```perl Elixir
   def get_order!(user_uuid, id) do
@@ -1467,12 +1467,12 @@ Open up your orders context in `lib/hello/orders.ex` and replace your `get_order
   end
 ```
 
-We rewrote the function to accept a user UUID and query our repo for an order matching the user's ID for a given order ID.
-Then we populated the order by preloading our line item and product associations.
+사용자 UUID를 수락하고 주어진 주문 ID에 대해 사용자 ID와 일치하는 주문이 있는지 저장소에 쿼리하도록 함수를 재작성했습니다.
+그런 다음 품목과 제품 연결을 미리 로드하여 주문을 채웠습니다.
 
-To complete an order, our cart page can issue a POST to the `OrderController.create` action, but we need to implement the operations and logic to actually complete an order.
-Like before, we'll start at the web interface.
-Create a new file at `lib/hello_web/controllers/order_controller.ex` and key this in:
+주문을 완료하려면 카트 페이지에서 `OrderController.create` 액션에 POST를 발행할 수 있지만 실제로 주문을 완료하려면 작업과 로직을 구현해야 합니다.
+이전과 마찬가지로 웹 인터페이스에서 시작하겠습니다.
+`lib/hello_web/controllers/order_controller.ex`에 새 파일을 생성하고 이 파일을 입력합니다:
 
 ```perl Elixir
 defmodule HelloWeb.OrderController do
@@ -1496,18 +1496,18 @@ defmodule HelloWeb.OrderController do
 end
 ```
 
-We wrote the `create` action to call an as-yet-implemented `Orders.complete_order/1` function.
-Our code is technically "creating" an order, but it's important to step back and consider the naming of your interfaces.
-The act of _completing_ an order is extremely important in our system.
-Money changes hands in a transaction, physical goods could be automatically shipped, etc.
-Such an operation deserves a better, more obvious function name, such as `complete_order`.
-If the order is completed successfully we redirect to the show page, otherwise a flash error is shown as we redirect back to the cart page.
+아직 구현되지 않은 `Orders.complete_order/1` 함수를 호출하기 위해 `create` 액션을 작성했습니다.
+이 코드는 기술적으로 주문을 '생성'하는 것이지만, 한 걸음 물러나서 인터페이스의 이름 지정을 고려하는 것이 중요합니다.
+주문을 '완료'하는 행위는 우리 시스템에서 매우 중요합니다.
+거래에서 돈이 오고가고, 실제 상품이 자동으로 배송되는 등의 작업이 이루어질 수 있습니다.
+이러한 작업에는 '주문 완료'와 같이 더 명확하고 더 나은 함수 이름이 필요합니다.
+주문이 성공적으로 완료되면 쇼 페이지로 리디렉션되고, 그렇지 않으면 카트 페이지로 다시 리디렉션되면서 플래시 오류가 표시됩니다.
 
-Here is also a good opportunity to highlight that contexts can naturally work with data defined by other contexts too.
-This will be especially common with data that is used throughout the application, such as the cart here (but it can also be the current user or the current project, and so forth, depending on your project).
+컨텍스트가 다른 컨텍스트에서 정의한 데이터에서도 자연스럽게 작동할 수 있다는 점을 강조할 수 있는 좋은 기회이기도 합니다.
+이는 특히 여기서의 장바구니와 같이 애플리케이션 전체에서 사용되는 데이터(프로젝트에 따라 현재 사용자 또는 현재 프로젝트 등이 될 수도 있음)에서 흔히 볼 수 있습니다.
 
-Now we can implement our `Orders.complete_order/1` function.
-To complete an order, our job will require a few operations:
+이제 `Orders.complete_order/1` 함수를 구현할 수 있습니다.
+주문을 완료하려면 몇 가지 작업이 필요합니다:
 
 1.  A new order record must be persisted with the total price of the order
 2.  All items in the cart must be transformed into new order line items records
@@ -1515,8 +1515,8 @@ To complete an order, our job will require a few operations:
 3.  After successful order insert (and eventual payment), items must be pruned
     from the cart
 
-From our requirements alone, we can start to see why a generic `create_order` function doesn't cut it.
-Let's implement this new function in `lib/hello/orders.ex`:
+요구 사항만 보더라도 일반적인 `create_order` 함수가 적합하지 않은 이유를 알 수 있습니다.
+이 새로운 함수를 `lib/hello/orders.ex`에 구현해 봅시다:
 
 ```perl Elixir
   alias Hello.Orders.LineItem
@@ -1548,16 +1548,16 @@ Let's implement this new function in `lib/hello/orders.ex`:
   end
 ```
 
-We started by mapping the `%ShoppingCart.CartItem{}`'s in our shopping cart into a map of order line items structs.
-The job of the order line item record is to capture the price of the product _at payment transaction time_, so we reference the product's price here.
-Next, we create a bare order changeset with `Ecto.Changeset.change/2` and associate our user UUID, set our total price calculation, and place our order line items in the changeset.
-With a fresh order changeset ready to be inserted, we can again make use of `Ecto.Multi` to execute our operations in a database transaction.
-We start by inserting the order, followed by a `run` operation.
-The `Ecto.Multi.run/3` function allows us to run any code in the function which must either succeed with `{:ok, result}` or error, which halts and rolls back the transaction.
-Here, we simply call into our shopping cart context and ask it to prune all items in a cart.
-Running the transaction will execute the multi as before and we return the result to the caller.
+먼저 쇼핑 카트의 `%ShoppingCart.CartItem{}`을 주문 품목 구조의 맵에 매핑하는 것으로 시작하겠습니다.
+주문 품목 레코드의 역할은 _결제 거래 시점의_ 제품 가격을 캡처하는 것이므로 여기서 제품 가격을 참조합니다.
+다음으로 `Ecto.Changeset.change/2`를 사용하여 베어 주문 변경 집합을 생성하고 사용자 UUID를 연결하고 총 가격 계산을 설정한 다음 주문 품목을 변경 집합에 배치합니다.
+새로운 주문 변경 집합을 삽입할 준비가 되었으면 다시 `Ecto.Multi`를 사용하여 데이터베이스 트랜잭션에서 작업을 실행할 수 있습니다.
+먼저 주문을 삽입한 다음 `run` 연산을 실행합니다.
+`Ecto.Multi.run/3` 함수를 사용하면 `{:ok, result}`로 성공하거나 트랜잭션을 중단하고 롤백하는 오류가 발생해야 하는 함수에서 모든 코드를 실행할 수 있습니다.
+여기서는 장바구니 컨텍스트를 호출하여 장바구니에 있는 모든 항목을 잘라내도록 요청하기만 하면 됩니다.
+트랜잭션을 실행하면 이전과 같이 멀티가 실행되고 호출자에게 결과를 반환합니다.
 
-To close out our order completion, we need to implement the `ShoppingCart.prune_cart_items/1` function in `lib/hello/shopping_cart.ex`:
+주문 완료를 마무리하려면 `lib/hello/shopping_cart.ex`에서 `ShoppingCart.prune_cart_items/1` 함수를 구현해야 합니다:
 
 ```perl Elixir
   def prune_cart_items(%Cart{} = cart) do
@@ -1566,10 +1566,10 @@ To close out our order completion, we need to implement the `ShoppingCart.prune_
   end
 ```
 
-Our new function accepts the cart struct and issues a `Repo.delete_all` which accepts a query of all items for the provided cart.
-We return a success result by simply reloading the pruned cart to the caller.
-With our context complete, we now need to show the user their completed order.
-Head back to your order controller and add the `show/2` action:
+새 함수는 카트 구조체를 받아들이고 제공된 카트의 모든 항목에 대한 쿼리를 수락하는 `Repo.delete_all`을 실행합니다.
+호출자에게 정리된 카트를 다시 로드하여 성공 결과를 반환합니다.
+컨텍스트가 완료되었으므로 이제 사용자에게 완료된 주문을 표시해야 합니다.
+주문 컨트롤러로 돌아가서 `show/2` 액션을 추가합니다:
 
 ```perl Elixir
   def show(conn, %{"id" => id}) do
@@ -1578,9 +1578,9 @@ Head back to your order controller and add the `show/2` action:
   end
 ```
 
-We added the show action to pass our `conn.assigns.current_uuid` to `get_order!` which authorizes orders to be viewable only by the owner of the order.
-Next, we can implement the view and template.
-Create a new view file at `lib/hello_web/controllers/order_html.ex` with the following content:
+주문 소유자만 주문을 볼 수 있도록 권한을 부여하는 `conn.assigns.current_uuid`를 `get_order!`에 전달하기 위해 show 액션을 추가했습니다.
+다음으로 보기와 템플릿을 구현할 수 있습니다.
+`lib/hello_web/controllers/order_html.ex`에 다음 내용으로 새 보기 파일을 만듭니다:
 
 ```perl Elixir
 defmodule HelloWeb.OrderHTML do
@@ -1590,7 +1590,7 @@ defmodule HelloWeb.OrderHTML do
 end
 ```
 
-Next we can create the template at `lib/hello_web/controllers/order_html/show.html.heex`:
+다음으로 `lib/hello_web/controllers/order_html/show.html.heex`에서 템플릿을 만들 수 있습니다:
 
 ```perl HEEx
 <.header>
@@ -1614,10 +1614,10 @@ Next we can create the template at `lib/hello_web/controllers/order_html/show.ht
 <.back navigate={~p"/products"}>Back to products</.back>
 ```
 
-To show our completed order, we displayed the order's user, followed by the line item listing with product title, quantity, and the price we "transacted" when completing the order, along with the total price.
+완료된 주문을 표시하기 위해 주문 사용자를 표시한 다음 제품 제목, 수량, 주문을 완료할 때 "거래한" 가격 및 총 가격을 포함한 품목 목록을 표시했습니다.
 
-Our last addition will be to add the "complete order" button to our cart page to allow completing an order.
-Add the following button to the <.header> of the cart show template in `lib/hello_web/controllers/cart_html/show.html.heex`:
+마지막으로 카트 페이지에 '주문 완료' 버튼을 추가하여 주문을 완료할 수 있도록 했습니다.
+`lib/hello_web/controllers/cart_html/show.html.heex`에 있는 카트 쇼 템플릿의 <.header>에 다음 버튼을 추가합니다:
 
 ```diff
   <.header>
@@ -1630,52 +1630,52 @@ Add the following button to the <.header> of the cart show template in `lib/hell
   </.header>
 ```
 
-We added a link with `method="post"` to send a POST request to our `OrderController.create` action.
-If we head back to our cart page at [`http://localhost:4000/cart`](http://localhost:4000/cart) and complete an order, we'll be greeted by our rendered template:
+method="post"`가 포함된 링크를 추가하여 `OrderController.create` 액션에 POST 요청을 보냅니다.
+[http://localhost:4000/cart](`http://localhost:4000/cart`)의 카트 페이지로 돌아가 주문을 완료하면 렌더링된 템플릿이 표시됩니다:
 
 ```shell
-Thank you for your order!
+주문해 주셔서 감사합니다!
 
-User uuid: 08964c7c-908c-4a55-bcd3-9811ad8b0b9d
-Title                   Quantity Price
-Metaprogramming Elixir  2        $15.00
+사용자 UUID: 08964C7C-908C-4A55-BCD3-9811AD8B0B9D
+제목 수량 가격
+메타프로그래밍 엘릭서 2 $15.00
 
-Total price: $30.00
+총 가격: $30.00
 ```
 
-Nice work! We haven't added payments, but we can already see how our `ShoppingCart` and `Orders` context splitting is driving us towards a maintainable solution.
-With our cart items separated from our order line items, we are well equipped in the future to add payment transactions, cart price detection, and more.
+수고하셨습니다! 아직 결제 기능을 추가하지는 않았지만 `ShoppingCart`와 `Orders` 컨텍스트 분할이 어떻게 유지 관리 가능한 솔루션으로 우리를 이끌고 있는지 이미 확인할 수 있습니다.
+카트 항목과 주문 항목이 분리되었으므로 향후 결제 거래, 카트 가격 감지 등을 추가할 수 있는 준비가 완료되었습니다.
 
-Great work!
+수고하셨습니다!
 
 ## FAQ
 
 ### How do I structure code inside contexts?
 
-You may wonder how to organize the code inside contexts.
-For example, should you define a module for changesets (such as ProductChangesets) and another module for queries (such as ProductQueries)?
+컨텍스트 내에서 코드를 구성하는 방법이 궁금할 수 있습니다.
+예를 들어 변경 집합(예: ProductChangesets)을 위한 모듈과 쿼리(예: ProductQueries)를 위한 다른 모듈을 정의해야 하나요?
 
-One important benefit of contexts is that this decision does not matter much.
-The context is your public API, the other modules are private.
-Contexts isolate these modules into small groups so the surface area of your application is the context and not _all of your code_.
+컨텍스트의 한 가지 중요한 이점은 이러한 결정이 크게 중요하지 않다는 것입니다.
+컨텍스트는 공개 API이고 다른 모듈은 비공개입니다.
+컨텍스트는 이러한 모듈을 작은 그룹으로 분리하므로 애플리케이션의 표면 영역은 모든 코드가 아닌 컨텍스트입니다.
 
-So while you and your team could establish patterns for organizing these private modules, it is also our opinion it is completely fine for them to be different.
-The major focus should be on how the contexts are defined and how they interact with each other (and with your web application).
+따라서 여러분과 여러분의 팀이 이러한 비공개 모듈을 구성하는 패턴을 설정할 수 있지만, 저희는 이 패턴이 다르더라도 괜찮다고 생각합니다.
+컨텍스트가 정의되는 방식과 컨텍스트가 서로(그리고 웹 애플리케이션과) 상호 작용하는 방식에 중점을 두어야 합니다.
 
-Think about it as a well-kept neighbourhood.
-Your contexts are houses, you want to keep them well-preserved, well-connected, etc.
-Inside the houses, they may all be a little bit different, and that's fine.
+잘 관리된 동네라고 생각하세요.
+컨텍스트는 집들이고, 잘 보존되고, 잘 연결되어 있는 등의 상태를 유지하고 싶을 것입니다.
+집 안에서는 모두 조금씩 다를 수 있으며, 이는 괜찮습니다.
 
 ### Returning Ecto structures from context APIs
 
-As we explored the context API, you might have wondered:
+컨텍스트 API를 살펴보면서 궁금한 점이 있었을 것입니다:
 
 > If one of the goals of our context is to encapsulate Ecto Repo access, why does `create_user/1` return an `Ecto.Changeset` struct when we fail to create a user?
 
-Although Changesets are part of Ecto, they are not tied to the database, and they can be used to map data from and to any source, which makes it a general and useful data structure for tracking field changes, perform validations, and generate error messages.
+변경 집합은 Ecto의 일부이지만 데이터베이스에 묶여 있지 않고 모든 소스의 데이터를 매핑하는 데 사용할 수 있으므로 필드 변경 사항을 추적하고 유효성 검사를 수행하며 오류 메시지를 생성하는 데 일반적이고 유용한 데이터 구조가 됩니다.
 
-For those reasons, `%Ecto.Changeset{}` is a good choice to model the data changes between your contexts and your web layer - regardless if you are talking to an API or the database.
+이러한 이유로 `%Ecto.Changeset{}`은 컨텍스트와 웹 레이어 간의 데이터 변경을 모델링하는 데 적합하며, API 또는 데이터베이스와 통신하는 경우 모두 사용할 수 있습니다.
 
-Finally, note that your controllers and views are not hardcoded to work exclusively with Ecto either.
-Instead, Phoenix defines protocols such as `Phoenix.Param` and `Phoenix.HTML.FormData`, which allow any library to extend how Phoenix generates URL parameters or renders forms.
-Conveniently for us, the `phoenix_ecto` project implements those protocols, but you could as well bring your own data structures and implement them yourself.
+마지막으로, 컨트롤러와 뷰가 Ecto에서만 작동하도록 하드코딩되어 있지 않다는 점에 유의하세요.
+대신, Phoenix는 `Phoenix.Param` 및 `Phoenix.HTML.FormData`와 같은 프로토콜을 정의하여 모든 라이브러리가 Phoenix가 URL 매개변수를 생성하거나 양식을 렌더링하는 방식을 확장할 수 있도록 합니다.
+편리하게도 `phoenix_ecto` 프로젝트에서 이러한 프로토콜을 구현하지만, 자체 데이터 구조를 가져와서 직접 구현할 수도 있습니다.
