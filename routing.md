@@ -1,13 +1,13 @@
 # Routing
 
-> **Requirement**: This guide expects that you have gone through the [introductory guides](installation.html) and got a Phoenix application [up and running](up_and_running.html).
+> **요구 사항**: 이 가이드는 사용자가 [소개 가이드](installation.html)를 살펴보고 Phoenix 애플리케이션을 [가동 및 실행](up_and_running.html)한 것으로 가정합니다.
 >
-> **Requirement**: This guide expects that you have gone through the [Request life-cycle guide](request_lifecycle.html).
+> **요구 사항**: 이 가이드는 사용자가 [요청 수명 주기 가이드](request_lifecycle.html)를 살펴봤을 것으로 예상합니다.
 
-Routers are the main hubs of Phoenix applications.
-They match HTTP requests to controller actions, wire up real-time channel handlers, and define a series of pipeline transformations scoped to a set of routes.
+라우터는 Phoenix 애플리케이션의 주요 허브입니다.
+라우터는 HTTP 요청을 컨트롤러 동작에 연결하고, 실시간 채널 핸들러를 연결하며, 일련의 경로로 범위가 지정된 일련의 파이프라인 변환을 정의합니다.
 
-The router file that Phoenix generates, `lib/hello_web/router.ex`, will look something like this one:
+Phoenix가 생성하는 라우터 파일인 `lib/hello_web/router.ex`는 이렇게 생겼습니다:
 
 ```perl Elixir
 defmodule HelloWeb.Router do
@@ -40,30 +40,30 @@ defmodule HelloWeb.Router do
 end
 ```
 
-Both the router and controller module names will be prefixed with the name you gave your application suffixed with `Web`.
+라우터 및 컨트롤러 모듈 이름 앞에는 애플리케이션에 지정한 이름 앞에 `Web`이 접미사로 붙습니다.
 
-The first line of this module, `use HelloWeb, :router`, simply makes Phoenix router functions available in our particular router.
+이 모듈의 첫 번째 줄인 `use HelloWeb, :라우터`는 단순히 특정 라우터에서 Phoenix 라우터 기능을 사용할 수 있도록 합니다.
 
-Scopes have their own section in this guide, so we won't spend time on the `scope "/", HelloWeb do` block here.
-The `pipe_through :browser` line will get a full treatment in the "Pipelines" section of this guide.
-For now, you only need to know that pipelines allow a set of plugs to be applied to different sets of routes.
+범위는 이 가이드에 별도의 섹션이 있으므로 여기서는 `scope "/", HelloWeb do` 블록에 대해 설명하지 않겠습니다.
+`pipe_through :browser` 줄은 이 가이드의 "파이프라인" 섹션에서 자세히 다루겠습니다.
+지금은 파이프라인을 통해 여러 경로 세트에 플러그 세트를 적용할 수 있다는 점만 알아두면 됩니다.
 
-Inside the scope block, however, we have our first actual route:
+하지만 스코프 블록 안에는 첫 번째 실제 경로가 있습니다:
 
 ```perl Elixir
 get "/", PageController, :home
 ```
 
-`get` is a Phoenix macro that corresponds to the HTTP verb GET.
-Similar macros exist for other HTTP verbs, including POST, PUT, PATCH, DELETE, OPTIONS, CONNECT, TRACE, and HEAD.
+`get`은 HTTP 동사 GET에 해당하는 Phoenix 매크로입니다.
+다른 HTTP 동사에도 비슷한 매크로가 존재하는데, 여기에는 POST, PUT, PATCH, DELETE, OPTIONS, CONNECT, TRACE, HEAD 등이 있습니다.
 
 ## Examining routes
 
-Phoenix provides an excellent tool for investigating routes in an application: `mix phx.routes`.
+Phoenix는 애플리케이션에서 경로를 조사하기 위한 훌륭한 도구인 `mix phx.routes`를 제공합니다.
 
-Let's see how this works.
-Go to the root of a newly-generated Phoenix application and run `mix phx.routes`.
-You should see something like the following, generated with all routes you currently have:
+어떻게 작동하는지 살펴봅시다.
+새로 생성된 Phoenix 애플리케이션의 루트로 이동하여 `mix phx.routes`를 실행합니다.
+현재 가지고 있는 모든 경로로 생성된 다음과 같은 내용이 표시될 것입니다:
 
 ```shell
 $ mix phx.routes
@@ -71,13 +71,13 @@ GET  /  HelloWeb.PageController :home
 ...
 ```
 
-The route above tells us that any HTTP GET request for the root of the application will be handled by the `home` action of the `HelloWeb.PageController`.
+위의 경로는 애플리케이션의 루트에 대한 모든 HTTP GET 요청이 `HelloWeb.PageController`의 `home` 액션에 의해 처리될 것임을 알려줍니다.
 
 ## Resources
 
-The router supports other macros besides those for HTTP verbs like [`get`](`Phoenix.Router.get/3`), [`post`](`Phoenix.Router.post/3`), and [`put`](`Phoenix.Router.put/3`).
-The most important among them is [`resources`](`Phoenix.Router.resources/4`).
-Let's add a resource to our `lib/hello_web/router.ex` file like this:
+라우터는 [`get`](`Phoenix.Router.get/3`), [`post`](`Phoenix.Router.post/3`), [`put`](`Phoenix.Router.put/3`) 같은 HTTP 동사에 대한 매크로 외에 다른 매크로를 지원합니다.
+이 중 가장 중요한 것은 [`resources`](`Phoenix.Router.resources/4`)입니다.
+이렇게 `lib/hello_web/router.ex` 파일에 리소스를 추가해 봅시다:
 
 ```perl Elixir
 scope "/", HelloWeb do
@@ -89,10 +89,10 @@ scope "/", HelloWeb do
 end
 ```
 
-For now it doesn't matter that we don't actually have a `HelloWeb.UserController`.
+지금은 실제로 `HelloWeb.UserController`가 없는 것은 중요하지 않습니다.
 
-Run `mix phx.routes` once again at the root of your project.
-You should see something like the following:
+프로젝트 루트에서 `mix phx.routes`를 다시 한 번 실행합니다.
+다음과 같은 내용이 표시될 것입니다:
 
 ```shell
 ...
@@ -107,42 +107,42 @@ DELETE  /users/:id       HelloWeb.UserController :delete
 ...
 ```
 
-This is the standard matrix of HTTP verbs, paths, and controller actions.
-For a while, this was known as RESTful routes, but most consider this a misnomer nowadays.
-Let's look at them individually.
+이것은 HTTP 동사, 경로 및 컨트롤러 동작의 표준 매트릭스입니다.
+한동안 이 행렬을 RESTful 라우트라고 불렀지만, 요즘은 대부분 잘못된 명칭으로 간주합니다.
+개별적으로 살펴봅시다.
 
-- A GET request to `/users` will invoke the `index` action to show all the users.
-- A GET request to `/users/:id/edit` will invoke the `edit` action with an ID to retrieve an individual user from the data store and present the information in a form for editing.
-- A GET request to `/users/new` will invoke the `new` action to present a form for creating a new user.
-- A GET request to `/users/:id` will invoke the `show` action with an id to show an individual user identified by that ID.
-- A POST request to `/users` will invoke the `create` action to save a new user to the data store.
-- A PATCH request to `/users/:id` will invoke the `update` action with an ID to save the updated user to the data store.
-- A PUT request to `/users/:id` will also invoke the `update` action with an ID to save the updated user to the data store.
-- A DELETE request to `/users/:id` will invoke the `delete` action with an ID to remove the individual user from the data store.
+- `users`에 대한 GET 요청은 모든 사용자를 표시하기 위해 `index` 액션을 호출합니다.
+- `users/:id/edit`에 대한 GET 요청은 데이터 저장소에서 개별 사용자를 검색하고 편집할 수 있는 양식으로 정보를 표시하기 위해 ID와 함께 `edit` 액션을 호출합니다.
+- `users/new`에 대한 GET 요청은 `new` 액션을 호출하여 새 사용자 생성을 위한 양식을 표시합니다.
+- `users/:id`에 대한 GET 요청은 아이디와 함께 `show` 액션을 호출하여 해당 아이디로 식별된 개별 사용자를 표시합니다.
+- `users`에 대한 POST 요청은 새 사용자를 데이터 저장소에 저장하기 위해 `create` 작업을 호출합니다.
+- `users/:id`에 대한 PATCH 요청은 업데이트된 사용자를 데이터 저장소에 저장하기 위해 ID와 함께 `update` 작업을 호출합니다.
+- `users/:id`로 PUT 요청을 하면 업데이트된 사용자를 데이터 저장소에 저장하기 위해 ID와 함께 `update` 액션을 호출합니다.
+- `users/:id`에 대한 DELETE 요청은 ID와 함께 `delete` 액션을 호출하여 데이터 저장소에서 개별 사용자를 제거합니다.
 
-If we don't need all these routes, we can be selective using the `:only` and `:except` options to filter specific actions.
+이러한 경로가 모두 필요하지 않은 경우 `:only` 및 `:except` 옵션을 사용하여 특정 동작을 필터링할 수 있습니다.
 
-Let's say we have a read-only posts resource.
-We could define it like this:
+읽기 전용 게시물 리소스가 있다고 가정해 보겠습니다.
+다음과 같이 정의할 수 있습니다:
 
 ```perl Elixir
 resources "/posts", PostController, only: [:index, :show]
 ```
 
-Running `mix phx.routes` shows that we now only have the routes to the index and show actions defined.
+`mix phx.routes`를 실행하면 이제 인덱스에 대한 경로와 표시 작업만 정의되었음을 보여줍니다.
 
 ```shell
 GET     /posts      HelloWeb.PostController :index
 GET     /posts/:id  HelloWeb.PostController :show
 ```
 
-Similarly, if we have a comments resource, and we don't want to provide a route to delete one, we could define a route like this.
+마찬가지로 댓글 리소스가 있는데 삭제 경로를 제공하지 않으려는 경우 다음과 같이 경로를 정의할 수 있습니다.
 
 ```perl Elixir
 resources "/comments", CommentController, except: [:delete]
 ```
 
-Running `mix phx.routes` now shows that we have all the routes except the DELETE request to the delete action.
+이제 `mix phx.routes`를 실행하면 삭제 작업에 대한 DELETE 요청을 제외한 모든 경로가 표시됩니다.
 
 ```shell
 GET    /comments           HelloWeb.CommentController :index
@@ -154,16 +154,16 @@ PATCH  /comments/:id       HelloWeb.CommentController :update
 PUT    /comments/:id       HelloWeb.CommentController :update
 ```
 
-The `Phoenix.Router.resources/4` macro describes additional options for customizing resource routes.
+`Phoenix. Router.resources/4` 매크로는 리소스 경로를 사용자 정의하기 위한 추가 옵션을 설명합니다.
 
 ## Verified Routes
 
-Phoenix includes `Phoenix.VerifiedRoutes` module which provides compile-time checks of router paths against your router by using the `~p` sigil.
-For example, you can write paths in controllers, tests, and templates and the compiler will make sure those actually match routes defined in your router.
+Phoenix에는 `~p` 시질을 사용하여 라우터에 대한 라우터 경로를 컴파일 타임에 검사하는 `Phoenix.VerifiedRoutes` 모듈이 포함되어 있습니다.
+예를 들어 컨트롤러, 테스트, 템플릿에 경로를 작성하면 컴파일러가 해당 경로가 라우터에 정의된 경로와 실제로 일치하는지 확인합니다.
 
-Let's see it in action.
-Run `iex -S mix` at the root of the project.
-We'll define a throwaway example module that builds a couple `~p` route paths.
+실제로 확인해 봅시다.
+프로젝트 루트에서 `iex -S mix`를 실행합니다.
+두 개의 `~p` 경로 경로를 빌드하는 일회용 예제 모듈을 정의하겠습니다.
 
 ```perl Elixir
 iex> defmodule RouteExample do
@@ -181,29 +181,29 @@ warning: no route path for HelloWeb.Router matches "/unknown/123"
 iex>
 ```
 
-Notice how the first call to an existing route, `~p"/comments"` gave no warning, but a bad route path `~p"/unknown/123"` produced a compiler warning, just as it should.
-This is significant because it allows us to write otherwise hard-coded paths in our application and the compiler will let us know whenever we write a bad route or change our routing structure.
+기존 경로인 `~p"/comments"`에 대한 첫 번째 호출은 아무런 경고를 표시하지 않지만 잘못된 경로 경로인 `~p"/unknown/123"`은 예상대로 컴파일러 경고를 표시하는 것을 볼 수 있습니다.
+이는 애플리케이션에서 하드코딩된 경로를 작성할 수 있고 컴파일러가 잘못된 경로를 작성하거나 라우팅 구조를 변경할 때마다 이를 알려주기 때문에 중요합니다.
 
-Phoenix projects are set up out of the box to allow use of verified routes throughout your web layer, including tests.
-For example in your templates you can render `~p` links:
+Phoenix 프로젝트는 테스트를 포함하여 웹 레이어 전체에서 검증된 경로를 사용할 수 있도록 즉시 설정됩니다.
+예를 들어 템플릿에서 `~p` 링크를 렌더링할 수 있습니다:
 
 ```perl HEEx
 <.link href={~p"/"}>Welcome Page!</.link>
 <.link href={~p"/comments"}>View Comments</.link>
 ```
 
-Or in a controller, issue a redirect:
+또는 컨트롤러에서 리디렉션을 발행할 수 있습니다:
 
 ```perl Elixir
 redirect(conn, to: ~p"/comments/#{comment}")
 ```
 
-Using `~p` for route paths ensures our application paths and URLs stay up to date with the router definitions.
-The compiler will catch bugs for us, and let us know when we change routes that are referenced elsewhere in our application.
+경로 경로에 `~p`를 사용하면 애플리케이션 경로와 URL이 라우터 정의에 따라 최신 상태로 유지됩니다.
+컴파일러가 버그를 잡아내고 애플리케이션의 다른 곳에서 참조되는 경로를 변경할 때 알려줍니다.
 
 ### More on verified routes
 
-What about paths with query strings? You can either add query string key values directly, or provide a dictionary of key-value pairs, for example:
+쿼리 문자열이 포함된 경로는 어떻게 하나요? 쿼리 문자열 키 값을 직접 추가하거나 키-값 쌍의 사전을 제공할 수 있습니다:
 
 ```perl Elixir
 ~p"/users/17?admin=true&active=false"
@@ -213,23 +213,23 @@ What about paths with query strings? You can either add query string key values 
 "/users/17?admin=true"
 ```
 
-What if we need a full URL instead of a path? Just wrap your path with a call to `Phoenix.VerifiedRoutes.url/1`, which is imported everywhere that `~p` is available:
+경로 대신 전체 URL이 필요하다면 어떻게 해야 할까요? 경로를 `~p`를 사용할 수 있는 모든 곳에서 가져오는 `Phoenix.VerifiedRoutes.url/1` 호출로 감싸기만 하면 됩니다:
 
 ```perl Elixir
 url(~p"/users")
 "http://localhost:4000/users"
 ```
 
-The `url` calls will get the host, port, proxy port, and SSL information needed to construct the full URL from the configuration parameters set for each environment.
-We'll talk about configuration in more detail in its own guide.
-For now, you can take a look at `config/dev.exs` file in your own project to see those values.
+`url` 호출은 각 환경에 대해 설정된 구성 매개변수에서 전체 URL을 구성하는 데 필요한 호스트, 포트, 프록시 포트 및 SSL 정보를 가져옵니다.
+구성에 대한 자세한 내용은 자체 가이드에서 설명합니다.
+지금은 프로젝트의 `config/dev.exs` 파일을 살펴보고 해당 값을 확인할 수 있습니다.
 
 ## Nested resources
 
-It is also possible to nest resources in a Phoenix router.
-Let's say we also have a `posts` resource that has a many-to-one relationship with `users`.
-That is to say, a user can create many posts, and an individual post belongs to only one user.
-We can represent that by adding a nested route in `lib/hello_web/router.ex` like this:
+Phoenix 라우터에서 리소스를 중첩할 수도 있습니다.
+'사용자'와 다대일 관계에 있는 '게시물' 리소스가 있다고 가정해 봅시다.
+즉, 한 사용자가 여러 개의 게시물을 만들 수 있고 개별 게시물은 한 사용자에게만 속합니다.
+다음과 같이 `lib/hello_web/router.ex`에 중첩 경로를 추가하여 이를 표현할 수 있습니다:
 
 ```perl Elixir
 resources "/users", UserController do
@@ -237,7 +237,7 @@ resources "/users", UserController do
 end
 ```
 
-When we run `mix phx.routes` now, in addition to the routes we saw for `users` above, we get the following set of routes:
+이제 `mix phx.routes`를 실행하면 위의 `사용자`에 대한 경로 외에 다음과 같은 경로 집합이 표시됩니다:
 
 ```perl Elixir
 ...
@@ -252,13 +252,13 @@ DELETE  /users/:user_id/posts/:id       HelloWeb.PostController :delete
 ...
 ```
 
-We see that each of these routes scopes the posts to a user ID.
-For the first one, we will invoke `PostController`'s `index` action, but we will pass in a `user_id`.
-This implies that we would display all the posts for that individual user only.
-The same scoping applies for all these routes.
+이러한 각 경로가 사용자 ID로 게시물의 범위를 지정하는 것을 알 수 있습니다.
+첫 번째 경로의 경우, `PostController`의 `index` 액션을 호출하되 `user_id`를 전달합니다.
+이는 해당 개별 사용자에 대한 모든 글만 표시한다는 것을 의미합니다.
+이러한 모든 경로에 동일한 범위가 적용됩니다.
 
-When building paths for nested routes, we will need to interpolate the IDs where they belong in route definition.
-For the following `show` route, `42` is the `user_id`, and `17` is the `post_id`.
+중첩된 경로에 대한 경로를 작성할 때는 경로 정의에서 해당 경로가 속한 ID를 보간해야 합니다.
+다음 `show` 경로의 경우 `42`는 `user_id`이고 `17`은 `post_id`입니다.
 
 ```perl Elixir
 user_id = 42
@@ -267,26 +267,26 @@ post_id = 17
 "/users/42/posts/17"
 ```
 
-Verified routes also support the `Phoenix.Param` protocol, but we don't need to concern ourselves with Elixir protocols just yet.
-Just know that once we start building our application with structs like `%User{}` and `%Post{}`, we'll be able to interpolate those data structures directly into our `~p` paths and Phoenix will pluck out the correct fields to use in the route.
+확인된 경로는 `Phoenix.Param` 프로토콜도 지원하지만, 아직은 엘릭서 프로토콜에 대해 걱정할 필요는 없습니다.
+`%User{}` 및 `%Post{}`와 같은 구조체로 애플리케이션을 빌드하기 시작하면 이러한 데이터 구조를 `~p` 경로에 직접 보간할 수 있으며, Phoenix는 경로에 사용할 올바른 필드를 뽑아낼 것입니다.
 
 ```perl Elixir
 ~p"/users/#{user}/posts/#{post}"
 "/users/42/posts/17"
 ```
 
-Notice how we didn't need to interpolate `user.id` or `post.id`? This is particularly nice if we decide later we want to make our URLs a little nicer and start using slugs instead.
-We don't need to change any of our `~p`'s!
+`user.id` 또는 `post.id`를 보간할 필요가 없는 것이 보이시죠? 이 기능은 나중에 URL을 좀 더 멋지게 만들고 대신 슬러그를 사용하기로 결정할 때 특히 유용합니다.
+`~p`를 하나도 변경할 필요가 없습니다!
 
 ## Scoped routes
 
-Scopes are a way to group routes under a common path prefix and scoped set of plugs.
-We might want to do this for admin functionality, APIs, and especially for versioned APIs.
-Let's say we have user-generated reviews on a site, and that those reviews first need to be approved by an administrator.
-The semantics of these resources are quite different, and they might not share the same controller.
-Scopes enable us to segregate these routes.
+범위는 공통 경로 접두사와 범위가 지정된 플러그 집합으로 경로를 그룹화하는 방법입니다.
+관리자 기능, API, 특히 버전이 지정된 API에 이 방법을 사용할 수 있습니다.
+사이트에 사용자가 작성한 리뷰가 있고 이러한 리뷰는 먼저 관리자의 승인을 받아야 한다고 가정해 보겠습니다.
+이러한 리소스의 의미는 상당히 다르며 동일한 컨트롤러를 공유하지 않을 수도 있습니다.
+범위를 사용하면 이러한 경로를 분리할 수 있습니다.
 
-The paths to the user-facing reviews would look like a standard resource.
+사용자 대상 리뷰 경로는 표준 리소스처럼 보일 것입니다.
 
 ```shell
 /reviews
@@ -295,7 +295,7 @@ The paths to the user-facing reviews would look like a standard resource.
 ...
 ```
 
-The administration review paths can be prefixed with `/admin`.
+관리 검토 경로 앞에 `/admin`을 붙일 수 있습니다.
 
 ```shell
 /admin/reviews
@@ -304,8 +304,8 @@ The administration review paths can be prefixed with `/admin`.
 ...
 ```
 
-We accomplish this with a scoped route that sets a path option to `/admin` like this one.
-We can nest this scope inside another scope, but instead, let's set it by itself at the root, by adding to `lib/hello_web/router.ex` the following:
+이와 같이 경로 옵션을 `/admin`으로 설정하는 범위 지정 경로를 사용하여 이를 수행합니다.
+이 범위를 다른 범위 안에 중첩할 수도 있지만, 대신 `lib/hello_web/router.ex`에 다음을 추가하여 루트에서 단독으로 설정해 보겠습니다:
 
 ```shell Elixir
 scope "/admin", HelloWeb.Admin do
@@ -315,9 +315,9 @@ scope "/admin", HelloWeb.Admin do
 end
 ```
 
-We define a new scope where all routes are prefixed with `/admin` and all controllers are under the `HelloWeb.Admin` namespace.
+모든 경로의 접두사가 `/admin`이고 모든 컨트롤러가 `HelloWeb.Admin` 네임스페이스 아래에 있는 새 스코프를 정의합니다.
 
-Running `mix phx.routes` again, in addition to the previous set of routes we get the following:
+이전 경로 집합에 추가하여 `mix phx.routes`를 다시 실행하면 다음과 같은 결과가 나타납니다:
 
 ```shell
 ...
@@ -332,9 +332,9 @@ DELETE  /admin/reviews/:id       HelloWeb.Admin.ReviewController :delete
 ...
 ```
 
-This looks good, but there is a problem here.
-Remember that we wanted both user-facing review routes `/reviews` and the admin ones `/admin/reviews`.
-If we now include the user-facing reviews in our router under the root scope like this:
+좋아 보이지만 여기에 문제가 있습니다.
+사용자 대상 리뷰 경로인 `/reviews`와 관리자 대상 경로인 `/admin/reviews`가 모두 필요하다는 점을 기억하세요.
+이제 라우터에 사용자 대면 리뷰를 이렇게 루트 범위 아래에 포함시키면 됩니다:
 
 ```perl Elixir
 scope "/", HelloWeb do
@@ -351,7 +351,7 @@ scope "/admin", HelloWeb.Admin do
 end
 ```
 
-and we run `mix phx.routes`, we get output for each scoped route:
+그리고 `mix phx.routes`를 실행하면 범위가 지정된 각 경로에 대한 출력을 얻습니다:
 
 ```shell
 ...
@@ -374,7 +374,7 @@ PUT     /admin/reviews/:id       HelloWeb.Admin.ReviewController :update
 DELETE  /admin/reviews/:id       HelloWeb.Admin.ReviewController :delete
 ```
 
-What if we had a number of resources that were all handled by admins? We could put all of them inside the same scope like this:
+관리자가 모두 처리하는 리소스가 여러 개 있다면 어떨까요? 이렇게 모든 리소스를 동일한 범위 안에 넣을 수 있습니다:
 
 ```perl Elixir
 scope "/admin", HelloWeb.Admin do
@@ -386,7 +386,7 @@ scope "/admin", HelloWeb.Admin do
 end
 ```
 
-Here's what `mix phx.routes` tells us:
+다음은 `mix phx.routes`가 알려주는 내용입니다:
 
 ```shell
 ...
@@ -416,12 +416,12 @@ PUT     /admin/users/:id         HelloWeb.Admin.UserController :update
 DELETE  /admin/users/:id         HelloWeb.Admin.UserController :delete
 ```
 
-This is great, exactly what we want.
-Note how every route and controller is properly namespaced.
+우리가 원하던 바로 그 결과입니다.
+모든 경로와 컨트롤러의 네임스페이스가 올바르게 지정되어 있다는 점에 유의하세요.
 
-Scopes can also be arbitrarily nested, but you should do it carefully as nesting can sometimes make our code confusing and less clear.
-With that said, suppose that we had a versioned API with resources defined for images, reviews, and users.
-Then technically, we could set up routes for the versioned API like this:
+범위를 임의로 중첩할 수도 있지만, 중첩하면 코드가 혼란스럽고 명확하지 않을 수 있으므로 신중하게 수행해야 합니다.
+이미지, 리뷰 및 사용자에 대해 정의된 리소스가 있는 버전이 있는 API가 있다고 가정해 보겠습니다.
+그렇다면 기술적으로 다음과 같이 버전이 지정된 API에 대한 경로를 설정할 수 있습니다:
 
 ```perl Elixir
 scope "/api", HelloWeb.Api, as: :api do
@@ -435,10 +435,10 @@ scope "/api", HelloWeb.Api, as: :api do
 end
 ```
 
-You can run `mix phx.routes` to see how these definitions will look like.
+`mix phx.routes`를 실행하여 이러한 정의가 어떻게 표시되는지 확인할 수 있습니다.
 
-Interestingly, we can use multiple scopes with the same path as long as we are careful not to duplicate routes.
-The following router is perfectly fine with two scopes defined for the same path:
+흥미롭게도 경로가 중복되지 않도록 주의하는 한 동일한 경로로 여러 범위를 사용할 수 있습니다.
+다음 라우터는 동일한 경로에 대해 정의된 두 개의 범위로 완벽하게 작동합니다:
 
 ```perl Elixir
 defmodule HelloWeb.Router do
@@ -459,7 +459,7 @@ defmodule HelloWeb.Router do
 end
 ```
 
-If we do duplicate a route — which means two routes having the same path — we'll get this familiar warning:
+경로가 중복되는 경우, 즉 경로가 같은 두 개의 경로가 있는 경우 익숙한 경고가 표시됩니다:
 
 ```shell
 warning: this clause cannot match because a previous clause at line 16 always matches
@@ -467,39 +467,39 @@ warning: this clause cannot match because a previous clause at line 16 always ma
 
 ## Pipelines
 
-We have come quite a long way in this guide without talking about one of the first lines we saw in the router: `pipe_through :browser`.
-It's time to fix that.
+라우터에서 본 첫 번째 줄 중 하나에 대해 이야기하지 않고 이 가이드에서 꽤 먼 길을 왔습니다: pipe_through :browser`.
+이제 바로잡을 시간입니다.
 
-Pipelines are a series of plugs that can be attached to specific scopes.
-If you are not familiar with plugs, we have an [in-depth guide about them](plug.html).
+파이프라인은 특정 범위에 연결할 수 있는 일련의 플러그입니다.
+플러그에 익숙하지 않다면 [플러그에 대한 심층 가이드](plug.html)를 참조하세요.
 
-Routes are defined inside scopes and scopes may pipe through multiple pipelines.
-Once a route matches, Phoenix invokes all plugs defined in all pipelines associated to that route.
-For example, accessing `/` will pipe through the `:browser` pipeline, consequently invoking all of its plugs.
+경로는 스코프 내부에 정의되며 스코프는 여러 파이프라인을 통과할 수 있습니다.
+경로가 일치하면 Phoenix는 해당 경로와 연결된 모든 파이프라인에 정의된 모든 플러그를 호출합니다.
+예를 들어 `/`에 액세스하면 `:browser` 파이프라인을 통과하여 결과적으로 모든 플러그가 호출됩니다.
 
-Phoenix defines two pipelines by default, `:browser` and `:api`, which can be used for a number of common tasks.
-In turn we can customize them as well as create new pipelines to meet our needs.
+Phoenix는 기본적으로 `:browser`와 `:api`라는 두 개의 파이프라인을 정의하며, 이 파이프라인은 여러 가지 일반적인 작업에 사용할 수 있습니다.
+이를 사용자 정의하고 필요에 따라 새로운 파이프라인을 생성할 수도 있습니다.
 
 ### The `:browser` and `:api` pipelines
 
-As their names suggest, the `:browser` pipeline prepares for routes which render requests for a browser, and the `:api` pipeline prepares for routes which produce data for an API.
+이름에서 알 수 있듯이 `:browser` 파이프라인은 브라우저에 대한 요청을 렌더링하는 경로를 준비하고 `:api` 파이프라인은 API에 대한 데이터를 생성하는 경로를 준비합니다.
 
-The `:browser` pipeline has six plugs: The `plug :accepts, ["html"]` defines the accepted request format or formats.
-`:fetch_session`, which, naturally, fetches the session data and makes it available in the connection.
-`:fetch_live_flash`, which fetches any flash messages from LiveView and merges them with the controller flash messages.
-Then, the plug `:put_root_layout` will store the root layout for rendering purposes.
-Later `:protect_from_forgery` and `:put_secure_browser_headers`, protects form posts from cross-site forgery.
+`:browser` 파이프라인에는 6개의 플러그가 있습니다: plug :accepts, ["html"]`는 허용되는 요청 형식을 정의합니다.
+`:fetch_session`은 세션 데이터를 가져와서 연결에서 사용할 수 있도록 합니다.
+`:fetch_live_flash`는 라이브뷰에서 모든 플래시 메시지를 가져와 컨트롤러 플래시 메시지와 병합합니다.
+그런 다음 `:put_root_layout` 플러그는 렌더링 목적으로 루트 레이아웃을 저장합니다.
+이후 `:protect_from_forgery`와 `:put_secure_browser_headers`는 사이트 간 위조로부터 양식 게시물을 보호합니다.
 
-Currently, the `:api` pipeline only defines `plug :accepts, ["json"]`.
+현재 `:api` 파이프라인은 `plug :accepts, ["json"]`만 정의합니다.
 
-The router invokes a pipeline on a route defined within a scope.
-Routes outside of a scope have no pipelines.
-Although the use of nested scopes is discouraged (see above the versioned API example), if we call `pipe_through` within a nested scope, the router will invoke all `pipe_through`'s from parent scopes, followed by the nested one.
+라우터는 범위 내에 정의된 경로에서 파이프라인을 호출합니다.
+범위 외부의 경로에는 파이프라인이 없습니다.
+중첩된 범위의 사용은 권장되지 않지만(위의 버전이 지정된 API 예제 참조), 중첩된 범위 내에서 `pipe_through`를 호출하면 라우터는 부모 범위의 모든 `pipe_through`를 호출한 다음 중첩된 범위에서 호출합니다.
 
-Those are a lot of words bunched up together.
-Let's take a look at some examples to untangle their meaning.
+많은 단어가 한데 묶여 있습니다.
+몇 가지 예를 통해 그 의미를 풀어보겠습니다.
 
-Here's another look at the router from a newly generated Phoenix application, this time with the `/api` scope uncommented back in and a route added.
+다음은 새로 생성된 Phoenix 애플리케이션의 라우터로, 이번에는 `/api` 스코프가 주석 처리되지 않고 경로가 추가된 상태입니다.
 
 ```perl Elixir
 defmodule HelloWeb.Router do
@@ -534,20 +534,20 @@ defmodule HelloWeb.Router do
 end
 ```
 
-When the server accepts a request, the request will always first pass through the plugs in our endpoint, after which it will attempt to match on the path and HTTP verb.
+서버가 요청을 수락하면 요청은 항상 엔드포인트의 플러그를 먼저 통과한 후 경로와 HTTP 동사를 일치시키려고 시도합니다.
 
-Let's say that the request matches our first route: a GET to `/`.
-The router will first pipe that request through the `:browser` pipeline - which will fetch the session data, fetch the flash, and execute forgery protection - before it dispatches the request to `PageController`'s `home` action.
+요청이 첫 번째 경로인 `/`에 대한 GET과 일치한다고 가정해 보겠습니다.
+라우터는 먼저 세션 데이터를 가져오고, 플래시를 가져오고, 위변조 방지를 실행하는 `:browser` 파이프라인을 통해 해당 요청을 파이프한 후 `PageController`의 `home` 액션으로 요청을 전송합니다.
 
-Conversely, suppose the request matches any of the routes defined by the [`resources/2`](`Phoenix.Router.resources/2`) macro.
-In that case, the router will pipe it through the `:api` pipeline — which currently only performs content negotiation — before it dispatches further to the correct action of the `HelloWeb.ReviewController`.
+반대로, 요청이 [`resources/2`](`Phoenix.Router.resources/2`) 매크로에 정의된 경로와 일치한다고 가정해 보겠습니다.
+이 경우 라우터는 현재 콘텐츠 협상만 수행하는 `:api` 파이프라인을 통해 요청을 파이프한 후 `HelloWeb.ReviewController`의 올바른 작업으로 추가 발송합니다.
 
-If no route matches, no pipeline is invoked and a 404 error is raised.
+일치하는 경로가 없으면 파이프라인이 호출되지 않고 404 오류가 발생합니다.
 
 ### Creating new pipelines
 
-Phoenix allows us to create our own custom pipelines anywhere in the router.
-To do so, we call the [`pipeline/2`](`Phoenix.Router.pipeline/2`) macro with these arguments: an atom for the name of our new pipeline and a block with all the plugs we want in it.
+Phoenix를 사용하면 라우터 내 어디에서나 사용자 정의 파이프라인을 생성할 수 있습니다.
+이를 위해 새 파이프라인의 이름을 나타내는 원자, 원하는 모든 플러그가 포함된 블록을 인수로 사용하여 [`pipeline/2`](`Phoenix.Router.pipeline/2`) 매크로를 호출합니다.
 
 ```perl Elixir
 defmodule HelloWeb.Router do
@@ -574,10 +574,10 @@ defmodule HelloWeb.Router do
 end
 ```
 
-The above assumes there is a plug called `HelloWeb.Authentication` that performs authentication and is now part of the `:auth` pipeline.
+위에서는 인증을 수행하는 `HelloWeb.Authentication`이라는 플러그가 있으며 이제 `:auth` 파이프라인의 일부라고 가정합니다.
 
-Note that pipelines themselves are plugs, so we can plug a pipeline inside another pipeline.
-For example, we could rewrite the `auth` pipeline above to automatically invoke `browser`, simplifying the downstream pipeline call:
+파이프라인 자체는 플러그이므로 다른 파이프라인 안에 파이프라인을 플러그할 수 있습니다.
+예를 들어, 위의 `auth` 파이프라인을 재작성하여 `browser`를 자동으로 호출하여 다운스트림 파이프라인 호출을 간소화할 수 있습니다:
 
 ```perl Elixir
   pipeline :auth do
@@ -595,17 +595,17 @@ For example, we could rewrite the `auth` pipeline above to automatically invoke 
 
 ## How to organize my routes?
 
-In Phoenix, we tend to define several pipelines, that provide specific functionality.
-For example, the `:browser` and `:api` pipelines are meant to be accessed by specific clients, browsers and http clients respectively.
+Phoenix에서는 특정 기능을 제공하는 여러 파이프라인을 정의하는 경향이 있습니다.
+예를 들어, `:browser` 및 `:api` 파이프라인은 각각 특정 클라이언트, 브라우저 및 http 클라이언트에서 액세스하기 위한 것입니다.
 
-Perhaps more importantly, it is also very common to define pipelines specific to authentication and authorization.
-For example, you might have a pipeline that requires all users are authenticated.
-Another pipeline may enforce only admin users can access certain routes.
+더 중요한 것은 인증 및 권한 부여와 관련된 파이프라인을 정의하는 것도 매우 일반적이라는 점입니다.
+예를 들어 모든 사용자가 인증을 받아야 하는 파이프라인이 있을 수 있습니다.
+또 다른 파이프라인에서는 관리자 사용자만 특정 경로에 액세스할 수 있도록 할 수도 있습니다.
 
-Once your pipelines are defined, you reuse the pipelines in the desired scopes, grouping your routes around their pipelines.
-For example, going back to our reviews example.
-Let's say anyone can read a review, but only authenticated users can create them.
-Your routes could look like this:
+파이프라인을 정의한 후에는 원하는 범위에서 파이프라인을 재사용하여 해당 파이프라인을 중심으로 경로를 그룹화합니다.
+예를 들어 리뷰의 예로 돌아가 보겠습니다.
+누구나 리뷰를 읽을 수 있지만 인증된 사용자만 리뷰를 작성할 수 있다고 가정해 보겠습니다.
+경로는 다음과 같이 보일 수 있습니다:
 
 ```perl Elixir
 pipeline :browser do
@@ -631,18 +631,18 @@ scope "/" do
 end
 ```
 
-Note in the above how the routes are split across different scopes.
-While the separation can be confusing at first, it has one big upside: it is very easy to inspect your routes and see all routes that, for example, require authentication and which ones do not.
-This helps with auditing and making sure your routes have the proper scope.
+위 그림에서 경로가 여러 범위에 걸쳐 분할되어 있는 것을 확인할 수 있습니다.
+이렇게 분리하면 처음에는 혼란스러울 수 있지만, 한 가지 큰 장점이 있습니다. 예를 들어 경로를 검사하여 인증이 필요한 경로와 그렇지 않은 경로를 모두 쉽게 확인할 수 있다는 점입니다.
+이는 경로를 감사하고 경로의 범위가 적절한지 확인하는 데 도움이 됩니다.
 
-You can create as few or as many scopes as you want.
-Because pipelines are reusable across scopes, they help encapsulate common functionality and you can compose them as necessary on each scope you define.
+원하는 만큼의 범위를 만들 수 있습니다.
+파이프라인은 여러 범위에서 재사용할 수 있으므로 공통 기능을 캡슐화하는 데 도움이 되며, 정의한 각 범위에서 필요에 따라 구성할 수 있습니다.
 
 ## Forward
 
-The `Phoenix.Router.forward/4` macro can be used to send all requests that start with a particular path to a particular plug.
-Let's say we have a part of our system that is responsible (it could even be a separate application or library) for running jobs in the background, it could have its own web interface for checking the status of the jobs.
-We can forward to this admin interface using:
+특정 경로로 시작하는 모든 요청을 특정 플러그에 보내는 데 `Phoenix.Router.forward/4` 매크로를 사용할 수 있습니다.
+백그라운드에서 작업을 실행하는 시스템 일부(별도의 애플리케이션이나 라이브러리일 수도 있음)에 작업 상태를 확인하기 위한 자체 웹 인터페이스가 있다고 가정해 봅시다.
+이 관리자 인터페이스를 사용하여 전달할 수 있습니다:
 
 ```perl Elixir
 defmodule HelloWeb.Router do
@@ -658,11 +658,11 @@ defmodule HelloWeb.Router do
 end
 ```
 
-This means that all routes starting with `/jobs` will be sent to the `HelloWeb.BackgroundJob.Plug` module.
-Inside the plug, you can match on subroutes, such as `/pending` and `/active` that shows the status of certain jobs.
+즉, `/jobs`로 시작하는 모든 경로가 `HelloWeb.BackgroundJob.Plug` 모듈로 전송됩니다.
+플러그 내에서 특정 작업의 상태를 표시하는 `/pending` 및 `/active`와 같은 하위 경로를 일치시킬 수 있습니다.
 
-We can even mix the [`forward/4`](`Phoenix.Router.forward/4`) macro with pipelines.
-If we wanted to ensure that the user was authenticated and was an administrator in order to see the jobs page, we could use the following in our router.
+[`forward/4`](`Phoenix.Router.forward/4`) 매크로를 파이프라인과 혼합할 수도 있습니다.
+작업 페이지를 보기 위해 사용자가 인증되고 관리자인지 확인하려면 라우터에서 다음을 사용할 수 있습니다.
 
 ```perl Elixir
 defmodule HelloWeb.Router do
@@ -677,31 +677,31 @@ defmodule HelloWeb.Router do
 end
 ```
 
-This means the plugs in the `authenticate_user` and `ensure_admin` pipelines will be called before the `BackgroundJob.Plug` allowing them to send an appropriate response and halt the request accordingly.
+즉, `authenticate_user` 및 `ensure_admin` 파이프라인의 플러그가 `BackgroundJob.Plug`보다 먼저 호출되어 적절한 응답을 보내고 그에 따라 요청을 중단할 수 있습니다.
 
-The `opts` that are received in the `init/1` callback of the Module Plug can be passed as a third argument.
-For example, maybe the background job lets you set the name of your application to be displayed on the page.
-This could be passed with:
+모듈 플러그의 `init/1` 콜백에서 수신되는 `옵션`은 세 번째 인수로 전달할 수 있습니다.
+예를 들어 백그라운드 작업을 통해 페이지에 표시할 애플리케이션의 이름을 설정할 수 있습니다.
+이를 함께 전달할 수 있습니다:
 
 ```perl Elixir
 forward "/jobs", BackgroundJob.Plug, name: "Hello Phoenix"
 ```
 
-There is a fourth `router_opts` argument that can be passed.
-These options are outlined in the `Phoenix.Router.scope/2` documentation.
+전달할 수 있는 네 번째 `router_opts` 인수가 있습니다.
+이러한 옵션은 `Phoenix.Router.scope/2` 문서에 설명되어 있습니다.
 
 `BackgroundJob.Plug` can be implemented as any Module Plug discussed in the [Plug guide](plug.html).
-Note though it is not advised to forward to another Phoenix endpoint.
-This is because plugs defined by your app and the forwarded endpoint would be invoked twice, which may lead to errors.
+다른 Phoenix 엔드포인트로 포워딩하는 것은 권장하지 않습니다.
+앱과 전달된 엔드포인트에 의해 정의된 플러그가 두 번 호출되어 오류가 발생할 수 있기 때문입니다.
 
 ## Summary
 
-Routing is a big topic, and we have covered a lot of ground here.
-The important points to take away from this guide are:
+라우팅은 매우 중요한 주제이며 여기서는 많은 부분을 다루었습니다.
+이 가이드에서 알아두어야 할 중요한 사항은 다음과 같습니다:
 
-- Routes which begin with an HTTP verb name expand to a single clause of the match function.
-- Routes declared with `resources` expand to 8 clauses of the match function.
-- Resources may restrict the number of match function clauses by using the `only:` or `except:` options.
-- Any of these routes may be nested.
-- Any of these routes may be scoped to a given path.
-- Using verified routes with `~p` for compile-time route checks
+- HTTP 동사 이름으로 시작하는 경로는 일치 함수의 단일 절로 확장됩니다.
+- `resources`로 선언된 경로는 일치 함수의 8개 절로 확장됩니다.
+- 리소스는 `only:` 또는 `except:` 옵션을 사용하여 일치 함수 절의 수를 제한할 수 있습니다.
+- 이러한 경로는 중첩될 수 있습니다.
+- 이러한 경로는 지정된 경로로 범위가 지정될 수 있습니다.
+- 컴파일 타임 경로 검사에 `~p`와 함께 확인된 경로 사용

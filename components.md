@@ -1,22 +1,22 @@
 # Components and HEEx
 
-> **Requirement**: This guide expects that you have gone through the [introductory guides](installation.html) and got a Phoenix application [up and running](up_and_running.html).
+> **요구 사항**: 이 가이드는 사용자가 [소개 가이드](installation.html)를 살펴보고 Phoenix 애플리케이션을 [가동 및 실행](up_and_running.html)한 것으로 가정합니다.
 >
-> **Requirement**: This guide expects that you have gone through the [request life-cycle guide](request_lifecycle.html).
+> **요구 사항**: 이 가이드는 사용자가 [요청 수명 주기 가이드](request_lifecycle.html)를 살펴봤을 것으로 예상합니다.
 
-The Phoenix endpoint pipeline takes a request, routes it to a controller, and calls a view module to render a template.
-The view interface from the controller is simple – the controller calls a view function with the connections assigns, and the function's job is to return a HEEx template.
-We call any function that accepts an `assigns` parameter and returns a HEEx template a _function component_.
-Function components are defined with the help of the [`Phoenix.Component`](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html) module.
+Phoenix 엔드포인트 파이프라인은 요청을 받아 컨트롤러로 라우팅하고 보기 모듈을 호출하여 템플릿을 렌더링합니다.
+컨트롤러의 보기 인터페이스는 간단합니다. 컨트롤러는 연결이 할당된 보기 함수를 호출하고, 이 함수의 작업은 HEEx 템플릿을 반환하는 것입니다.
+'assigns' 매개변수를 받아들이고 HEEx 템플릿을 반환하는 함수를 _function component_라고 부릅니다.
+함수 컴포넌트는 [`Phoenix.Component`](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html) 모듈의 도움으로 정의됩니다.
 
-Function components are the essential building block for any kind of markup-based template rendering you'll perform in Phoenix.
-They serve as a shared abstraction for the standard MVC controller-based applications, LiveView applications, layouts, and smaller UI definitions you'll use throughout other templates.
+함수 컴포넌트는 Phoenix에서 수행하게 될 모든 종류의 마크업 기반 템플릿 렌더링에 필수적인 구성 요소입니다.
+이 컴포넌트는 표준 MVC 컨트롤러 기반 애플리케이션, 라이브뷰 애플리케이션, 레이아웃 및 다른 템플릿 전체에서 사용할 작은 UI 정의에 대한 공유 추상화 역할을 합니다.
 
-In this chapter, we will recap how components were used in previous chapters and find new use cases for them.
+이 장에서는 이전 장에서 컴포넌트가 어떻게 사용되었는지 요약하고 새로운 사용 사례를 찾아보겠습니다.
 
 ## Function components
 
-At the end of the Request life-cycle chapter, we created a template at `lib/hello_web/controllers/hello_html/show.html.heex`, let's open it up:
+요청 수명 주기 챕터의 마지막에 `lib/hello_web/controllers/hello_html/show.html`에 템플릿을 만들었습니다.heex`, let's open it up:
 
 ```perl HEEx
 <section>
@@ -24,7 +24,7 @@ At the end of the Request life-cycle chapter, we created a template at `lib/hell
 </section>
 ```
 
-This template, is embedded as part of `HelloHTML`, at `lib/hello_web/controllers/hello_html.ex`:
+이 템플릿은 `lib/hello_web/controllers/hello_html`에서 `HelloHTML`의 일부로 임베드됩니다.ex`:
 
 ```perl Elixir
 defmodule HelloWeb.HelloHTML do
@@ -34,17 +34,17 @@ defmodule HelloWeb.HelloHTML do
 end
 ```
 
-That's simple enough.
-There's only two lines, `use HelloWeb, :html`.
-This line calls the `html/0` function defined in `HelloWeb` which sets up the basic imports and configuration for our function components and templates.
+충분히 간단합니다.
+단지 두 줄, `use HelloWeb, :html`만 있으면 됩니다.
+이 줄은 함수 컴포넌트와 템플릿에 대한 기본 임포트와 구성을 설정하는 `HelloWeb`에 정의된 `html/0` 함수를 호출합니다.
 
-All of the imports and aliases we make in our module will also be available in our templates.
-That's because templates are effectively compiled into functions inside their respective module.
-For example, if you define a function in your module, you will be able to invoke it directly from the template.
-Let's see this in practice.
+모듈에서 만든 모든 임포트와 별칭은 템플릿에서도 사용할 수 있습니다.
+템플릿은 해당 모듈 내부의 함수로 효과적으로 컴파일되기 때문입니다.
+예를 들어 모듈에서 함수를 정의하면 템플릿에서 바로 함수를 호출할 수 있습니다.
+이를 실제로 살펴봅시다.
 
-Imagine we want to refactor our `show.html.heex` to move the rendering of `<h2>Hello World, from <%= @messenger %>!</h2>` to its own function.
-We can move it to a function component inside `HelloHTML`, let's do so:
+`show.html.heex`를 리팩터링하여 `<h2>Hello World, from <%= @messenger %>!</h2>`의 렌더링을 자체 함수로 옮기고 싶다고 가정해 보겠습니다.
+HelloHTML` 내부의 함수 컴포넌트로 이동해 보겠습니다:
 
 ```perl Elixir
 defmodule HelloWeb.HelloHTML do
@@ -62,9 +62,9 @@ defmodule HelloWeb.HelloHTML do
 end
 ```
 
-We declared the attributes we accept via the `attr/3` macro provided by `Phoenix.Component`, then we defined our `greet/1` function which returns the HEEx template.
+`Phoenix.Component`에서 제공하는 `attr/3` 매크로를 통해 허용하는 어트리뷰트를 선언한 다음, HEEx 템플릿을 반환하는 `greet/1` 함수를 정의했습니다.
 
-Next we need to update `show.html.heex`:
+다음으로 `show.html.heex`을 업데이트해야 합니다:
 
 ```perl Elixir
 <section>
@@ -72,48 +72,48 @@ Next we need to update `show.html.heex`:
 </section>
 ```
 
-When we reload `http://localhost:4000/hello/Frank`, we should see the same content as before.
+`http://localhost:4000/hello/Frank`를 다시 로드하면 이전과 동일한 내용이 표시될 것입니다.
 
-Since templates are embedded inside the `HelloHTML` module, we were able to invoke the view function simply as `<.greet messenger="..." />`.
+템플릿이 `HelloHTML` 모듈 안에 내장되어 있기 때문에 `<.greet messenger="..." />`로 간단히 보기 함수를 호출할 수 있었습니다.
 
-If the component was defined elsewhere, we can also type `<HelloWeb.HelloHTML.greet messenger="..." />`.
+컴포넌트가 다른 곳에 정의된 경우 `<HelloWeb.HelloHTML.greet messenger="..." />`를 입력할 수도 있습니다.
 
-By declaring attributes as required, Phoenix will warn at compile time if we call the `<.greet />` component without passing attributes.
-If an attribute is optional, you can specify the `:default` option with a value:
+어트리뷰트를 필요에 따라 선언하면 어트리뷰트를 전달하지 않고 `<.greet />` 컴포넌트를 호출하면 컴파일 시점에 Phoenix가 경고합니다.
+속성이 선택 사항인 경우 값과 함께 `:default` 옵션을 지정할 수 있습니다:
 
 ```perl Elixir
 attr :messenger, :string, default: nil
 ```
 
-Although this is a quick example, it shows the different roles function components play in Phoenix:
+이것은 간단한 예시이지만, 함수 컴포넌트가 Phoenix에서 수행하는 다양한 역할을 보여줍니다:
 
-- Function components can be defined as functions that receive `assigns` as argument and call the `~H` sigil, as we did in `greet/1`
+- 함수 컴포넌트는 `greet/1`에서와 같이 `assigns`를 인수로 받고 `~H` 시질을 호출하는 함수로 정의할 수 있습니다.
 
-- Function components can be embedded from template files, that's how we load `show.html.heex` into `HelloWeb.HelloHTML`
+- 함수 컴포넌트는 템플릿 파일에서 임베드할 수 있으며, 이는 `show.html.heex`를 `HelloWeb.HelloHTML`에 로드하는 방식입니다.
 
-- Function components can declare which attributes are expected, which are validated at compilation time
+- 함수 컴포넌트는 예상되는 어트리뷰트를 선언할 수 있으며, 컴파일 시 유효성이 검사됩니다.
 
-- Function components can be directly rendered from controllers
+- 함수 컴포넌트는 컨트롤러에서 직접 렌더링할 수 있습니다.
 
-- Function components can be directly rendered from other function components, as we called `<.greet messenger={@messenger} />` from `show.html.heex`
+- 함수 컴포넌트는 다른 함수 컴포넌트에서 직접 렌더링할 수 있으며, `<.greet messenger={@messenger} />`를 `show.html.heex`에서 호출한 것처럼 말입니다.
 
-And there's more.
-Before we go deeper, let's fully understand the expressive power behind the HEEx template language.
+그리고 더 있습니다.
+더 깊이 들어가기 전에 HEEx 템플릿 언어의 표현력을 완전히 이해해 보겠습니다.
 
 ## HEEx
 
-Function components and templates files are powered by [the HEEx template language](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2), which stands for "HTML+EEx".
-EEx is an Elixir library that uses `<%= expression %>` to execute Elixir expressions and interpolate their results into the template.
-This is frequently used to display assigns we have set by way of the `@` shortcut.
-In your controller, if you invoke:
+함수 컴포넌트와 템플릿 파일은 "HTML+EEx"의 약자인 [HEEx 템플릿 언어](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2)로 구동됩니다.
+EEx는 `<%= 표현식 %>`을 사용하여 Elixir 표현식을 실행하고 그 결과를 템플릿에 보간하는 Elixir 라이브러리입니다.
+이는 `@` 단축키를 통해 설정한 할당을 표시하는 데 자주 사용됩니다.
+컨트롤러에서 호출하는 경우
 
 ```perl Elixir
   render(conn, :show, username: "joe")
 ```
 
-Then you can access said username in the templates as `<%= @username %>`.
-In addition to displaying assigns and functions, we can use pretty much any Elixir expression.
-For example, in order to have conditionals:
+그런 다음 템플릿에서 `<%= @사용자 이름 %>`로 해당 사용자 이름에 액세스할 수 있습니다.
+어사인과 함수를 표시하는 것 외에도 거의 모든 엘릭서 표현식을 사용할 수 있습니다.
+예를 들어, 조건문을 사용하려면
 
 ```perl HEEx
 <%= if some_condition? do %>
@@ -140,30 +140,30 @@ or even loops:
 </table>
 ```
 
-Did you notice the use of `<%= %>` versus `<% %>` above? All expressions that output something to the template **must** use the equals sign (`=`).
-If this is not included the code will still be executed but nothing will be inserted into the template.
+위에서 `<%= %>`와 `<% %>`를 사용한 것을 눈치채셨나요? 템플릿에 무언가를 출력하는 모든 표현식은 반드시 등호 기호(`=`)를 사용해야 합니다.
+이 기호를 포함하지 않으면 코드가 실행되기는 하지만 템플릿에 아무 것도 삽입되지 않습니다.
 
-HEEx also comes with handy HTML extensions we will learn next.
+HEEx에는 다음에 배우게 될 편리한 HTML 확장 기능도 함께 제공됩니다.
 
 ### HTML extensions
 
-Besides allowing interpolation of Elixir expressions via `<%= %>`, `.heex` templates come with HTML-aware extensions.
-For example, let's see what happens if you try to interpolate a value with "<" or ">" in it, which would lead to HTML injection:
+`.heex` 템플릿은 `<%= %>`를 통해 Elixir 표현식의 보간을 허용하는 것 외에도 HTML 인식 확장을 제공합니다.
+예를 들어 "<" 또는 ">"가 포함된 값을 보간하려고 하면 HTML 삽입으로 이어질 수 있으므로 어떤 일이 발생하는지 살펴보겠습니다:
 
 ```perl HEEx
 <%= "<b>Bold?</b>" %>
 ```
 
-Once you render the template, you will see the literal `<b>` on the page.
-This means users cannot inject HTML content on the page.
-If you want to allow them to do so, you can call `raw`, but do so with extreme care:
+템플릿을 렌더링하면 페이지에 리터럴 `<b>`가 표시됩니다.
+이는 사용자가 페이지에 HTML 콘텐츠를 삽입할 수 없음을 의미합니다.
+그렇게 하도록 허용하려면 `raw`를 호출할 수 있지만 매우 신중하게 하세요:
 
 ```perl HEEx
 <%= raw "<b>Bold?</b>" %>
 ```
 
-Another super power of HEEx templates is validation of HTML and lean interpolation syntax of attributes.
-You can write:
+HEEx 템플릿의 또 다른 강점은 HTML의 유효성 검사와 속성의 간결한 보간 구문입니다.
+다음처럼 쓸 수 있습니다:
 
 ```perl HEEx
 <div title="My div" class={@class}>
@@ -171,10 +171,10 @@ You can write:
 </div>
 ```
 
-Notice how you could simply use `key={value}`.
-HEEx will automatically handle special values such as `false` to remove the attribute or a list of classes.
+`키={값}`을 간단히 사용할 수 있는 방법을 주목하세요.
+HEEx는 `false`와 같은 특수 값을 자동으로 처리하여 속성 또는 클래스 목록을 제거합니다.
 
-To interpolate a dynamic number of attributes in a keyword list or map, do:
+키워드 목록 또는 맵에서 동적인 수의 속성을 보간하려면 다음을 수행합니다:
 
 ```perl HEEx
 <div title="My div" {@many_attributes}>
@@ -182,11 +182,11 @@ To interpolate a dynamic number of attributes in a keyword list or map, do:
 </div>
 ```
 
-Also, try removing the closing `</div>` or renaming it to `</div-typo>`.
-HEEx templates will let you know about your error.
+또한 닫는 `</div>`를 제거하거나 `</div-typo>`로 이름을 변경해 보세요.
+HEEx 템플릿은 오류에 대해 알려줍니다.
 
-HEEx also supports shorthand syntax for `if` and `for` expressions via the special `:if` and `:for` attributes.
-For example, rather than this:
+HEEx는 특수 `:if` 및 `:for` 속성을 통해 `if` 및 `for` 표현식에 대한 속기 구문도 지원합니다.
+예를 들면 다음과 같습니다:
 
 ```perl HEEx
 <%= if @some_condition do %>
@@ -194,13 +194,13 @@ For example, rather than this:
 <% end %>
 ```
 
-You can write:
+다음처럼 쓸 수 있습니다:
 
 ```perl HEEx
 <div :if={@some_condition}>...</div>
 ```
 
-Likewise, for comprehensions may be written as:
+마찬가지로 구문을 위해 다음과 같이 작성할 수 있습니다:
 
 ```perl HEEx
 <ul>
@@ -210,28 +210,28 @@ Likewise, for comprehensions may be written as:
 
 ## Layouts
 
-Layouts are just function components.
-They are defined in a module, just like all other function component templates.
-In a newly generated app, this is `lib/hello_web/components/layouts.ex`.
-You will also find in a `layouts` folder with the two built-in layouts generated by Phoenix.
-The default _root layout_ is called `root.html.heex`, and it is the layout into which all templates will be rendered by default.
-The second is the _app layout_, called `app.html.heex`, which is rendered within the root layout and includes our contents.
+레이아웃은 함수 컴포넌트일 뿐입니다.
+다른 모든 함수 컴포넌트 템플릿과 마찬가지로 모듈에 정의됩니다.
+새로 생성된 앱에서는 `lib/hello_web/components/layouts.ex`입니다.
+또한 `layouts` 폴더에는 Phoenix에서 생성된 두 개의 기본 제공 레이아웃이 있습니다.
+기본 _root 레이아웃_은 `root.html.heex`라고 불리며, 모든 템플릿이 기본적으로 렌더링되는 레이아웃입니다.
+두 번째는 `app.html.heex`라고 하는 _app 레이아웃_으로, 루트 레이아웃 내에서 렌더링되며 콘텐츠를 포함합니다.
 
-You may be wondering how the string resulting from a rendered view ends up inside a layout.
-That's a great question! If we look at `lib/hello_web/components/layouts/root.html.heex`, just about at the end of the `<body>`, we will see this.
+렌더링된 뷰의 결과 문자열이 어떻게 레이아웃 안에 들어가는지 궁금할 수 있습니다.
+좋은 질문입니다! lib/hello_web/components/layouts/root.html.heex`를 보면 `<body>`의 끝부분에 이런 내용이 있습니다.
 
 ```perl HEEx
 <%= @inner_content %>
 ```
 
-In other words, after rendering your page, the result is placed in the `@inner_content` assign.
+즉, 페이지를 렌더링한 후 결과가 `@inner_content` 어사인에 배치됩니다.
 
-Phoenix provides all kinds of conveniences to control which layout should be rendered.
-For example, the `Phoenix.Controller` module provides the `put_root_layout/2` function for us to switch _root layouts_.
-This takes `conn` as its first argument and a keyword list of formats and their layouts.
-You can set it to `false` to disable the layout altogether.
+Phoenix는 어떤 레이아웃을 렌더링할지 제어할 수 있는 모든 종류의 편의를 제공합니다.
+예를 들어, `Phoenix.Controller` 모듈은 _루트 레이아웃_을 전환할 수 있는 `put_root_layout/2` 함수를 제공합니다.
+이 함수는 첫 번째 인수로 `conn`과 형식 및 해당 레이아웃의 키워드 목록을 받습니다.
+레이아웃을 완전히 비활성화하려면 `false`로 설정하면 됩니다.
 
-You can edit the `index` action of `HelloController` in `lib/hello_web/controllers/hello_controller.ex` to look like this.
+`lib/hello_web/controllers/hello_controller.ex`에서 `HelloController`의 `index` 액션을 다음과 같이 편집할 수 있습니다.
 
 ```perl Elixir
 def index(conn, _params) do
@@ -241,15 +241,15 @@ def index(conn, _params) do
 end
 ```
 
-After reloading [http://localhost:4000/hello](http://localhost:4000/hello), we should see a very different page, one with no title or CSS styling at all.
+[http://localhost:4000/hello](http://localhost:4000/hello)를 다시 로드하면 제목이나 CSS 스타일링이 전혀 없는 매우 다른 페이지를 볼 수 있습니다.
 
-To customize the application layout, we invoke a similar function named `put_layout/2`.
-Let's actually create another layout and render the index template into it.
-As an example, let's say we had a different layout for the admin section of our application which didn't have the logo image.
-To do this, copy the existing `app.html.heex` to a new file `admin.html.heex` in the same directory `lib/hello_web/components/layouts`.
-Then remove everything inside the `<header>...</header>` tags (or change it to whatever you desire) in the new file.
+애플리케이션 레이아웃을 사용자 정의하기 위해 `put_layout/2`라는 유사한 함수를 호출합니다.
+실제로 다른 레이아웃을 만들고 그 안에 인덱스 템플릿을 렌더링해 봅시다.
+예를 들어, 애플리케이션의 관리자 섹션에 로고 이미지가 없는 다른 레이아웃이 있다고 가정해 보겠습니다.
+이렇게 하려면 기존 `app.html.heex`를 동일한 디렉토리 `lib/hello_web/components/layouts`에 있는 새 파일 `admin.html.heex`에 복사합니다.
+그런 다음 새 파일에서 `<header>...</header>` 태그 안의 모든 내용을 제거하거나 원하는 대로 변경합니다.
 
-Now, in the `index` action of the controller of `lib/hello_web/controllers/hello_controller.ex`, add the following:
+이제 `lib/hello_web/controllers/hello_controller`의 컨트롤러의 `index` 액션에서.ex`, add the following:
 
 ```perl Elixir
 def index(conn, _params) do
@@ -259,31 +259,31 @@ def index(conn, _params) do
 end
 ```
 
-When we load the page, we should be rendering the admin layout without the header (or a custom one that you wrote).
+페이지를 로드하면 헤더가 없는 관리자 레이아웃(또는 사용자가 작성한 사용자 정의 레이아웃)이 렌더링되어야 합니다.
 
-At this point, you may be wondering, why does Phoenix have two layouts?
+이쯤 되면 왜 피닉스에 두 가지 레이아웃이 있는지 궁금할 것입니다.
 
-First of all, it gives us flexibility.
-In practice, we will hardly have multiple root layouts, as they often contain only HTML headers.
-This allows us to focus on different application layouts with only the parts that changes between them.
-Second of all, Phoenix ships with a feature called LiveView, which allows us to build rich and real-time user experiences with server-rendered HTML.
-LiveView is capable of dynamically changing the contents of the page, but it only ever changes the app layout, never the root layout.
-Check out [the LiveView documentation](https://hexdocs.pm/phoenix_live_view) to learn more.
+우선, 유연성을 제공합니다.
+실제로는 HTML 헤더만 포함하는 경우가 많기 때문에 루트 레이아웃이 여러 개 있는 경우는 거의 없습니다.
+따라서 서로 다른 애플리케이션 레이아웃 간에 변경되는 부분만 가지고 다른 애플리케이션 레이아웃에 집중할 수 있습니다.
+둘째, 피닉스는 서버 렌더링 HTML로 풍부한 실시간 사용자 경험을 구축할 수 있는 라이브뷰라는 기능을 제공합니다.
+라이브뷰는 페이지의 콘텐츠를 동적으로 변경할 수 있지만 앱 레이아웃만 변경하고 루트 레이아웃은 변경하지 않습니다.
+자세한 내용은 [라이브뷰 문서](https://hexdocs.pm/phoenix_live_view)를 참조하세요.
 
 ## CoreComponents
 
-In a new Phoenix application, you will also find a `core_components.ex` module inside the `components` folder.
-This module is a great example of defining function components to be reused throughout our application.
-This guarantees that, as our application evolves, our components will look consistent.
+새로운 Phoenix 애플리케이션에서는 `components` 폴더 안에 `core_components.ex` 모듈도 찾을 수 있습니다.
+이 모듈은 애플리케이션 전체에서 재사용할 함수 컴포넌트를 정의하는 좋은 예입니다.
+이를 통해 애플리케이션이 발전함에 따라 컴포넌트가 일관성 있게 보이도록 보장합니다.
 
-If you look inside `def html` in `HelloWeb` placed at `lib/hello_web.ex`, you will see that `CoreComponents` are automatically imported into all HTML views via `use HelloWeb, :html`.
-This is also the reason why `CoreComponents` itself performs `use Phoenix.Component` instead `use HelloWeb, :html` at the top: doing the latter would cause a deadlock as we would try to import `CoreComponents` into itself.
+`lib/hello_web.ex`에 있는 `HelloWeb`의 `def html` 내부를 살펴보면 `CoreComponents`가 `use HelloWeb, :html`을 통해 모든 HTML 보기로 자동 임포트되는 것을 볼 수 있습니다.
+이것이 바로 `CoreComponents` 자체가 맨 위에 `use HelloWeb, :html` 대신 `use Phoenix.Component`를 수행하는 이유이기도 합니다: 후자를 수행하면 `CoreComponents` 자체를 가져오려고 할 때 교착 상태가 발생할 수 있기 때문입니다.
 
-CoreComponents also play an important role in Phoenix code generators, as the code generators assume those components are available in order to quickly scaffold your application.
-In case you want to learn more about all of these pieces, you may:
+코드 생성기는 애플리케이션을 빠르게 스캐폴딩하기 위해 해당 컴포넌트를 사용할 수 있다고 가정하기 때문에 CoreComponents는 Phoenix 코드 생성기에서도 중요한 역할을 합니다.
+이 모든 작품에 대해 더 자세히 알아보고 싶으시다면 다음을 참조하세요:
 
-- Explore the generated `CoreComponents` module to learn more from practical examples
+- 생성된 `CoreComponents` 모듈을 살펴보고 실제 예제를 통해 자세히 알아보세요.
 
-- Read the official documentation for [`Phoenix.Component`](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html)
+- [`피닉스 컴포넌트` 공식 문서](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html) 읽기
 
-- Read the official documentation for [HEEx and the ~H sigils](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2)
+- [HEEx 및 ~H sigils 공식 문서](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html#sigil_H/2) 읽기
