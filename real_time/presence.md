@@ -45,7 +45,7 @@ https://hexdocs.pm/phoenix/Phoenix.Presence.html
 
 If we open up the `lib/hello_web/channels/presence.ex` file, we will see the following line:
 
-```elixir
+```perl Elixir
 use Phoenix.Presence,
   otp_app: :hello,
   pubsub_server: Hello.PubSub
@@ -55,7 +55,7 @@ This sets up the module for presence, defining the functions we require for trac
 As mentioned in the generator task, we should add this module to our supervision tree in
 `application.ex`:
 
-```elixir
+```perl Elixir
 children = [
   ...
   HelloWeb.Presence,
@@ -68,7 +68,7 @@ Next, we will create the channel that we'll communicate presence over.
 After a user joins, we can push the list of presences down the channel and then track the connection.
 We can also provide a map of additional information to track.
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.RoomChannel do
   use Phoenix.Channel
   alias HelloWeb.Presence
@@ -160,7 +160,7 @@ To start with, we need to update the `lib/hello_web/channels/presence.ex` file t
 Firstly, we add the `init/1` callback.
 This allows us to keep track of the presence state within the process.
 
-```elixir
+```perl Elixir
   def init(_opts) do
     {:ok, %{}}
   end
@@ -169,7 +169,7 @@ This allows us to keep track of the presence state within the process.
 The presence module also allows a `fetch/2` callback, this allows the data fetched from the presence to be modified, allowing us to define the shape of the response.
 In this case we are adding an `id` and a `user` map.
 
-```elixir
+```perl Elixir
   def fetch(_topic, presences) do
     for {key, %{metas: [meta | metas]}} <- presences, into: %{} do
       # user can be populated here from the database here we populate
@@ -182,7 +182,7 @@ In this case we are adding an `id` and a `user` map.
 The final thing to add is the `handle_metas/4` callback.
 This callback updates the state that we keep track of in `HelloWeb.Presence` based on the user leaves and joins.
 
-```elixir
+```perl Elixir
   def handle_metas(topic, %{joins: joins, leaves: leaves}, presences, state) do
     for {user_id, presence} <- joins do
       user_data = %{id: user_id, user: presence.user, metas: Map.fetch!(presences, user_id)}
@@ -212,7 +212,7 @@ You'll also see that we use "proxy" channel when broadcasting the joins and leav
 This is because we don't want our LiveView process to receive the presence events directly.
 We can add a few helper functions so that this particular implementation detail is abstracted from the LiveView module.
 
-```elixir
+```perl Elixir
   def list_online_users(), do: list("online_users") |> Enum.map(fn {_id, presence} -> presence end)
 
   def track_user(name, params), do: track(self(), "online_users", name, params)
@@ -223,7 +223,7 @@ We can add a few helper functions so that this particular implementation detail 
 Now that we have our presence module set up and broadcasting events, we can create a LiveView.
 Create a new file `lib/hello_web/live/online/index.ex` with the following contents:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.OnlineLive do
   use HelloWeb, :live_view
 
@@ -265,7 +265,7 @@ end
 
 If we add this route to the `lib/hello_web/router.ex`:
 
-```elixir
+```perl Elixir
     live "/online/:name", OnlineLive, :index
 ```
 

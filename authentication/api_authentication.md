@@ -20,7 +20,7 @@ mix phx.gen.auth Accounts User users
 하나는 API 토큰을 생성하는 함수이고 다른 하나는 이를 확인하는 함수입니다.
 `lib/my_app/accounts.ex`를 열고 이 두 가지 새 함수를 추가합니다:
 
-```elixir
+```perl Elixir
   ## API
 
   @doc """
@@ -58,7 +58,7 @@ mix phx.gen.auth Accounts User users
 새 함수가 제대로 작동하는지 확인하기 위해 테스트를 작성해 봅시다.
 `test/my_app/accounts_test.exs`를 열고 이 새로운 설명 블록을 추가합니다:
 
-```elixir
+```perl Elixir
   describe "create_user_api_token/1 and fetch_user_by_api_token/1" do
     test "creates and fetches by token" do
       user = user_fixture()
@@ -72,7 +72,7 @@ mix phx.gen.auth Accounts User users
 테스트를 실행하면 실제로 실패합니다.
 이와 비슷합니다:
 
-```elixir
+```perl Elixir
 1) test create_user_api_token/1 and fetch_user_by_api_token/1 creates and verify token (Demo.AccountsTest)
    test/demo/accounts_test.exs:21
    ** (FunctionClauseError) no function clause matching in Demo.Accounts.UserToken.days_for_context/1
@@ -104,7 +104,7 @@ mix phx.gen.auth Accounts User users
 
 `lib/my_app/accounts/user_token.ex`를 열고 `defp days_for_context`가 정의된 위치를 찾아 다음과 같이 새 절을 추가합니다:
 
-```elixir
+```perl Elixir
   defp days_for_context("api-token"), do: 365
   defp days_for_context("confirm"), do: @confirm_validity_in_days
   defp days_for_context("reset_password"), do: @reset_password_validity_in_days
@@ -119,7 +119,7 @@ mix phx.gen.auth Accounts User users
 `mix phx.gen.auth`를 실행하면 `conn`을 수신하고 요청/응답 라이프사이클을 사용자 정의하는 작은 함수인 여러 개의 플러그가 있는 `MyAppWeb.UserAuth` 모듈이 생성됩니다.
 `lib/my_app_web/user_auth.ex`를 열고 이 새 함수를 추가합니다:
 
-```elixir
+```perl Elixir
 def fetch_api_user(conn, _opts) do
   with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
        {:ok, user} <- Accounts.fetch_user_by_api_token(token) do
@@ -140,7 +140,7 @@ end
 `lib/my_app_web/router.ex`를 열면 API용 파이프라인을 찾을 수 있습니다.
 그 아래에 다음과 같이 새 플러그를 추가해 보겠습니다:
 
-```elixir
+```perl Elixir
   pipeline :api do
     plug :accepts, ["json"]
     plug :fetch_api_user

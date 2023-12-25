@@ -35,7 +35,7 @@ We've got twenty-one tests and they are all passing!
 
 If you open up `test/hello/blog_test.exs`, you will see a file with the following:
 
-```elixir
+```perl Elixir
 defmodule Hello.BlogTest do
   use Hello.DataCase
 
@@ -76,7 +76,7 @@ The tests defined for our context are very straight-forward.
 They call the functions in our context and assert on their results.
 As you can see, some of those tests even create entries in the database:
 
-```elixir
+```perl Elixir
 test "create_post/1 with valid data creates a post" do
   valid_attrs = %{body: "some body", title: "some title"}
 
@@ -93,7 +93,7 @@ To answer this question, let's talk about the `DataCase`.
 
 If you open up `test/support/data_case.ex`, you will find the following:
 
-```elixir
+```perl Elixir
 defmodule Hello.DataCase do
   use ExUnit.CaseTemplate
 
@@ -136,7 +136,7 @@ When the test is over, we automatically rollback the transaction, effectively er
 Furthermore, the SQL Sandbox allows multiple tests to run concurrently, even if they talk to the database.
 This feature is provided for PostgreSQL databases and it can be used to further speed up your contexts and controllers tests by adding a `async: true` flag when using them:
 
-```elixir
+```perl Elixir
 use Hello.DataCase, async: true
 ```
 
@@ -161,7 +161,7 @@ The context will typically have the code that creates and updates schemas and th
 We'll be adding additional validations to the schema module, so that's a great opportunity to write some schema specific tests.
 Open up `lib/hello/blog/post.ex` and add the following validation to `def changeset`:
 
-```elixir
+```perl Elixir
 def changeset(post, attrs) do
   post
   |> cast(attrs, [:title, :body])
@@ -174,7 +174,7 @@ The new validation says the title needs to have at least 2 characters.
 Let's write a test for this.
 Create a new file at `test/hello/blog/post_test.exs` with this:
 
-```elixir
+```perl Elixir
 defmodule Hello.Blog.PostTest do
   use Hello.DataCase, async: true
   alias Hello.Blog.Post

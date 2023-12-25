@@ -9,7 +9,7 @@ They match HTTP requests to controller actions, wire up real-time channel handle
 
 The router file that Phoenix generates, `lib/hello_web/router.ex`, will look something like this one:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Router do
   use HelloWeb, :router
 
@@ -50,7 +50,7 @@ For now, you only need to know that pipelines allow a set of plugs to be applied
 
 Inside the scope block, however, we have our first actual route:
 
-```elixir
+```perl Elixir
 get "/", PageController, :home
 ```
 
@@ -79,7 +79,7 @@ The router supports other macros besides those for HTTP verbs like [`get`](`Phoe
 The most important among them is [`resources`](`Phoenix.Router.resources/4`).
 Let's add a resource to our `lib/hello_web/router.ex` file like this:
 
-```elixir
+```perl Elixir
 scope "/", HelloWeb do
   pipe_through :browser
 
@@ -94,7 +94,7 @@ For now it doesn't matter that we don't actually have a `HelloWeb.UserController
 Run `mix phx.routes` once again at the root of your project.
 You should see something like the following:
 
-```log
+```shell
 ...
 GET     /users           HelloWeb.UserController :index
 GET     /users/:id/edit  HelloWeb.UserController :edit
@@ -125,26 +125,26 @@ If we don't need all these routes, we can be selective using the `:only` and `:e
 Let's say we have a read-only posts resource.
 We could define it like this:
 
-```elixir
+```perl Elixir
 resources "/posts", PostController, only: [:index, :show]
 ```
 
 Running `mix phx.routes` shows that we now only have the routes to the index and show actions defined.
 
-```log
+```shell
 GET     /posts      HelloWeb.PostController :index
 GET     /posts/:id  HelloWeb.PostController :show
 ```
 
 Similarly, if we have a comments resource, and we don't want to provide a route to delete one, we could define a route like this.
 
-```elixir
+```perl Elixir
 resources "/comments", CommentController, except: [:delete]
 ```
 
 Running `mix phx.routes` now shows that we have all the routes except the DELETE request to the delete action.
 
-```log
+```shell
 GET    /comments           HelloWeb.CommentController :index
 GET    /comments/:id/edit  HelloWeb.CommentController :edit
 GET    /comments/new       HelloWeb.CommentController :new
@@ -165,7 +165,7 @@ Let's see it in action.
 Run `iex -S mix` at the root of the project.
 We'll define a throwaway example module that builds a couple `~p` route paths.
 
-```elixir
+```perl Elixir
 iex> defmodule RouteExample do
 ...>   use HelloWeb, :verified_routes
 ...>
@@ -187,14 +187,14 @@ This is significant because it allows us to write otherwise hard-coded paths in 
 Phoenix projects are set up out of the box to allow use of verified routes throughout your web layer, including tests.
 For example in your templates you can render `~p` links:
 
-```heex
+```perl HEEx
 <.link href={~p"/"}>Welcome Page!</.link>
 <.link href={~p"/comments"}>View Comments</.link>
 ```
 
 Or in a controller, issue a redirect:
 
-```elixir
+```perl Elixir
 redirect(conn, to: ~p"/comments/#{comment}")
 ```
 
@@ -205,7 +205,7 @@ The compiler will catch bugs for us, and let us know when we change routes that 
 
 What about paths with query strings? You can either add query string key values directly, or provide a dictionary of key-value pairs, for example:
 
-```elixir
+```perl Elixir
 ~p"/users/17?admin=true&active=false"
 "/users/17?admin=true&active=false"
 
@@ -215,7 +215,7 @@ What about paths with query strings? You can either add query string key values 
 
 What if we need a full URL instead of a path? Just wrap your path with a call to `Phoenix.VerifiedRoutes.url/1`, which is imported everywhere that `~p` is available:
 
-```elixir
+```perl Elixir
 url(~p"/users")
 "http://localhost:4000/users"
 ```
@@ -231,7 +231,7 @@ Let's say we also have a `posts` resource that has a many-to-one relationship wi
 That is to say, a user can create many posts, and an individual post belongs to only one user.
 We can represent that by adding a nested route in `lib/hello_web/router.ex` like this:
 
-```elixir
+```perl Elixir
 resources "/users", UserController do
   resources "/posts", PostController
 end
@@ -239,7 +239,7 @@ end
 
 When we run `mix phx.routes` now, in addition to the routes we saw for `users` above, we get the following set of routes:
 
-```elixir
+```perl Elixir
 ...
 GET     /users/:user_id/posts           HelloWeb.PostController :index
 GET     /users/:user_id/posts/:id/edit  HelloWeb.PostController :edit
@@ -260,7 +260,7 @@ The same scoping applies for all these routes.
 When building paths for nested routes, we will need to interpolate the IDs where they belong in route definition.
 For the following `show` route, `42` is the `user_id`, and `17` is the `post_id`.
 
-```elixir
+```perl Elixir
 user_id = 42
 post_id = 17
 ~p"/users/#{user_id}/posts/#{post_id}"
@@ -270,7 +270,7 @@ post_id = 17
 Verified routes also support the `Phoenix.Param` protocol, but we don't need to concern ourselves with Elixir protocols just yet.
 Just know that once we start building our application with structs like `%User{}` and `%Post{}`, we'll be able to interpolate those data structures directly into our `~p` paths and Phoenix will pluck out the correct fields to use in the route.
 
-```elixir
+```perl Elixir
 ~p"/users/#{user}/posts/#{post}"
 "/users/42/posts/17"
 ```
@@ -288,7 +288,7 @@ Scopes enable us to segregate these routes.
 
 The paths to the user-facing reviews would look like a standard resource.
 
-```log
+```shell
 /reviews
 /reviews/1234
 /reviews/1234/edit
@@ -297,7 +297,7 @@ The paths to the user-facing reviews would look like a standard resource.
 
 The administration review paths can be prefixed with `/admin`.
 
-```log
+```shell
 /admin/reviews
 /admin/reviews/1234
 /admin/reviews/1234/edit
@@ -307,7 +307,7 @@ The administration review paths can be prefixed with `/admin`.
 We accomplish this with a scoped route that sets a path option to `/admin` like this one.
 We can nest this scope inside another scope, but instead, let's set it by itself at the root, by adding to `lib/hello_web/router.ex` the following:
 
-```elixir
+```shell Elixir
 scope "/admin", HelloWeb.Admin do
   pipe_through :browser
 
@@ -319,7 +319,7 @@ We define a new scope where all routes are prefixed with `/admin` and all contro
 
 Running `mix phx.routes` again, in addition to the previous set of routes we get the following:
 
-```log
+```shell
 ...
 GET     /admin/reviews           HelloWeb.Admin.ReviewController :index
 GET     /admin/reviews/:id/edit  HelloWeb.Admin.ReviewController :edit
@@ -336,7 +336,7 @@ This looks good, but there is a problem here.
 Remember that we wanted both user-facing review routes `/reviews` and the admin ones `/admin/reviews`.
 If we now include the user-facing reviews in our router under the root scope like this:
 
-```elixir
+```perl Elixir
 scope "/", HelloWeb do
   pipe_through :browser
 
@@ -353,7 +353,7 @@ end
 
 and we run `mix phx.routes`, we get output for each scoped route:
 
-```log
+```shell
 ...
 GET     /reviews                 HelloWeb.ReviewController :index
 GET     /reviews/:id/edit        HelloWeb.ReviewController :edit
@@ -376,7 +376,7 @@ DELETE  /admin/reviews/:id       HelloWeb.Admin.ReviewController :delete
 
 What if we had a number of resources that were all handled by admins? We could put all of them inside the same scope like this:
 
-```elixir
+```perl Elixir
 scope "/admin", HelloWeb.Admin do
   pipe_through :browser
 
@@ -388,7 +388,7 @@ end
 
 Here's what `mix phx.routes` tells us:
 
-```log
+```shell
 ...
 GET     /admin/images            HelloWeb.Admin.ImageController :index
 GET     /admin/images/:id/edit   HelloWeb.Admin.ImageController :edit
@@ -423,7 +423,7 @@ Scopes can also be arbitrarily nested, but you should do it carefully as nesting
 With that said, suppose that we had a versioned API with resources defined for images, reviews, and users.
 Then technically, we could set up routes for the versioned API like this:
 
-```elixir
+```perl Elixir
 scope "/api", HelloWeb.Api, as: :api do
   pipe_through :api
 
@@ -440,7 +440,7 @@ You can run `mix phx.routes` to see how these definitions will look like.
 Interestingly, we can use multiple scopes with the same path as long as we are careful not to duplicate routes.
 The following router is perfectly fine with two scopes defined for the same path:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Router do
   use Phoenix.Router
   ...
@@ -461,7 +461,7 @@ end
 
 If we do duplicate a route — which means two routes having the same path — we'll get this familiar warning:
 
-```log
+```shell
 warning: this clause cannot match because a previous clause at line 16 always matches
 ```
 
@@ -501,7 +501,7 @@ Let's take a look at some examples to untangle their meaning.
 
 Here's another look at the router from a newly generated Phoenix application, this time with the `/api` scope uncommented back in and a route added.
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Router do
   use HelloWeb, :router
 
@@ -549,7 +549,7 @@ If no route matches, no pipeline is invoked and a 404 error is raised.
 Phoenix allows us to create our own custom pipelines anywhere in the router.
 To do so, we call the [`pipeline/2`](`Phoenix.Router.pipeline/2`) macro with these arguments: an atom for the name of our new pipeline and a block with all the plugs we want in it.
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Router do
   use HelloWeb, :router
 
@@ -579,7 +579,7 @@ The above assumes there is a plug called `HelloWeb.Authentication` that performs
 Note that pipelines themselves are plugs, so we can plug a pipeline inside another pipeline.
 For example, we could rewrite the `auth` pipeline above to automatically invoke `browser`, simplifying the downstream pipeline call:
 
-```elixir
+```perl Elixir
   pipeline :auth do
     plug :browser
     plug :ensure_authenticated_user
@@ -607,7 +607,7 @@ For example, going back to our reviews example.
 Let's say anyone can read a review, but only authenticated users can create them.
 Your routes could look like this:
 
-```elixir
+```perl Elixir
 pipeline :browser do
   ...
 end
@@ -644,7 +644,7 @@ The `Phoenix.Router.forward/4` macro can be used to send all requests that start
 Let's say we have a part of our system that is responsible (it could even be a separate application or library) for running jobs in the background, it could have its own web interface for checking the status of the jobs.
 We can forward to this admin interface using:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Router do
   use HelloWeb, :router
 
@@ -664,7 +664,7 @@ Inside the plug, you can match on subroutes, such as `/pending` and `/active` th
 We can even mix the [`forward/4`](`Phoenix.Router.forward/4`) macro with pipelines.
 If we wanted to ensure that the user was authenticated and was an administrator in order to see the jobs page, we could use the following in our router.
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Router do
   use HelloWeb, :router
 
@@ -683,7 +683,7 @@ The `opts` that are received in the `init/1` callback of the Module Plug can be 
 For example, maybe the background job lets you set the name of your application to be displayed on the page.
 This could be passed with:
 
-```elixir
+```perl Elixir
 forward "/jobs", BackgroundJob.Plug, name: "Hello Phoenix"
 ```
 

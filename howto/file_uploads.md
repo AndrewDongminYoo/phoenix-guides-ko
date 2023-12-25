@@ -34,7 +34,7 @@ The `HelloWeb.CoreComponents` `simple_form/1` component accepts a `multipart` at
 
 Here is the form from `lib/hello_web/controllers/product_html/product_form.html.heex` with that change in place:
 
-```heex
+```perl HEEx
 <.simple_form :let={f} for={@changeset} action={@action} multipart>
 . . .
 ```
@@ -44,7 +44,7 @@ Here is the form from `lib/hello_web/controllers/product_html/product_form.html.
 Once you have a multipart form, you need a `file` input.
 Here's how you would do that, also in `product_form.html.heex`:
 
-```heex
+```perl HEEx
 . . .
   <.input field={f[:photo]} type="file" label="Photo" />
 
@@ -86,7 +86,7 @@ Since you generated an HTML resource, you can now start your server with `mix ph
 Before you begin, add `IO.inspect product_params` to the top of your `ProductController.create/2` action in `lib/hello_web/controllers/product_controller.ex`.
 This will show the `product_params` in your development log so you can get a better sense of what's happening.
 
-```elixir
+```perl Elixir
 . . .
   def create(conn, %{"product" => product_params}) do
     IO.inspect product_params
@@ -95,7 +95,7 @@ This will show the `product_params` in your development log so you can get a bet
 
 When you do that, this is what your `product_params` will output in the log:
 
-```elixir
+```perl Elixir
 %{"title" => "Metaprogramming Elixir", "description" => "Write Less Code, Get More Done (and Have Fun!)", "price" => "15.000000", "views" => "0",
 "photo" => %Plug.Upload{content_type: "image/png", filename: "meta-cover.png", path: "/var/folders/_6/xbsnn7tx6g9dblyx149nrvbw0000gn/T//plug-1434/multipart-558399-917557-1"}}
 ```
@@ -104,7 +104,7 @@ You have a `"photo"` key which maps to the pre-populated `Plug.Upload` struct re
 
 To make this easier to read, focus on the struct itself:
 
-```elixir
+```perl Elixir
 %Plug.Upload{content_type: "image/png", filename: "meta-cover.png", path: "/var/folders/_6/xbsnn7tx6g9dblyx149nrvbw0000gn/T//plug-1434/multipart-558399-917557-1"}
 ```
 
@@ -138,7 +138,7 @@ In a production system, you may want to copy the file to a root directory, such 
 When doing so, it is important to guarantee the names are unique.
 For instance, if you are allowing users to upload product cover images, you could use the product id to generate a unique name:
 
-```elixir
+```perl Elixir
 if upload = product_params["photo"] do
   extension = Path.extname(upload.filename)
   File.cp(upload.path, "/media/#{product.id}-cover#{extension}")
@@ -147,7 +147,7 @@ end
 
 Then a `Plug.Static` plug could be added in your `lib/my_app_web/endpoint.ex` to serve the files at `"/media"`:
 
-```elixir
+```perl Elixir
 plug Plug.Static, at: "/uploads", from: "/media"
 ```
 
@@ -158,7 +158,7 @@ Many times, using a library that already handles such cases is preferred.
 Finally, notice that when there is no data from the `file` input, you get neither the `"photo"` key nor a `Plug.Upload` struct.
 Here are the `product_params` from the log.
 
-```elixir
+```perl Elixir
 %{"title" => "Metaprogramming Elixir", "description" => "Write Less Code, Get More Done (and Have Fun!)", "price" => "15.000000", "views" => "0"}
 ```
 
@@ -166,7 +166,7 @@ Here are the `product_params` from the log.
 
 The conversion from the data being sent by the form to an actual `Plug.Upload` is done by the `Plug.Parsers` plug which you can find inside `HelloWeb.Endpoint`:
 
-```elixir
+```perl Elixir
 # lib/hello_web/endpoint.ex
 plug Plug.Parsers,
   parsers: [:urlencoded, :multipart, :json],

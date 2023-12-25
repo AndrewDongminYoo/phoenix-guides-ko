@@ -11,12 +11,12 @@
 
 ### Single route
 
-```elixir
+```perl Elixir
 get "/users", UserController, :index
 patch "/users/:id", UserController, :update
 ```
 
-```elixir
+```perl Elixir
 # generated routes
 ~p"/users"
 ~p"/users/9" # user_id is 9
@@ -28,7 +28,7 @@ patch "/users/:id", UserController, :update
 
 #### Simple
 
-```elixir
+```perl Elixir
 resources "/users", UserController
 ```
 
@@ -36,7 +36,7 @@ resources "/users", UserController
 
 #### Options
 
-```elixir
+```perl Elixir
 resources "/users", UserController, only: [:show]
 resources "/users", UserController, except: [:create, :delete]
 resources "/users", UserController, as: :person # ~p"/person"
@@ -44,13 +44,13 @@ resources "/users", UserController, as: :person # ~p"/person"
 
 #### Nested
 
-```elixir
+```perl Elixir
 resources "/users", UserController do
   resources "/posts", PostController
 end
 ```
 
-```elixir
+```perl Elixir
 # generated routes
 ~p"/users/3/posts" # user_id is 3
 ~p"/users/3/posts/17" # user_id is 3 and post_id = 17
@@ -62,7 +62,7 @@ end
 
 #### Simple
 
-```elixir
+```perl Elixir
 scope "/admin", HelloWeb.Admin do
   pipe_through :browser
 
@@ -70,14 +70,14 @@ scope "/admin", HelloWeb.Admin do
 end
 ```
 
-```elixir
+```perl Elixir
 # generated path helpers
 ~p"/admin/users"
 ```
 
 #### Nested
 
-```elixir
+```perl Elixir
 scope "/api", HelloWeb.Api, as: :api do
   pipe_through :api
 
@@ -87,7 +87,7 @@ scope "/api", HelloWeb.Api, as: :api do
 end
 ```
 
-```elixir
+```perl Elixir
 # generated path helpers
 ~p"/api/v1/users"
 ```

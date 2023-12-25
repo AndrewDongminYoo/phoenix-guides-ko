@@ -115,7 +115,7 @@ For now, let's follow the instructions and add the route according to the consol
 
 With the new route in place, Phoenix reminds us to update our repo by running `mix ecto.migrate`, but first we need to make a few tweaks to the generated migration in `priv/repo/migrations/*_create_products.exs`:
 
-```elixir
+```perl Elixir
   def change do
     create table(:products) do
       add :title, :string
@@ -148,7 +148,7 @@ Before we jump into the generated code, let's start the server with `mix phx.ser
 Let's follow the "New Product" link and click the "Save" button without providing any input.
 We should be greeted with the following output:
 
-```text
+```shell
 Oops, something went wrong! Please check the errors below.
 ```
 
@@ -156,7 +156,7 @@ When we submit the form, we can see all the validation errors inline with the in
 Nice! Out of the box, the context generator included the schema fields in our form template and we can see our default validations for required inputs are in effect.
 Let's enter some example product data and resubmit the form:
 
-```text
+```shell
 Product created successfully.
 
 Title: Metaprogramming Elixir
@@ -178,7 +178,7 @@ Code generation can't solve all your problems, but it will teach you the ins and
 
 Let's first check out the `ProductController` that was generated in `lib/hello_web/controllers/product_controller.ex`:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.ProductController do
   use HelloWeb, :controller
 
@@ -231,7 +231,7 @@ Conversely, if `Catalog.create_product/1` fails, we render our `"new.html"` temp
 
 Next, let's dig deeper and check out our `Catalog` context in `lib/hello/catalog.ex`:
 
-```elixir
+```perl Elixir
 defmodule Hello.Catalog do
   @moduledoc """
   The Catalog context.
@@ -271,7 +271,7 @@ Phoenix will push us to think about where we have different responsibilities in 
 
 Now we know how data is fetched, but how are products persisted? Let's take a look at the `Catalog.create_product/1` function:
 
-```elixir
+```perl Elixir
   @doc """
   Creates a product.
 
@@ -298,7 +298,7 @@ We talked about changesets before, and now we see them in action in our context.
 
 If we open up the `Product` schema in `lib/hello/catalog/product.ex`, it will look immediately familiar:
 
-```elixir
+```perl Elixir
 defmodule Hello.Catalog.Product do
   use Ecto.Schema
   import Ecto.Changeset
@@ -358,7 +358,7 @@ There's a better way.
 Let's think of a function that describes what we want to accomplish.
 Here's how we would like to use it:
 
-```elixir
+```perl Elixir
 product = Catalog.inc_page_views(product)
 ```
 
@@ -367,7 +367,7 @@ Our callers will have no confusion over what this function does, and we can wrap
 
 Open up your catalog context (`lib/hello/catalog.ex`), and add this new function:
 
-```elixir
+```perl Elixir
   def inc_page_views(%Product{} = product) do
     {1, [%Product{views: views}]} =
       from(p in Product, where: p.id == ^product.id, select: [:views])
@@ -385,7 +385,7 @@ When we receive the new product views, we use `put_in(product.views, views)` to 
 With our context function in place, let's make use of it in our product controller.
 Update your `show` action in `lib/hello_web/controllers/product_controller.ex` to call our new function:
 
-```elixir
+```perl Elixir
   def show(conn, %{"id" => id}) do
     product =
       id
@@ -403,7 +403,7 @@ Refresh one of your product pages a few times and watch the view count increase.
 
 We can also see our atomic update in action in the ecto debug logs:
 
-```text
+```shell
 [debug] QUERY OK source="products" db=0.5ms idle=834.5ms
 UPDATE "products" AS p0 SET "views" = p0."views" + $1 WHERE (p0."id" = $2) RETURNING p0."views" [1, 1]
 ```
@@ -468,7 +468,7 @@ mix ecto.gen.migration create_product_categories
 
 Next, let's open up the new migration file and add the following code to the `change` function:
 
-```elixir
+```perl Elixir
 
 defmodule Hello.Repo.Migrations.CreateProductCategories do
   use Ecto.Migration
@@ -522,7 +522,7 @@ Before we dive in, we first need real categories to select in our web UI.
 Let's quickly seed some new categories in the application.
 Add the following code to your seeds file in `priv/repo/seeds.exs`:
 
-```elixir
+```perl Elixir
 for title <- ["Home Improvement", "Power Tools", "Gardening", "Books", "Education"] do
   {:ok, _} = Hello.Catalog.create_category(%{title: title})
 end
@@ -622,7 +622,7 @@ Next, let's expose our new feature to the web by adding the category input to ou
 To keep our form template tidy, let's write a new function to wrap up the details of rendering a category select input for our product.
 Open up your `ProductHTML` view in `lib/hello_web/controllers/product_html.ex` and key this in:
 
-```elixir
+```perl Elixir
   def category_opts(changeset) do
     existing_ids =
       changeset
@@ -657,7 +657,7 @@ Now let's try it out.
 Next, let's show the product's categories in the product show template.
 Add the following code to the list in `lib/hello_web/controllers/product_html/show.html.heex`:
 
-```heex
+```perl HEEx
 <.list>
   ...
 + <:item title="Categories">
@@ -672,7 +672,7 @@ Add the following code to the list in `lib/hello_web/controllers/product_html/sh
 Now if we start the server with `mix phx.server` and visit [http://localhost:4000/products/new](http://localhost:4000/products/new), we'll see the new category multiple select input.
 Enter some valid product details, select a category or two, and click save.
 
-```text
+```shell
 Title: Elixir Flashcards
 Description: Flash card set for the Elixir programming language
 Price: 5.000000
@@ -763,7 +763,7 @@ We generated a new resource inside our `ShoppingCart` named `CartItem`.
 This schema and table will hold references to a cart and product, along with the price at the time we added the item to our cart, and the quantity the user wishes to purchase.
 Let's touch up the generated migration file in `priv/repo/migrations/*_create_cart_items.ex`:
 
-```elixir
+```perl Elixir
     create table(:cart_items) do
 -     add :price_when_carted, :decimal
 +     add :price_when_carted, :decimal, precision: 15, scale: 6, null: false
@@ -830,7 +830,7 @@ Both are valid options given your tradeoffs and application size, but joining da
 Now that we know where our data dependencies exist, let's add our schema associations so we can tie shopping cart items to products.
 First, let's make a quick change to our cart schema in `lib/hello/shopping_cart/cart.ex` to associate a cart to its items:
 
-```elixir
+```perl Elixir
   schema "carts" do
     field :user_uuid, Ecto.UUID
 
@@ -842,7 +842,7 @@ First, let's make a quick change to our cart schema in `lib/hello/shopping_cart/
 
 Now that our cart is associated to the items we place in it, let's set up the cart item associations inside `lib/hello/shopping_cart/cart_item.ex`:
 
-```elixir
+```perl Elixir
   schema "cart_items" do
     field :price_when_carted, :decimal
     field :quantity, :integer
@@ -884,7 +884,7 @@ Let's get started!
 We won't focus on a real user authentication system at this point, but by the time we're done, you'll be able to naturally integrate one with what we've written here.
 To simulate a current user session, open up your `lib/hello_web/router.ex` and key this in:
 
-```elixir
+```perl Elixir
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -954,7 +954,7 @@ The second route, a PUT request, will handle the submission of a form for updati
 With our routes in place, let's add the ability to add an item to our cart from the product show page.
 Create a new file at `lib/hello_web/controllers/cart_item_controller.ex` and key this in:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.CartItemController do
   use HelloWeb, :controller
 
@@ -990,7 +990,7 @@ It also allows us to spec out our web layer and context APIs without thinking ab
 
 Let's implement the new interface for the `ShoppingCart` context API in `lib/hello/shopping_cart.ex`:
 
-```elixir
+```perl Elixir
 +  alias Hello.Catalog
 -  alias Hello.ShoppingCart.Cart
 +  alias Hello.ShoppingCart.{Cart, CartItem}
@@ -1082,7 +1082,7 @@ Let's try it out.
 Start your server with `mix phx.server` and visit a product page.
 If we try clicking the add to cart link, we'll be greeted by an error page with the following logs in the console:
 
-```text
+```shell
 [info] POST /cart_items
 [debug] Processing with HelloWeb.CartItemController.create/2
   Parameters: %{"_method" => "post", "product_id" => "1", ...}
@@ -1114,7 +1114,7 @@ Let's create the cart controller, view, and template to display and manage user 
 
 Create a new file at `lib/hello_web/controllers/cart_controller.ex` and key this in:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.CartController do
   use HelloWeb, :controller
 
@@ -1135,7 +1135,7 @@ We pass it our cart struct which is already in the connection assigns thanks to 
 Next, we can implement the view and template.
 Create a new view file at `lib/hello_web/controllers/cart_html.ex` with the following content:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.CartHTML do
   use HelloWeb, :html
 
@@ -1152,7 +1152,7 @@ We'll need to display the cart prices like product item price, cart total, etc, 
 
 Next we can create the template at `lib/hello_web/controllers/cart_html/show.html.heex`:
 
-```heex
+```perl HEEx
 <%= if @cart.items == [] do %>
   <.header>
     My Cart
@@ -1194,7 +1194,7 @@ Finally, we added a `back` component to go back to our products page.
 We're almost ready to try out our cart page, but first we need to implement our new currency calculation functions.
 Open up your shopping cart context at `lib/hello/shopping_cart.ex` and add these new functions:
 
-```elixir
+```perl Elixir
   def total_item_price(%CartItem{} = item) do
     Decimal.mult(item.product.price, item.quantity)
   end
@@ -1221,7 +1221,7 @@ Nice work!
 
 Our cart page is almost complete, but submitting the form will yield yet another error.
 
-```text
+```shell
 Request: POST /cart
 ** (exit) an exception was raised:
     ** (UndefinedFunctionError) function HelloWeb.CartController.update/2 is undefined or private
@@ -1229,7 +1229,7 @@ Request: POST /cart
 
 Let's head back to our `CartController` at `lib/hello_web/controllers/cart_controller.ex` and implement the update action:
 
-```elixir
+```perl Elixir
   def update(conn, %{"cart" => cart_params}) do
     case ShoppingCart.update_cart(conn.assigns.cart, cart_params) do
       {:ok, _cart} ->
@@ -1252,7 +1252,7 @@ For our purposes, we now need it to handle nested cart item associations, and mo
 
 Head back over to your shopping cart context in `lib/hello/shopping_cart.ex` and replace your `update_cart/2` function with the following implementation:
 
-```elixir
+```perl Elixir
   def update_cart(%Cart{} = cart, attrs) do
     changeset =
       cart
@@ -1328,7 +1328,7 @@ We generated an `Orders` context.
 We added a `user_uuid` field to associate our placeholder current user to an order, along with a `total_price` column.
 With our starting point in place, let's open up the newly created migration in `priv/repo/migrations/*_create_orders.exs` and make the following changes:
 
-```elixir
+```perl Elixir
   def change do
     create table(:orders) do
       add :user_uuid, :uuid
@@ -1370,7 +1370,7 @@ Remember to update your repository by running migrations:
 We used the `phx.gen.context` command to generate the `LineItem` Ecto schema and inject supporting functions into our orders context.
 Like before, let's modify the migration in `priv/repo/migrations/*_create_order_line_items.exs` and make the following decimal field changes:
 
-```elixir
+```perl Elixir
   def change do
     create table(:order_line_items) do
 -     add :price, :decimal
@@ -1389,7 +1389,7 @@ Like before, let's modify the migration in `priv/repo/migrations/*_create_order_
 
 With our migration in place, let's wire up our orders and line items associations in `lib/hello/orders/order.ex`:
 
-```elixir
+```perl Elixir
   schema "orders" do
     field :total_price, :decimal
     field :user_uuid, Ecto.UUID
@@ -1406,7 +1406,7 @@ Next, we used the `:through` feature of `has_many`, which allows us to instruct 
 In this case, we can associate products of an order by finding all products through associated line items.
 Next, let's wire up the association in the other direction in `lib/hello/orders/line_item.ex`:
 
-```elixir
+```perl Elixir
   schema "order_line_items" do
     field :price, :decimal
     field :quantity, :integer
@@ -1424,7 +1424,7 @@ We used `belongs_to` to associate line items to orders and products.
 With our associations in place, we can start integrating the web interface into our order process.
 Open up your router `lib/hello_web/router.ex` and add the following line:
 
-```elixir
+```perl Elixir
   scope "/", HelloWeb do
     pipe_through :browser
 
@@ -1459,7 +1459,7 @@ mix ecto.migrate
 Before we render information about our orders, we need to ensure our order data is fully populated and can be looked up by a current user.
 Open up your orders context in `lib/hello/orders.ex` and replace your `get_order!/1` function by a new `get_order!/2` definition:
 
-```elixir
+```perl Elixir
   def get_order!(user_uuid, id) do
     Order
     |> Repo.get_by!(id: id, user_uuid: user_uuid)
@@ -1474,7 +1474,7 @@ To complete an order, our cart page can issue a POST to the `OrderController.cre
 Like before, we'll start at the web interface.
 Create a new file at `lib/hello_web/controllers/order_controller.ex` and key this in:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.OrderController do
   use HelloWeb, :controller
 
@@ -1518,7 +1518,7 @@ To complete an order, our job will require a few operations:
 From our requirements alone, we can start to see why a generic `create_order` function doesn't cut it.
 Let's implement this new function in `lib/hello/orders.ex`:
 
-```elixir
+```perl Elixir
   alias Hello.Orders.LineItem
   alias Hello.ShoppingCart
 
@@ -1559,7 +1559,7 @@ Running the transaction will execute the multi as before and we return the resul
 
 To close out our order completion, we need to implement the `ShoppingCart.prune_cart_items/1` function in `lib/hello/shopping_cart.ex`:
 
-```elixir
+```perl Elixir
   def prune_cart_items(%Cart{} = cart) do
     {_, _} = Repo.delete_all(from(i in CartItem, where: i.cart_id == ^cart.id))
     {:ok, reload_cart(cart)}
@@ -1571,7 +1571,7 @@ We return a success result by simply reloading the pruned cart to the caller.
 With our context complete, we now need to show the user their completed order.
 Head back to your order controller and add the `show/2` action:
 
-```elixir
+```perl Elixir
   def show(conn, %{"id" => id}) do
     order = Orders.get_order!(conn.assigns.current_uuid, id)
     render(conn, :show, order: order)
@@ -1582,7 +1582,7 @@ We added the show action to pass our `conn.assigns.current_uuid` to `get_order!`
 Next, we can implement the view and template.
 Create a new view file at `lib/hello_web/controllers/order_html.ex` with the following content:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.OrderHTML do
   use HelloWeb, :html
 
@@ -1592,7 +1592,7 @@ end
 
 Next we can create the template at `lib/hello_web/controllers/order_html/show.html.heex`:
 
-```heex
+```perl HEEx
 <.header>
   Thank you for your order!
   <:subtitle>
@@ -1633,7 +1633,7 @@ Add the following button to the <.header> of the cart show template in `lib/hell
 We added a link with `method="post"` to send a POST request to our `OrderController.create` action.
 If we head back to our cart page at [`http://localhost:4000/cart`](http://localhost:4000/cart) and complete an order, we'll be greeted by our rendered template:
 
-```text
+```shell
 Thank you for your order!
 
 User uuid: 08964c7c-908c-4a55-bcd3-9811ad8b0b9d

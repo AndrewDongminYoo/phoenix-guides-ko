@@ -111,7 +111,7 @@ Since we don't have `Mix`, a _build_ tool, inside releases, which are a producti
 
 The `phx.gen.release` command created the following `release.ex` file in your project `lib/my_app/release.ex`, with the following content:
 
-```elixir
+```perl Elixir
 defmodule MyApp.Release do
   @app :my_app
 
@@ -156,7 +156,7 @@ Keep in mind, starting the application will start all processes for the current 
 This can be circumvented by changing your supervision tree to not start certain children under certain conditions.
 For example, in the release commands file you could do:
 
-```elixir
+```perl Elixir
 defp start_app do
   load_app()
   Application.put_env(@app, :minimal, true)

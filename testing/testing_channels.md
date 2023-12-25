@@ -48,7 +48,7 @@ It is important to add the channel route or our channel won't function at all!
 
 Open up `test/hello_web/channels/room_channel_test.exs` and you will find this:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.RoomChannelTest do
   use HelloWeb.ChannelCase
 ```
@@ -58,7 +58,7 @@ All three of them have been generated for us when we started our Phoenix applica
 Let's take a look at it.
 Open up `test/support/channel_case.ex`:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.ChannelCase do
   use ExUnit.CaseTemplate
 
@@ -90,7 +90,7 @@ Now that we know that Phoenix provides with a custom Test Case just for channels
 
 First off, is the setup block:
 
-```elixir
+```perl Elixir
 setup do
   {:ok, _, socket} =
     HelloWeb.UserSocket
@@ -112,7 +112,7 @@ This is a necessary step since clients need to join a channel before they can se
 
 The first test block in our generated channel test looks like:
 
-```elixir
+```perl Elixir
 test "ping replies with status ok", %{socket: socket} do
   ref = push(socket, "ping", %{"hello" => "there"})
   assert_reply ref, :ok, %{"hello" => "there"}
@@ -121,7 +121,7 @@ end
 
 This tests the following code in our `HelloWeb.RoomChannel`:
 
-```elixir
+```perl Elixir
 # Channels can be used in a request/response fashion
 # by sending replies to requests from the client
 def handle_in("ping", payload, socket) do
@@ -148,7 +148,7 @@ This is how we check that the `handle_in/3` callback for the `"ping"` was trigge
 It is common to receive messages from the client and broadcast to everyone subscribed to a current topic.
 This common pattern is simple to express in Phoenix and is one of the generated `handle_in/3` callbacks in our `HelloWeb.RoomChannel`.
 
-```elixir
+```perl Elixir
 def handle_in("shout", payload, socket) do
   broadcast(socket, "shout", payload)
   {:noreply, socket}
@@ -157,7 +157,7 @@ end
 
 Its corresponding test looks like:
 
-```elixir
+```perl Elixir
 test "shout broadcasts to room:lobby", %{socket: socket} do
   push(socket, "shout", %{"hello" => "all"})
   assert_broadcast "shout", %{"hello" => "all"}

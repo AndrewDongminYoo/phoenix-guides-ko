@@ -25,7 +25,7 @@ In order to act as a plug, a function needs to:
 Any function that meets these two criteria will do.
 Here's an example.
 
-```elixir
+```perl Elixir
 def introspect(conn, _opts) do
   IO.puts """
   Verb: #{inspect(conn.method)}
@@ -46,7 +46,7 @@ This function does the following:
 Pretty simple, right? Let's see this function in action by adding it to our endpoint in `lib/hello_web/endpoint.ex`.
 We can plug it anywhere, so let's do it by inserting `plug :introspect` right before we delegate the request to the router:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Endpoint do
   ...
 
@@ -69,7 +69,7 @@ Function plugs are plugged by passing the function name as an atom.
 To try the plug out, go back to your browser and fetch [http://localhost:4000](http://localhost:4000).
 You should see something like this printed in your shell terminal:
 
-```log
+```shell
 Verb: "GET"
 Host: "localhost"
 Headers: [...]
@@ -92,7 +92,7 @@ The module only needs to implement two functions:
 To see this in action, let's write a module plug that puts the `:locale` key and value into the connection for downstream use in other plugs, controller actions, and our views.
 Put the contents below in a file named `lib/hello_web/plugs/locale.ex`:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Plugs.Locale do
   import Plug.Conn
 
@@ -112,7 +112,7 @@ end
 
 To give it a try, let's add this module plug to our router, by appending `plug HelloWeb.Plugs.Locale, "en"` to our `:browser` pipeline in `lib/hello_web/router.ex`:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Router do
   use HelloWeb, :router
 
@@ -133,7 +133,7 @@ The [`assign/3`] is a part of the `Plug.Conn` module and it's how we store value
 
 To see the assign in action, go to the template in `lib/hello_web/controllers/page_html/home.html.heex` and add the following code after the closing of the `</h1>` tag:
 
-```heex
+```perl HEEx
 <p>Locale: <%= @locale %></p>
 ```
 
@@ -154,7 +154,7 @@ The endpoint, router, and controllers in Phoenix accept plugs.
 Endpoints organize all the plugs common to every request, and apply them before dispatching into the router with its custom pipelines.
 We added a plug to the endpoint like this:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Endpoint do
   ...
 
@@ -187,7 +187,7 @@ Here they are in order:
 
 In the middle of the endpoint, there is also a conditional block:
 
-```elixir
+```perl Elixir
   if code_reloading? do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader
@@ -207,7 +207,7 @@ It enables:
 
 In the router, we can declare plugs inside pipelines:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Router do
   use HelloWeb, :router
 
@@ -239,7 +239,7 @@ There, we will also discuss all plugs in the `:browser` pipeline.
 
 Finally, controllers are plugs too, so we can do:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.PageController do
   use HelloWeb, :controller
 
@@ -249,7 +249,7 @@ defmodule HelloWeb.PageController do
 In particular, controller plugs provide a feature that allows us to execute plugs only within certain actions.
 For example, you can do:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.PageController do
   use HelloWeb, :controller
 
@@ -265,7 +265,7 @@ It doesn't stop there.
 To really see how effective Plug's design is, let's imagine a scenario where we need to check a series of conditions and then either redirect or halt if a condition fails.
 Without plug, we would end up with something like this:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.MessageController do
   use HelloWeb, :controller
 
@@ -291,7 +291,7 @@ end
 
 Notice how just a few steps of authentication and authorization require complicated nesting and duplication? Let's improve this with a couple of plugs.
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.MessageController do
   use HelloWeb, :controller
 

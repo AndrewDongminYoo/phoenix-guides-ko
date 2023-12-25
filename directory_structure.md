@@ -4,7 +4,7 @@
 
 When we use `mix phx.new` to generate a new Phoenix application, it builds a top-level directory structure like this:
 
-```log
+```shell
 ├── _build
 ├── assets
 ├── config
@@ -60,7 +60,7 @@ The `lib/hello` directory hosts all of your business domain.
 Since our project does not have any business logic yet, the directory is mostly empty.
 You will only find three files:
 
-```log
+```shell
 lib/hello
 ├── application.ex
 ├── mailer.ex
@@ -71,7 +71,7 @@ The `lib/hello/application.ex` file defines an Elixir application named `Hello.A
 That's because at the end of the day Phoenix applications are simply Elixir applications.
 The `Hello.Application` module defines which services are part of our application:
 
-```elixir
+```perl Elixir
 children = [
   HelloWeb.Telemetry,
   Hello.Repo,
@@ -88,7 +88,7 @@ You can learn more about applications in [Elixir's official docs for Application
 
 The `lib/hello/mailer.ex` file holds the `Hello.Mailer` module, which defines the main interface to deliver e-mails:
 
-```elixir
+```perl Elixir
 defmodule Hello.Mailer do
   use Swoosh.Mailer, otp_app: :hello
 end
@@ -98,7 +98,7 @@ In the same `lib/hello` directory, we will find a `lib/hello/repo.ex`.
 It defines a `Hello.Repo` module which is our main interface to the database.
 If you are using Postgres (the default database), you will see something like this:
 
-```elixir
+```perl Elixir
 defmodule Hello.Repo do
   use Ecto.Repo,
     otp_app: :hello,
@@ -114,7 +114,7 @@ As you work on your project, we will add files and modules to this directory.
 The `lib/hello_web` directory holds the web-related parts of our application.
 It looks like this when expanded:
 
-```log
+```shell
 lib/hello_web
 ├── controllers
 │   ├── page_controller.ex

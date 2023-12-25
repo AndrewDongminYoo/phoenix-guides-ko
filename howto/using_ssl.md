@@ -10,7 +10,7 @@ We can then put those files in our `priv` directory and set the paths to `priv/o
 
 Here's an example configuration from `config/runtime.exs`.
 
-```elixir
+```perl Elixir
 import Config
 
 config :hello, HelloWeb.Endpoint,
@@ -31,7 +31,7 @@ config :hello, HelloWeb.Endpoint,
 
 Without the `otp_app:` key, we need to provide absolute paths to the files wherever they are on the filesystem in order for Plug to find them.
 
-```elixir
+```perl Elixir
 Path.expand("../../../some/path/to/ssl/key.pem", __DIR__)
 ```
 
@@ -46,7 +46,7 @@ This requires Erlang/OTP 20 or later.
 
 With your self-signed certificate, your development configuration in `config/dev.exs` can be updated to run an HTTPS endpoint:
 
-```elixir
+```perl Elixir
 config :my_app, MyAppWeb.Endpoint,
   ...
   https: [
@@ -68,14 +68,14 @@ By default, it sets the "strict-transport-security" header in HTTPS requests, fo
 If an unsafe (HTTP) request is sent, it redirects to the HTTPS version using the `:host` specified in the `:url` configuration.
 For example:
 
-```elixir
+```perl Elixir
 config :my_app, MyAppWeb.Endpoint,
   force_ssl: [rewrite_on: [:x_forwarded_proto]]
 ```
 
 To dynamically redirect to the `host` of the current request, set `:host` in the `:force_ssl` configuration to `nil`.
 
-```elixir
+```perl Elixir
 config :my_app, MyAppWeb.Endpoint,
   force_ssl: [rewrite_on: [:x_forwarded_proto], host: nil]
 ```

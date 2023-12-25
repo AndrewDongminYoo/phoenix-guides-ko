@@ -15,7 +15,7 @@ Please see the [Plug guide](plug.html) or the [Plug documentation](`Plug`) for m
 
 A newly generated Phoenix app will have a single controller named `PageController`, which can be found at `lib/hello_web/controllers/page_controller.ex` which looks like this:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.PageController do
   use HelloWeb, :controller
 
@@ -37,19 +37,19 @@ The only requirement we must fulfill is that the action name matches a route def
 
 For example, in `lib/hello_web/router.ex` we could change the action name in the default route that Phoenix gives us in a new app from `home`:
 
-```elixir
+```perl Elixir
 get "/", PageController, :home
 ```
 
 to `index`:
 
-```elixir
+```perl Elixir
 get "/", PageController, :index
 ```
 
 as long as we change the action name in `PageController` to `index` as well, the [welcome page] will load as before.
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.PageController do
   ...
 
@@ -80,7 +80,7 @@ Not surprisingly, this is a map which holds any parameters passed along in the H
 It is a good practice to pattern match against parameters in the function signature to provide data in a simple package we can pass on to rendering.
 We saw this in the [request life-cycle guide](request_lifecycle.html) when we added a messenger parameter to our `show` route in `lib/hello_web/controllers/hello_controller.ex`.
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.HelloController do
   ...
 
@@ -102,7 +102,7 @@ The simplest is to render some plain text using the [`text/2`] function which Ph
 For example, let's rewrite the `show` action from `HelloController` to return text instead.
 For that, we could do the following.
 
-```elixir
+```perl Elixir
 def show(conn, %{"messenger" => messenger}) do
   text(conn, "From messenger #{messenger}")
 end
@@ -113,7 +113,7 @@ Now [`/hello/Frank`] in your browser should display `From messenger Frank` as pl
 A step beyond this is rendering pure JSON with the [`json/2`] function.
 We need to pass it something that the [Jason library](`Jason`) can decode into JSON, such as a map. (Jason is one of Phoenix's dependencies.)
 
-```elixir
+```perl Elixir
 def show(conn, %{"messenger" => messenger}) do
   json(conn, %{id: messenger})
 end
@@ -131,7 +131,7 @@ It is specially important for HTML responses, as Phoenix Views provide performan
 
 Let's rollback our `show` action to what we originally wrote in the [request life-cycle guide](request_lifecycle.html):
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.HelloController do
   use HelloWeb, :controller
 
@@ -150,7 +150,7 @@ In other words, `HelloController` requires `HelloHTML`, and `HelloHTML` requires
 If we need to pass values into the template when using `render`, that's easy.
 We can pass a keyword like we've seen with `messenger: messenger`, or we can use `Plug.Conn.assign/3`, which conveniently returns `conn`.
 
-```elixir
+```perl Elixir
   def show(conn, %{"messenger" => messenger}) do
     conn
     |> Plug.Conn.assign(:messenger, messenger)
@@ -162,7 +162,7 @@ Note: Using `Phoenix.Controller` imports `Plug.Conn`, so shortening the call to 
 
 Passing more than one value to our template is as simple as connecting [`assign/3`] functions together:
 
-```elixir
+```perl Elixir
   def show(conn, %{"messenger" => messenger}) do
     conn
     |> assign(:messenger, messenger)
@@ -173,7 +173,7 @@ Passing more than one value to our template is as simple as connecting [`assign/
 
 Or you can pass the assigns directly to `render` instead:
 
-```elixir
+```perl Elixir
   def show(conn, %{"messenger" => messenger}) do
     render(conn, :show, messenger: messenger, receiver: "Dweezil")
   end
@@ -198,7 +198,7 @@ Many web apps today return JSON to remote clients, and Phoenix views are _great_
 As an example, let's take `PageController`'s `home` action from a newly generated app.
 Out of the box, this has the right view `PageHTML`, the embedded templates from (`lib/hello_web/controllers/page_html`), and the right template for rendering HTML (`home.html.heex`.)
 
-```elixir
+```perl Elixir
 def home(conn, _params) do
   render(conn, :home, layout: false)
 end
@@ -209,7 +209,7 @@ Phoenix Controller hands off to a view module to render templates, and it does s
 We already have a view for the HTML format, but we need to instruct Phoenix how to render the JSON format as well.
 By default, you can see which formats your controllers support in `lib/hello_web.ex`:
 
-```elixir
+```perl Elixir
   def controller do
     quote do
       use Phoenix.Controller,
@@ -224,13 +224,13 @@ So out of the box Phoenix will look for a `HTML` and `JSON` view modules based o
 We can also explicitly tell Phoenix in our controller which view(s) to use for each format.
 For example, what Phoenix does by default can be explicitly set with the following in your controller:
 
-```elixir
+```perl Elixir
 plug :put_view, html: HelloWeb.PageHTML, json: HelloWeb.PageJSON
 ```
 
 Let's add a `PageJSON` view module at `lib/hello_web/controllers/page_json.ex`:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.PageJSON do
   def home(_assigns) do
     %{message: "this is some JSON"}
@@ -245,7 +245,7 @@ Because we want to render both HTML and JSON from the same controller, we need t
 We do that by adding `json` to the list of accepted formats in the `:browser` pipeline.
 Let's open up `lib/hello_web/router.ex` and change `plug :accepts` to include `json` as well as `html` like this.
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Router do
   use HelloWeb, :router
 
@@ -274,7 +274,7 @@ We can do that with the `Plug.Conn.send_resp/3` function.
 
 Edit the `home` action of `PageController` in `lib/hello_web/controllers/page_controller.ex` to look like this:
 
-```elixir
+```perl Elixir
 def home(conn, _params) do
   send_resp(conn, 201, "")
 end
@@ -286,7 +286,7 @@ Some browsers (Safari) will download the response, as the content type is not se
 
 To be specific about the content type, we can use [`put_resp_content_type/2`] in conjunction with [`send_resp/3`].
 
-```elixir
+```perl Elixir
 def home(conn, _params) do
   conn
   |> put_resp_content_type("text/plain")
@@ -302,7 +302,7 @@ Analogous to the `_format` query string param, we can render any sort of format 
 
 If we wanted to render an XML version of our `home` action, we might implement the action like this in `lib/hello_web/page_controller.ex`.
 
-```elixir
+```perl Elixir
 def home(conn, _params) do
   conn
   |> put_resp_content_type("text/xml")
@@ -324,7 +324,7 @@ The list of status code atom representations can be found in `Plug.Conn.Status.c
 
 Let's change the status in our `PageController` `home` action.
 
-```elixir
+```perl Elixir
 def home(conn, _params) do
   conn
   |> put_status(202)
@@ -346,7 +346,7 @@ Phoenix differentiates between redirecting to a path within the application and 
 
 In order to try out [`redirect/2`], let's create a new route in `lib/hello_web/router.ex`.
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Router do
   ...
 
@@ -361,7 +361,7 @@ end
 
 Then we'll change `PageController`'s `home` action of our controller to do nothing but to redirect to our new route.
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.PageController do
   use HelloWeb, :controller
 
@@ -377,7 +377,7 @@ We learned about verified routes in the [routing guide](routing.html).
 
 Finally, let's define in the same file the action we redirect to, which simply renders the home, but now under a new address:
 
-```elixir
+```perl Elixir
 def redirect_test(conn, _params) do
   render(conn, :home, layout: false)
 end
@@ -393,7 +393,7 @@ Notice that the redirect function takes `conn` as well as a string representing 
 For security reasons, the `:to` option can only redirect to paths within your application.
 If you want to redirect to a fully-qualified path or an external URL, you should use `:external` instead:
 
-```elixir
+```perl Elixir
 def home(conn, _params) do
   redirect(conn, external: "https://elixir-lang.org/")
 end
@@ -410,7 +410,7 @@ Let's set two flash messages in our `HelloWeb.PageController` to try this out.
 
 To do this we modify the `home` action as follows:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.PageController do
   ...
   def home(conn, _params) do
@@ -427,7 +427,7 @@ It then returns the value for that key.
 
 For our convenience, a `flash_group` component is already available and added to the beginning of our [welcome page]
 
-```heex
+```perl HEEx
 <.flash_group flash={@flash} />
 ```
 
@@ -437,7 +437,7 @@ The flash functionality is handy when mixed with redirects.
 Perhaps you want to redirect to a page with some extra information.
 If we reuse the redirect action from the previous section, we can do:
 
-```elixir
+```perl Elixir
   def home(conn, _params) do
     conn
     |> put_flash(:error, "Let's pretend we have an error.")

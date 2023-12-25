@@ -18,7 +18,7 @@ In this chapter, we will recap how components were used in previous chapters and
 
 At the end of the Request life-cycle chapter, we created a template at `lib/hello_web/controllers/hello_html/show.html.heex`, let's open it up:
 
-```heex
+```perl HEEx
 <section>
   <h2>Hello World, from <%= @messenger %>!</h2>
 </section>
@@ -26,7 +26,7 @@ At the end of the Request life-cycle chapter, we created a template at `lib/hell
 
 This template, is embedded as part of `HelloHTML`, at `lib/hello_web/controllers/hello_html.ex`:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.HelloHTML do
   use HelloWeb, :html
 
@@ -46,7 +46,7 @@ Let's see this in practice.
 Imagine we want to refactor our `show.html.heex` to move the rendering of `<h2>Hello World, from <%= @messenger %>!</h2>` to its own function.
 We can move it to a function component inside `HelloHTML`, let's do so:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.HelloHTML do
   use HelloWeb, :html
 
@@ -66,7 +66,7 @@ We declared the attributes we accept via the `attr/3` macro provided by `Phoenix
 
 Next we need to update `show.html.heex`:
 
-```elixir
+```perl Elixir
 <section>
   <.greet messenger={@messenger} />
 </section>
@@ -81,7 +81,7 @@ If the component was defined elsewhere, we can also type `<HelloWeb.HelloHTML.gr
 By declaring attributes as required, Phoenix will warn at compile time if we call the `<.greet />` component without passing attributes.
 If an attribute is optional, you can specify the `:default` option with a value:
 
-```elixir
+```perl Elixir
 attr :messenger, :string, default: nil
 ```
 
@@ -107,7 +107,7 @@ EEx is an Elixir library that uses `<%= expression %>` to execute Elixir express
 This is frequently used to display assigns we have set by way of the `@` shortcut.
 In your controller, if you invoke:
 
-```elixir
+```perl Elixir
   render(conn, :show, username: "joe")
 ```
 
@@ -115,7 +115,7 @@ Then you can access said username in the templates as `<%= @username %>`.
 In addition to displaying assigns and functions, we can use pretty much any Elixir expression.
 For example, in order to have conditionals:
 
-```heex
+```perl HEEx
 <%= if some_condition? do %>
   <p>Some condition is true for user: <%= @username %></p>
 <% else %>
@@ -125,7 +125,7 @@ For example, in order to have conditionals:
 
 or even loops:
 
-```heex
+```perl HEEx
 <table>
   <tr>
     <th>Number</th>
@@ -150,7 +150,7 @@ HEEx also comes with handy HTML extensions we will learn next.
 Besides allowing interpolation of Elixir expressions via `<%= %>`, `.heex` templates come with HTML-aware extensions.
 For example, let's see what happens if you try to interpolate a value with "<" or ">" in it, which would lead to HTML injection:
 
-```heex
+```perl HEEx
 <%= "<b>Bold?</b>" %>
 ```
 
@@ -158,14 +158,14 @@ Once you render the template, you will see the literal `<b>` on the page.
 This means users cannot inject HTML content on the page.
 If you want to allow them to do so, you can call `raw`, but do so with extreme care:
 
-```heex
+```perl HEEx
 <%= raw "<b>Bold?</b>" %>
 ```
 
 Another super power of HEEx templates is validation of HTML and lean interpolation syntax of attributes.
 You can write:
 
-```heex
+```perl HEEx
 <div title="My div" class={@class}>
   <p>Hello <%= @username %></p>
 </div>
@@ -176,7 +176,7 @@ HEEx will automatically handle special values such as `false` to remove the attr
 
 To interpolate a dynamic number of attributes in a keyword list or map, do:
 
-```heex
+```perl HEEx
 <div title="My div" {@many_attributes}>
   <p>Hello <%= @username %></p>
 </div>
@@ -188,7 +188,7 @@ HEEx templates will let you know about your error.
 HEEx also supports shorthand syntax for `if` and `for` expressions via the special `:if` and `:for` attributes.
 For example, rather than this:
 
-```heex
+```perl HEEx
 <%= if @some_condition do %>
   <div>...</div>
 <% end %>
@@ -196,13 +196,13 @@ For example, rather than this:
 
 You can write:
 
-```heex
+```perl HEEx
 <div :if={@some_condition}>...</div>
 ```
 
 Likewise, for comprehensions may be written as:
 
-```heex
+```perl HEEx
 <ul>
   <li :for={item <- @items}><%= item.name %></li>
 </ul>
@@ -220,7 +220,7 @@ The second is the _app layout_, called `app.html.heex`, which is rendered within
 You may be wondering how the string resulting from a rendered view ends up inside a layout.
 That's a great question! If we look at `lib/hello_web/components/layouts/root.html.heex`, just about at the end of the `<body>`, we will see this.
 
-```heex
+```perl HEEx
 <%= @inner_content %>
 ```
 
@@ -233,7 +233,7 @@ You can set it to `false` to disable the layout altogether.
 
 You can edit the `index` action of `HelloController` in `lib/hello_web/controllers/hello_controller.ex` to look like this.
 
-```elixir
+```perl Elixir
 def index(conn, _params) do
   conn
   |> put_root_layout(html: false)
@@ -251,7 +251,7 @@ Then remove everything inside the `<header>...</header>` tags (or change it to w
 
 Now, in the `index` action of the controller of `lib/hello_web/controllers/hello_controller.ex`, add the following:
 
-```elixir
+```perl Elixir
 def index(conn, _params) do
   conn
   |> put_layout(html: :admin)

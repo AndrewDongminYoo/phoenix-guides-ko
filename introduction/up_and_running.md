@@ -36,7 +36,7 @@ Phoenix는 애플리케이션에 필요한 디렉토리 구조와 모든 파일�
 커밋이 완료되면 의존성을 설치할지 묻는 메시지가 표시됩니다.
 '예'라고 대답해 봅시다.
 
-```log
+```shell
 Fetch and install dependencies? [Yn] Y
 * running mix deps.get
 * running mix assets.setup
@@ -97,7 +97,7 @@ $ mix phx.server
 
 새 애플리케이션을 생성할 때 Phoenix가 종속성을 설치하지 않도록 선택하면, 설치하려는 경우 `mix phx.new` 작업에서 필요한 단계를 수행하라는 메시지를 표시합니다.
 
-```log
+```shell
 Fetch and install dependencies? [Yn] n
 
 We are almost there! The following steps are missing:

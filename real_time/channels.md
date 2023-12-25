@@ -111,7 +111,7 @@ The message flow looks something like this:
 
 In your Phoenix app's `Endpoint` module, a `socket` declaration specifies which socket handler will receive connections on a given URL.
 
-```elixir
+```perl Elixir
 socket "/socket", HelloWeb.UserSocket,
   websocket: true,
   longpoll: false
@@ -139,7 +139,7 @@ Channel routes match on the topic string and dispatch matching requests to the g
 The star character `*` acts as a wildcard matcher, so in the following example route, requests for `room:lobby` and `room:123` would both be dispatched to the `RoomChannel`.
 In your `UserSocket`, you would have:
 
-```elixir
+```perl Elixir
 channel "room:*", HelloWeb.RoomChannel
 ```
 
@@ -226,7 +226,7 @@ mix phx.gen.socket User
 It will create two files, the client code in `assets/js/user_socket.js` and the server counter-part in `lib/hello_web/channels/user_socket.ex`.
 After running, the generator will also ask to add the following line to `lib/hello_web/endpoint.ex`:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :hello
 
@@ -243,7 +243,7 @@ The generator also asks us to import the client code, we will do that later.
 Next, we will configure our socket to ensure messages get routed to the correct channel.
 To do that, we'll uncomment the `"room:*"` channel definition:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.UserSocket do
   use Phoenix.Socket
 
@@ -260,7 +260,7 @@ Next, we'll define a `HelloWeb.RoomChannel` module to manage our chat room messa
 The first priority of your channels is to authorize clients to join a given topic.
 For authorization, we must implement `join/3` in `lib/hello_web/channels/room_channel.ex`.
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.RoomChannel do
   use Phoenix.Channel
 
@@ -317,7 +317,7 @@ Now let's make it useful by enabling chat.
 
 In `lib/hello_web/controllers/page_html/home.html.heex`, we'll replace the existing code with a container to hold our chat messages, and an input field to send them:
 
-```heex
+```perl HEEx
 <div id="messages" role="log" aria-live="polite"></div>
 <input id="chat-input" type="text">
 ```
@@ -393,7 +393,7 @@ We handle incoming events with `handle_in/3`.
 We can pattern match on the event names, like `"new_msg"`, and then grab the payload that the client passed over the channel.
 For our chat application, we simply need to notify all other `room:lobby` subscribers of the new message with `broadcast!/3`.
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.RoomChannel do
   use Phoenix.Channel
 
@@ -423,7 +423,7 @@ We won't implement this for our application, but imagine our chat app allowed us
 We could implement that behavior like this, where we explicitly tell Phoenix which outgoing event we want to intercept and then define a `handle_out/3` callback for those events. (Of course, this assumes that we have an `Accounts` context with an `ignoring_user?/2` function, and that we pass a user in via the `assigns` map).
 It is important to note that the `handle_out/3` callback will be called for every recipient of a message, so more expensive operations like hitting the database should be considered carefully before being included in `handle_out/3`.
 
-```elixir
+```perl Elixir
 intercept ["user_joined"]
 
 def handle_out("user_joined", msg, socket) do
@@ -453,7 +453,7 @@ We can wrap that behavior up in a private function plug, `put_user_token/2`.
 This could also be put in its own module as well.
 To make this all work, we just add `OurAuth` and `put_user_token/2` to the browser pipeline.
 
-```elixir
+```perl Elixir
 pipeline :browser do
   ...
   plug OurAuth
@@ -477,7 +477,7 @@ Now our `conn.assigns` contains the `current_user` and `user_token`.
 Next, we need to pass this token to JavaScript.
 We can do so inside a script tag in `lib/hello_web/components/layouts/app.html.heex` right above the app.js script, as follows:
 
-```heex
+```perl HEEx
 <script>window.userToken = "<%= assigns[:user_token] %>";</script>
 <script src={~p"/assets/app.js"}></script>
 ```
@@ -487,7 +487,7 @@ We can do so inside a script tag in `lib/hello_web/components/layouts/app.html.h
 We also need to pass the `:params` to the socket constructor and verify the user token in the `connect/3` function.
 To do so, edit `lib/hello_web/channels/user_socket.ex`, as follows:
 
-```elixir
+```perl Elixir
 def connect(%{"token" => token}, socket, _connect_info) do
   # max_age: 1209600 is equivalent to two weeks in seconds
   case Phoenix.Token.verify(socket, "user socket", token, max_age: 1209600) do

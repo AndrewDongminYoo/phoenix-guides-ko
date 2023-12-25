@@ -15,7 +15,7 @@ A client must join at least one topic to begin sending and receiving messages, a
 To establish a WebSocket connection to Phoenix Channels, first make note of the `socket` declaration in the application's `Endpoint` module.
 For example, if you see: `socket "/mobile", MyAppWeb.MobileSocket`, the path for the initial HTTP request is:
 
-```log
+```shell
 [host]:[port]/mobile/websocket?vsn=2.0.0
 ```
 
@@ -32,7 +32,7 @@ For these examples, `Phoenix.Socket.V2.JSONSerializer` is assumed.
 
 The general format for messages a client sends to a Phoenix Channel is as follows:
 
-```log
+```shell
 [join_reference, message_reference, topic_name, event_name, payload]
 ```
 
@@ -75,7 +75,7 @@ Other allowed messages depend on the Phoenix application.
 
 For example, if the Channel serving the `miami:weather` can handle a `report_emergency` event:
 
-```elixir
+```perl Elixir
 def handle_in("report_emergency", payload, socket) do
   MyApp.Emergencies.report(payload) # or whatever
   {:reply, :ok, socket}

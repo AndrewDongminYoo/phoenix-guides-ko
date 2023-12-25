@@ -7,7 +7,7 @@ The purpose of these views is to handle errors in a general way for each format,
 
 For new applications, the `ErrorHTML` and `ErrorJSON` views looks like this:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.ErrorHTML do
   use HelloWeb, :html
 
@@ -52,7 +52,7 @@ In the development environment, Phoenix will debug errors by default, showing us
 What we want here, however, is to see what page the application would serve in production.
 In order to do that, we need to set `debug_errors: false` in `config/dev.exs`.
 
-```elixir
+```perl Elixir
 import Config
 
 config :hello, HelloWeb.Endpoint,
@@ -70,7 +70,7 @@ We get the bare string "Not Found", displayed without any markup or styling.
 
 The first question is, where does that error string come from? The answer is right in `ErrorHTML`.
 
-```elixir
+```perl Elixir
 def render(template, _assigns) do
   Phoenix.Controller.status_message_from_template(template)
 end
@@ -82,7 +82,7 @@ If no function exists, it falls back to calling `render/2` with the template and
 
 In other words, to provide custom error pages, we could simply define a proper `render/2` function clause in `HelloWeb.ErrorHTML`.
 
-```elixir
+```perl Elixir
   def render("404.html", _assigns) do
     "Page Not Found"
   end
@@ -94,7 +94,7 @@ Phoenix generates an `ErrorHTML` for us, but it doesn't give us a `lib/hello_web
 Let's create one now.
 Inside our new directory, let's add a template named `404.html.heex` and give it some markup – a mixture of our application layout and a new `<div>` with our message to the user.
 
-```heex
+```perl HEEx
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -153,7 +153,7 @@ In order to create a custom exception, we need to define a new module.
 Conventionally, this will have "Error" in the name.
 Inside that module, we need to define a new exception with `defexception/1`, the file `lib/hello_web.ex` seems like a good place for it.
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.SomethingNotFoundError do
   defexception [:message]
 end
@@ -161,7 +161,7 @@ end
 
 You can raise your new exception like this:
 
-```elixir
+```perl Elixir
 raise HelloWeb.SomethingNotFoundError, "oops"
 ```
 
@@ -170,7 +170,7 @@ However, Plug provides a protocol called `Plug.Exception` where we are able to c
 
 If we wanted to supply a status of 404 for an `HelloWeb.SomethingNotFoundError` error, we could do it by defining an implementation for the `Plug.Exception` protocol like this, in `lib/hello_web.ex`:
 
-```elixir
+```perl Elixir
 defimpl Plug.Exception, for: HelloWeb.SomethingNotFoundError do
   def status(_exception), do: 404
   def actions(_exception), do: []
@@ -179,7 +179,7 @@ end
 
 Alternatively, you could define a `plug_status` field directly in the exception struct:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.SomethingNotFoundError do
   defexception [:message, plug_status: 404]
 end
@@ -194,7 +194,7 @@ As an example, Phoenix will display an error if you have pending migrations and 
 
 When `debug_errors` is `true`, they are rendered in the error page as a collection of buttons and follow the format of:
 
-```elixir
+```perl Elixir
 [
   %{
     label: String.t(),
@@ -205,7 +205,7 @@ When `debug_errors` is `true`, they are rendered in the error page as a collecti
 
 If we wanted to return some actions for an `HelloWeb.SomethingNotFoundError` we would implement `Plug.Exception` like this:
 
-```elixir
+```perl Elixir
 defimpl Plug.Exception, for: HelloWeb.SomethingNotFoundError do
   def status(_exception), do: 404
 

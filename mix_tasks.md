@@ -69,7 +69,7 @@ $ mix phx.gen.html Blog Post posts body:string word_count:integer
 
 When `mix phx.gen.html` is done creating files, it helpfully tells us that we need to add a line to our router file as well as run our Ecto migrations.
 
-```log
+```shell
 Add the resource to your browser scope in lib/hello_web/router.ex:
 
     resources "/posts", PostController
@@ -106,7 +106,7 @@ $ mix phx.gen.html Blog Post posts body:string word_count:integer --no-context
 
 It will tell us we need to add a line to our router file, but since we skipped the context, it won't mention anything about `ecto.migrate`.
 
-```log
+```shell
 Add the resource to your browser scope in lib/hello_web/router.ex:
 
     resources "/posts", PostController
@@ -161,7 +161,7 @@ $ mix phx.gen.json Blog Post posts title:string content:string
 
 When `mix phx.gen.json` is done creating files, it helpfully tells us that we need to add a line to our router file as well as run our Ecto migrations.
 
-```log
+```shell
 Add the resource to your :api scope in lib/hello_web/router.ex:
 
     resources "/posts", PostController, except: [:new, :edit]
@@ -285,7 +285,7 @@ $ mix phx.gen.auth Accounts User users
 
 When `mix phx.gen.auth` is done creating files, it helpfully tells us that we need to re-fetch our dependencies as well as run our Ecto migrations.
 
-```log
+```shell
 Please re-fetch your dependencies with the following command:
 
     mix deps.get
@@ -314,7 +314,7 @@ $ mix phx.gen.channel Room
 
 If your application does not have a `UserSocket` yet, it will ask if you want to create one:
 
-```log
+```shell
 The default socket handler - HelloWeb.UserSocket - was not found in its default location.
 
 Do you want to create it? [Y/n]
@@ -322,7 +322,7 @@ Do you want to create it? [Y/n]
 
 By confirming, a channel will be created, then you need to connect the socket in your endpoint:
 
-```log
+```shell
 Add the socket handler to your `lib/hello_web/endpoint.ex`, for example:
 
     socket "/socket", HelloWeb.UserSocket,
@@ -336,7 +336,7 @@ For the front-end integration, you need to import the `user_socket.js` in your `
 
 In case a `UserSocket` already exists or you decide to not create one, the `channel` generator will tell you to add it to the Socket manually:
 
-```log
+```shell
 Add the channel to your `lib/hello_web/channels/user_socket.ex` handler, for example:
 
     channel "rooms:lobby", HelloWeb.RoomChannel
@@ -423,7 +423,7 @@ Before we run this task let's inspect the contents of two directories in our hel
 
 First `priv/static/` which should look similar to this:
 
-```log
+```shell
 ├── assets
 │   ├── app.css
 │   └── app.js
@@ -433,7 +433,7 @@ First `priv/static/` which should look similar to this:
 
 And then `assets/` which should look similar to this:
 
-```log
+```shell
 ├── css
 │   └── app.css
 ├── js
@@ -462,7 +462,7 @@ Those versions are:
 
 We can optionally determine which files should be gzipped by using the `:gzippable_exts` option in the config file:
 
-```elixir
+```perl Elixir
 config :phoenix, :gzippable_exts, ~w(.js .css)
 ```
 
@@ -523,7 +523,7 @@ mix ecto.create
 
 We can fix this by creating the "postgres" role in the `psql` console with the permissions needed to log in and create a database.
 
-```log
+```shell
 =# CREATE ROLE postgres LOGIN CREATEDB;
 CREATE ROLE
 ```
@@ -537,7 +537,7 @@ mix ecto.create
 
 To fix this, we need to change the permissions on our "postgres" user to allow login.
 
-```log
+```shell
 =# ALTER ROLE postgres LOGIN;
 ALTER ROLE
 ```
@@ -551,7 +551,7 @@ mix ecto.create
 
 To fix this, we need to change the permissions on our "postgres" user in the `psql` console to allow database creation.
 
-```log
+```shell
 =# ALTER ROLE postgres CREATEDB;
 ALTER ROLE
 ```
@@ -612,7 +612,7 @@ Don't forget to add your new repo to your supervision tree
 Notice that this task has updated `config/config.exs`.
 If we take a look, we'll see this extra configuration block for our new repo.
 
-```elixir
+```perl Elixir
 .
 .
 .
@@ -632,7 +632,7 @@ We'll also need to change the config for other environments.
 We certainly should follow the instructions and add our new repo to our supervision tree.
 In our `Hello` application, we would open up `lib/hello/application.ex`, and add our repo as a worker to the `children` list.
 
-```elixir
+```perl Elixir
 .
 .
 .
@@ -667,7 +667,7 @@ Notice that the migration's filename begins with a string representation of the 
 
 Let's take a look at the file `ecto.gen.migration` has generated for us at `priv/repo/migrations/20150318001628_add_comments_table.exs`.
 
-```elixir
+```perl Elixir
 defmodule Hello.Repo.Migrations.AddCommentsTable do
   use Ecto.Migration
 
@@ -682,7 +682,7 @@ Very nice indeed.
 
 What we want to do is create a `comments` table with a `body` column, a `word_count` column, and timestamp columns for `inserted_at` and `updated_at`.
 
-```elixir
+```perl Elixir
 .
 .
 .
@@ -729,7 +729,7 @@ This will keep track of all the migrations which we run by storing the timestamp
 
 Here's what the `schema_migrations` table looks like.
 
-```log
+```shell
 hello_dev=# select * from schema_migrations;
 version        |     inserted_at
 ---------------+---------------------
@@ -796,7 +796,7 @@ mkdir -p lib/mix/tasks/
 
 Inside that directory, let's create a new file, `hello.greeting.ex`, that looks like this.
 
-```elixir
+```perl Elixir
 defmodule Mix.Tasks.Hello.Greeting do
   use Mix.Task
 
@@ -866,7 +866,7 @@ If you want to make your new Mix task to use your application's infrastructure, 
 This is particularly useful if you need to access your database from within the Mix task.
 Thankfully, Mix makes it really easy for us via the `@requirements` module attribute:
 
-```elixir
+```perl Elixir
   @requirements ["app.config"]
 
   @impl Mix.Task

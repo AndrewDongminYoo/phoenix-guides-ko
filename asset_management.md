@@ -20,19 +20,19 @@ If you want to import JavaScript dependencies, you have at least three options t
 
 1. Vendor those dependencies inside your project and import them in your "assets/js/app.js" using a relative path:
 
-   ```js
+   ```javascript
    import topbar from "../vendor/topbar";
    ```
 
 2. Call `npm install topbar --save` inside your assets directory and `esbuild` will be able to automatically pick them up:
 
-   ```js
+   ```javascript
    import topbar from "topbar";
    ```
 
 3. Use Mix to track the dependency from a source repository:
 
-   ```elixir
+   ```perl Elixir
    # mix.exs
    {:topbar,
     github: "buunguyen/topbar",
@@ -43,7 +43,7 @@ If you want to import JavaScript dependencies, you have at least three options t
 
    Run `mix deps.get` to fetch the dependency and then import it:
 
-   ```js
+   ```javascript
    import topbar from "../../deps/topbar";
    ```
 
@@ -60,7 +60,7 @@ If you want to import JavaScript dependencies, you have at least three options t
 By default, Phoenix generates CSS with the `tailwind` library, but esbuild has basic support for CSS which you can use if you aren't using tailwind.
 If you import a `.css` file at the top of your main `.js` file, `esbuild` will bundle it, and write it to the same directory as your final `app.js`.
 
-```js
+```javascript
 import "../css/app.css";
 ```
 
@@ -86,7 +86,7 @@ body {
 
 The above may fail with the following message:
 
-```text
+```shell
 error: Could not resolve "/images/bg.png" (mark it as external to exclude it from the bundle)
 ```
 
@@ -94,7 +94,7 @@ Given the images are already managed by Phoenix, you need to mark all resources 
 This is what Phoenix does by default for new apps since v1.6.1+.
 In your `config/config.exs`, you will find:
 
-```elixir
+```perl Elixir
 args: ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
 ```
 
@@ -127,7 +127,7 @@ yarn add ../deps/phoenix ../deps/phoenix_html ../deps/phoenix_live_view
 Next, add a custom JavaScript build script.
 We'll call the example `assets/build.js`:
 
-```js
+```javascript
 const esbuild = require("esbuild");
 
 const args = process.argv.slice(2);
@@ -188,7 +188,7 @@ This script covers following use cases:
 
 Modify `config/dev.exs` so that the script runs whenever you change files, replacing the existing `:esbuild` configuration under `watchers`:
 
-```elixir
+```perl Elixir
 config :hello, HelloWeb.Endpoint,
   ...
   watchers: [
@@ -199,7 +199,7 @@ config :hello, HelloWeb.Endpoint,
 
 Modify the `aliases` task in `mix.exs` to install `npm` packages during `mix setup` and use the new `esbuild` on `mix assets.deploy`:
 
-```elixir
+```perl Elixir
   defp aliases do
     [
       setup: ["deps.get", "ecto.setup", "cmd --cd assets npm install"],

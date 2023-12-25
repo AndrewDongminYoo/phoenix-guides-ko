@@ -169,7 +169,7 @@ Something like this:
 The Phoenix Static buildpack uses a predefined Node.js version, but to avoid surprises when deploying, it is best to explicitly list the Node.js version we want in production to be the same we are using during development or in your continuous integration servers.
 This is done by creating a config file named `phoenix_static_buildpack.config` in the root directory of your project with your target version of Node.js:
 
-```text
+```shell
 # Node.js version
 node_version=10.20.1
 ```
@@ -187,14 +187,14 @@ This aligns well with Heroku best practices, so the only work left for us to do 
 First let's tell Phoenix enforce we only use the SSL version of the website.
 Find the endpoint config in your `config/runtime.exs`:
 
-```elixir
+```perl Elixir
 config :scaffold, ScaffoldWeb.Endpoint,
   url: [host: host, port: 443, scheme: "https"],
 ```
 
 ... and add `force_ssl`
 
-```elixir
+```perl Elixir
 config :scaffold, ScaffoldWeb.Endpoint,
   url: [host: host, port: 443, scheme: "https"],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
@@ -203,7 +203,7 @@ config :scaffold, ScaffoldWeb.Endpoint,
 Then in your `config/runtime.exs` (formerly `config/prod.secret.exs`) and uncomment the `# ssl: true,` line in your repository configuration.
 It will look like this:
 
-```elixir
+```perl Elixir
 config :hello, Hello.Repo,
   ssl: true,
   url: database_url,
@@ -214,7 +214,7 @@ Finally, if you plan on using websockets, then we will need to decrease the time
 If you do not plan on using websockets, then leaving it set to false is fine.
 You can find further explanation of the options available at the [documentation](https://hexdocs.pm/phoenix/Phoenix.Endpoint.html#socket/3-websocket-configuration).
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :hello
 
@@ -430,7 +430,7 @@ Heroku gives you the ability to connect to your dyno with an IEx shell which all
 
 - Modify the `web` process in your Procfile to run a named node:
 
-  ```text
+  ```shell
   web: elixir --sname server -S mix phx.server
   ```
 
@@ -471,7 +471,7 @@ It's possible to force Heroku to recompile all dependencies on each deploy, whic
 The way to do it is to add a new file called `elixir_buildpack.config` at the root of the application.
 The file should contain this line:
 
-```text
+```shell
 always_rebuild=true
 ```
 

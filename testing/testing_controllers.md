@@ -18,7 +18,7 @@ At the end of the guide, we will generate a JSON resource, and explore how our A
 
 If you open up `test/hello_web/controllers/post_controller_test.exs`, you will find the following:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.PostControllerTest do
   use HelloWeb.ConnCase
 
@@ -46,7 +46,7 @@ Then, as usual, it defines some aliases, some module attributes to use throughou
 The first describe block is for the `index` action.
 The action itself is implemented like this in `lib/hello_web/controllers/post_controller.ex`:
 
-```elixir
+```perl Elixir
 def index(conn, _params) do
   posts = Blog.list_posts()
   render(conn, :index, posts: posts)
@@ -58,7 +58,7 @@ The template can be found in `lib/hello_web/templates/page/index.html.heex`.
 
 The test looks like this:
 
-```elixir
+```perl Elixir
 describe "index" do
   test "lists all posts", %{conn: conn} do
     conn = get(conn, ~p"/posts")
@@ -75,7 +75,7 @@ It uses the `get/2` helper to make a request to the `"/posts"` page, which is ve
 The next test we will look at is the one for the `create` action.
 The `create` action implementation is this:
 
-```elixir
+```perl Elixir
 def create(conn, %{"post" => post_params}) do
   case Blog.create_post(post_params) do
     {:ok, post} ->
@@ -91,7 +91,7 @@ end
 
 Since there are two possible outcomes for the `create`, we will have at least two tests:
 
-```elixir
+```perl Elixir
 describe "create post" do
   test "redirects to show when data is valid", %{conn: conn} do
     conn = post(conn, ~p"/posts", post: @create_attrs)
@@ -123,7 +123,7 @@ If any invalid attribute is given, it should re-render the "New Post" page.
 
 One common question is: how many failure scenarios do you test at the controller level? For example, in the [Testing Contexts](testing_contexts.html) guide, we introduced a validation to the `title` field of the post:
 
-```elixir
+```perl Elixir
 def changeset(post, attrs) do
   post
   |> cast(attrs, [:title, :body])
@@ -151,7 +151,7 @@ The test for `update` follows a similar structure as `create`, so let's skip to 
 
 The `delete` action looks like this:
 
-```elixir
+```perl Elixir
 def delete(conn, %{"id" => id}) do
   post = Blog.get_post!(id)
   {:ok, _post} = Blog.delete_post(post)
@@ -164,7 +164,7 @@ end
 
 The test is written like this:
 
-```elixir
+```perl Elixir
   describe "delete post" do
     setup [:create_post]
 
@@ -188,14 +188,14 @@ First of all, `setup` is used to declare that the `create_post` function should 
 The `create_post` function simply creates a post and stores it in the test metadata.
 This allows us to, in the first line of the test, match on both the post and the connection:
 
-```elixir
+```perl Elixir
 test "deletes chosen post", %{conn: conn, post: post} do
 ```
 
 The test uses `delete/2` to delete the post and then asserts that we redirected to the index page.
 Finally, we check that it is no longer possible to access the show page of the deleted post:
 
-```elixir
+```perl Elixir
 assert_error_sent 404, fn ->
   get(conn, ~p"/posts/#{post}")
 end
@@ -210,7 +210,7 @@ In this case, it verifies that:
 This pretty much mimics how Phoenix handles exceptions.
 For example, when we access `/posts/12345` where `12345` is an ID that does not exist, we will invoke our `show` action:
 
-```elixir
+```perl Elixir
 def show(conn, %{"id" => id}) do
   post = Blog.get_post!(id)
   render(conn, :show, post: post)
@@ -222,7 +222,7 @@ If your application raises any exception during a web request, Phoenix translate
 In this case, 404..
 We could, for example, have written this test as:
 
-```elixir
+```perl Elixir
 assert_raise Ecto.NotFoundError, fn ->
   get(conn, ~p"/posts/#{post}")
 end
@@ -265,7 +265,7 @@ Previously it generated 16 (we went from 5 to 21) and now it generated 14 (we we
 That's because JSON APIs do not need to expose the `new` and `edit` actions.
 We can see this is the case in the resource we have added to the router at the end of the `mix phx.gen.json` command:
 
-```elixir
+```perl Elixir
 resources "/articles", ArticleController, except: [:new, :edit]
 ```
 
@@ -284,7 +284,7 @@ The initial structure is quite similar to `post_controller_test.exs`.
 So let's take a look at the tests for the `index` action.
 The `index` action itself is implemented in `lib/hello_web/controllers/article_controller.ex` like this:
 
-```elixir
+```perl Elixir
 def index(conn, _params) do
   articles = News.list_articles()
   render(conn, :index, articles: articles)
@@ -295,7 +295,7 @@ The action gets all articles and renders the index template.
 Since we are talking about JSON, we don't have a `index.json.heex` template.
 Instead, the code that converts `articles` into JSON can be found directly in the ArticleJSON module, defined at `lib/hello_web/controllers/article_json.ex` like this:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.ArticleJSON do
   alias Hello.News.Article
 
@@ -322,7 +322,7 @@ We simply define functions for our `index` and `show` actions that return the ma
 
 Let's take a look at the test for the `index` action then:
 
-```elixir
+```perl Elixir
 describe "index" do
   test "lists all articles", %{conn: conn} do
     conn = get(conn, ~p"/api/articles")
@@ -340,7 +340,7 @@ Let's look at something more interesting.
 
 The `create` action is defined like this:
 
-```elixir
+```perl Elixir
 def create(conn, %{"article" => article_params}) do
   with {:ok, %Article{} = article} <- News.create_article(article_params) do
     conn
@@ -356,7 +356,7 @@ If so, it sets the status code to `:created` (which translates to 201), it sets 
 
 This is precisely what the first test for the `create` action verifies:
 
-```elixir
+```perl Elixir
 describe "create article" do
   test "renders article when data is valid", %{conn: conn} do
     conn = post(conn, ~p"/articles", article: @create_attrs)
@@ -379,7 +379,7 @@ Then we perform a `get/2` request on the `show` route and verify that the articl
 Inside `describe "create article"`, we will find another test, which handles the failure scenario.
 Can you spot the failure scenario in the `create` action? Let's recap it:
 
-```elixir
+```perl Elixir
 def create(conn, %{"article" => article_params}) do
   with {:ok, %Article{} = article} <- News.create_article(article_params) do
 ```
@@ -393,14 +393,14 @@ Our actions do not know how to handle the `{:error, changeset}` result by defaul
 Luckily, we can teach Phoenix Controllers to handle it with the Action Fallback controller.
 At the top of `ArticleController`, you will find:
 
-```elixir
+```perl Elixir
   action_fallback HelloWeb.FallbackController
 ```
 
 This line says: if any action does not return a `%Plug.Conn{}`, we want to invoke `FallbackController` with the result.
 You will find `HelloWeb.FallbackController` at `lib/hello_web/controllers/fallback_controller.ex` and it looks like this:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.FallbackController do
   use HelloWeb, :controller
 
@@ -424,7 +424,7 @@ You can see how the first clause of the `call/2` function handles the `{:error, 
 
 With this in mind, let's look at our second test for `create`:
 
-```elixir
+```perl Elixir
 test "renders errors when data is invalid", %{conn: conn} do
   conn = post(conn, ~p"/api/articles", article: @invalid_attrs)
   assert json_response(conn, 422)["errors"] != %{}
@@ -442,7 +442,7 @@ You can learn more about the "Action Fallback" in the [Controllers guide](contro
 Finally, the last action we will study is the `delete` action for JSON.
 Its implementation looks like this:
 
-```elixir
+```perl Elixir
 def delete(conn, %{"id" => id}) do
   article = News.get_article!(id)
 
@@ -456,7 +456,7 @@ The new action simply attempts to delete the article and, if it succeeds, it ret
 
 The test looks like this:
 
-```elixir
+```perl Elixir
 describe "delete article" do
   setup [:create_article]
 

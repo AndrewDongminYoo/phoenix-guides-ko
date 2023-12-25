@@ -30,14 +30,14 @@ By simply adding `:telemetry_poller` as a dependency, you can receive VM-related
 
 If you are coming from an older version of Phoenix, install the `:telemetry_metrics` and `:telemetry_poller` packages:
 
-```elixir
+```perl Elixir
 {:telemetry_metrics, "~> 0.6"},
 {:telemetry_poller, "~> 1.0"}
 ```
 
 and create your Telemetry supervisor at `lib/my_app_web/telemetry.ex`:
 
-```elixir
+```perl Elixir
 # lib/my_app_web/telemetry.ex
 defmodule MyAppWeb.Telemetry do
   use Supervisor
@@ -90,7 +90,7 @@ Make sure to replace MyApp by your actual application name.
 Then add to your main application's supervision tree
 (usually in `lib/my_app/application.ex`):
 
-```elixir
+```perl Elixir
 children = [
   MyAppWeb.Telemetry,
   MyApp.Repo,
@@ -128,7 +128,7 @@ Here is an example of an event from your endpoint:
 
 This means that after each request, `Plug`, via `:telemetry`, will emit a "stop" event, with a measurement of how long it took to get the response:
 
-```elixir
+```perl Elixir
 :telemetry.execute([:phoenix, :endpoint, :stop], %{duration: duration}, %{conn: conn})
 ```
 
@@ -156,13 +156,13 @@ Let's take a look at some examples.
 
 Using `Telemetry.Metrics`, you can define a counter metric, which counts how many HTTP requests were completed:
 
-```elixir
+```perl Elixir
 Telemetry.Metrics.counter("phoenix.endpoint.stop.duration")
 ```
 
 or you could use a distribution metric to see how many requests were completed in particular time buckets:
 
-```elixir
+```perl Elixir
 Telemetry.Metrics.distribution("phoenix.endpoint.stop.duration")
 ```
 
@@ -189,7 +189,7 @@ Here is an example of a Telemetry event executed by Ecto when an Ecto repository
 
 This means that whenever the `Ecto.Repo` starts, it will emit an event, via `:telemetry`, with a measurement of the time at start-up.
 
-```elixir
+```perl Elixir
 :telemetry.execute([:ecto, :repo, :init], %{system_time: System.system_time()}, %{repo: repo, opts: opts})
 ```
 
@@ -198,7 +198,7 @@ Additional Telemetry events are executed by Ecto adapters.
 One such adapter-specific event is the `[:my_app, :repo, :query]` event.
 For instance, if you want to graph query execution time, you can use the `Telemetry.Metrics.summary/2` function to instruct your reporter to calculate statistics of the `[:my_app, :repo, :query]` event, like maximum, mean, percentiles etc.:
 
-```elixir
+```perl Elixir
 Telemetry.Metrics.summary("my_app.repo.query.query_time",
   unit: {:native, :millisecond}
 )
@@ -206,7 +206,7 @@ Telemetry.Metrics.summary("my_app.repo.query.query_time",
 
 Or you could use the `Telemetry.Metrics.distribution/2` function to define a histogram for another adapter-specific event: `[:my_app, :repo, :query, :queue_time]`, thus visualizing how long queries spend queued:
 
-```elixir
+```perl Elixir
 Telemetry.Metrics.distribution("my_app.repo.query.queue_time",
   unit: {:native, :millisecond}
 )
@@ -227,7 +227,7 @@ They then aggregate the measurements (data) into metrics to provide meaningful i
 
 For example, if the following `Telemetry.Metrics.summary/2` call is added to the `metrics/0` function of your Telemetry supervisor:
 
-```elixir
+```perl Elixir
 summary("phoenix.endpoint.stop.duration",
   unit: {:native, :millisecond}
 )
@@ -247,7 +247,7 @@ You can use this reporter to experiment with the metrics discussed in this guide
 
 Uncomment or add the following to this list of children in your Telemetry supervision tree (usually in `lib/my_app_web/telemetry.ex`):
 
-```elixir
+```perl Elixir
 {Telemetry.Metrics.ConsoleReporter, metrics: metrics()}
 ```
 
@@ -276,7 +276,7 @@ Let's take a look at another event emitted during the HTTP request lifecycle, th
 Let's start by grouping these events by route.
 Add the following (if it does not already exist) to the `metrics/0` function of your Telemetry supervisor (usually in `lib/my_app_web/telemetry.ex`):
 
-```elixir
+```perl Elixir
 # lib/my_app_web/telemetry.ex
 def metrics do
   [
@@ -316,7 +316,7 @@ Let's find out how to extract more tags from events that include a `conn` in the
 
 Let's add another metric for the route event, this time to group by route and method:
 
-```elixir
+```perl Elixir
 summary("phoenix.router_dispatch.stop.duration",
   tags: [:method, :route],
   tag_values: &get_and_put_http_method/1,
@@ -328,7 +328,7 @@ We've introduced the `:tag_values` option here, because we need to perform a tra
 
 Add the following private function to your Telemetry module to lift the `:method` value from the `Plug.Conn` struct:
 
-```elixir
+```perl Elixir
 # lib/my_app_web/telemetry.ex
 defp get_and_put_http_method(%{conn: %{method: method}} = metadata) do
   Map.put(metadata, :method, method)
@@ -345,7 +345,7 @@ Note the `:tags` and `:tag_values` options can be applied to all `Telemetry.Metr
 Sometimes when displaying a metric, the value label may need to be transformed to improve readability.
 Take for example the following metric that displays the duration of the each LiveView's `mount/3` callback by `connected?` status.
 
-```elixir
+```perl Elixir
 summary("phoenix.live_view.mount.stop.duration",
   unit: {:native, :millisecond},
   tags: [:view, :connected?],
@@ -355,7 +355,7 @@ summary("phoenix.live_view.mount.stop.duration",
 
 The following function lifts `metadata.socket.view` and `metadata.socket.connected?` to be top-level keys on `metadata`, as we did in the previous example.
 
-```elixir
+```perl Elixir
 # lib/my_app_web/telemetry.ex
 defp live_view_metric_tag_values(metadata) do
   metadata
@@ -369,7 +369,7 @@ However, when rendering these metrics in LiveDashboard, the value label is outpu
 To make the value label easier to read, we can update our private function to generate more user friendly names.
 We'll run the value of the `:view` through `inspect/1` to remove the `Elixir.` prefix and call another private function to convert the `connected?` boolean into human readable text.
 
-```elixir
+```perl Elixir
 # lib/my_app_web/telemetry.ex
 defp live_view_metric_tag_values(metadata) do
   metadata
@@ -394,7 +394,7 @@ Fortunately the [`:telemetry_poller`](https://hexdocs.pm/telemetry_poller) packa
 
 Add the following to the list in your Telemetry supervisor's `periodic_measurements/0` function, which is a private function that returns a list of measurements to take on a specified interval.
 
-```elixir
+```perl Elixir
 # lib/my_app_web/telemetry.ex
 defp periodic_measurements do
   [
@@ -409,7 +409,7 @@ end
 
 where `MyApp.measure_users/0` could be written like this:
 
-```elixir
+```perl Elixir
 # lib/my_app.ex
 defmodule MyApp do
   def measure_users do
@@ -420,7 +420,7 @@ end
 
 Now with measurements in place, you can define the metrics for the events above:
 
-```elixir
+```perl Elixir
 # lib/my_app_web/telemetry.ex
 def metrics do
   [
@@ -461,7 +461,7 @@ If you need custom metrics and instrumentation in your application, you can util
 Here is an example of a simple GenServer that emits telemetry events.
 Create this file in your app at `lib/my_app/my_server.ex`:
 
-```elixir
+```perl Elixir
 # lib/my_app/my_server.ex
 defmodule MyApp.MyServer do
   @moduledoc """
@@ -576,7 +576,7 @@ end
 
 and add it to your application's supervisor tree (usually in `lib/my_app/application.ex`), giving it a function to invoke when called:
 
-```elixir
+```perl Elixir
 # lib/my_app/application.ex
 children = [
   # Start a server that greets the world
@@ -586,13 +586,13 @@ children = [
 
 Now start an IEx session and call the server:
 
-```elixir
+```perl Elixir
 iex> MyApp.MyServer.call!
 ```
 
 and you should see something like the following output:
 
-```text
+```shell
 [Telemetry.Metrics.ConsoleReporter] Got new event!
 Event name: my_app.my_server.call.stop
 All measurements: %{duration: 4000}

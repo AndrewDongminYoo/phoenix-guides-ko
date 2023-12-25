@@ -96,7 +96,7 @@ fly deploy
 참고: Apple Silicon(M1) 컴퓨터에서 docker는 qemu를 사용하여 크로스 플랫폼 빌드를 실행하는데, 이는 항상 작동하지 않을 수 있습니다.
 다음과 같은 세분화 오류 오류가 발생하면:
 
-```log
+```shell
  => [build  7/17] RUN mix deps.get --only
  => => # qemu: uncaught target signal 11 (Segmentation fault) - core dumped
 ```
@@ -180,7 +180,7 @@ Fly.io에서 사용할 전략은 `DNSPoll`입니다.
 
 `libcluster`를 설치한 후 다음과 같이 애플리케이션에 추가합니다:
 
-```elixir
+```perl Elixir
 defmodule MyApp.Application do
   use Application
 
@@ -202,7 +202,7 @@ end
 
 다음 단계는 `config/runtime.exs`에 `topologies` 구성을 추가하는 것입니다.
 
-```elixir
+```perl Elixir
   app_name =
     System.get_env("FLY_APP_NAME") ||
       raise "FLY_APP_NAME not available"
@@ -305,7 +305,7 @@ IEx 셸에서 연결된 노드에 어떤 다른 노드를 볼 수 있는지 물�
 fly ssh console -C "/app/bin/my_app remote"
 ```
 
-```elixir
+```perl Elixir
 iex(my-app-1234@fdaa:0:1da8:a7b:ac2:f901:4bf7:2)1> Node.list
 [:"my-app-1234@fdaa:0:1da8:a7b:ac4:eb41:19d3:2"]
 ```
@@ -369,7 +369,7 @@ cdf6c422 30      sea    run     running 1 total, 1 passing 0        6m47s ago
 fly ssh console -C "/app/bin/my_app remote"
 ```
 
-```elixir
+```perl Elixir
 iex(my-app-1234@fdaa:0:1da8:a7b:ac2:cdf6:c422:2)1> Node.list
 [:"my-app-1234@fdaa:0:1da8:a7b:ab2:a8e:6666:2"]
 ```

@@ -38,7 +38,7 @@ This is where we will be working for this section.
 
 The route for our "Welcome to Phoenix!" page from the previous [Up And Running Guide](up_and_running.html) looks like this.
 
-```elixir
+```perl Elixir
 get "/", PageController, :home
 ```
 
@@ -52,7 +52,7 @@ The first thing we need to do is to create the page route for a new page.
 Let's open up `lib/hello_web/router.ex` in a text editor.
 For a brand new application, it looks like this:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Router do
   use HelloWeb, :router
 
@@ -89,7 +89,7 @@ We will discuss those in the [Routing guide](routing.html).
 
 Let's add a new route to the router that maps a `GET` request for `/hello` to the `index` action of a soon-to-be-created `HelloWeb.HelloController` inside the `scope "/" do` block of the router:
 
-```elixir
+```perl Elixir
 scope "/", HelloWeb do
   pipe_through :browser
 
@@ -106,7 +106,7 @@ Our route specifies that we need a `HelloWeb.HelloController` module with an `in
 
 To make the `index` action happen, let's create a new `lib/hello_web/controllers/hello_controller.ex` file, and make it look like the following:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.HelloController do
   use HelloWeb, :controller
 
@@ -138,7 +138,7 @@ To make our lives easier, we often use templates for creating those HTML pages.
 Let's create a new view.
 Create `lib/hello_web/controllers/hello_html.ex` and make it look like this:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.HelloHTML do
   use HelloWeb, :html
 end
@@ -148,7 +148,7 @@ To add templates to this view, we can define them as function components in the 
 
 Let's start by defining a function component:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.HelloHTML do
   use HelloWeb, :html
 
@@ -170,7 +170,7 @@ Function components are great for smaller templates and separate files are a goo
 Let's give it a try by defining a template in its own file.
 First delete our `def index(assigns)` function from above and replace it with an `embed_templates` declaration:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.HelloHTML do
   use HelloWeb, :html
 
@@ -188,7 +188,7 @@ They are also collocated together in the directory tree:
 > **Note**: We can rename the `hello_html` directory to whatever we want and put it in a subdirectory of `lib/hello_web/controllers`, as long as we update the `embed_templates` setting accordingly.
 > However, it's best to keep the same naming convention to prevent any confusion.
 
-```log
+```shell
 lib/hello_web
 ├── controllers
 │   ├── hello_controller.ex
@@ -200,7 +200,7 @@ lib/hello_web
 A template file has the following structure: `NAME.FORMAT.TEMPLATING_LANGUAGE`.
 In our case, let's create an `index.html.heex` file at `lib/hello_web/controllers/hello_html/index.html.heex`:
 
-```heex
+```perl HEEx
 <section>
   <h2>Hello World, from Phoenix!</h2>
 </section>
@@ -218,7 +218,7 @@ Yes, Phoenix has hot code reloading! Also, even though our `index.html.heex` fil
 Our index template is actually rendered into layouts: first it renders `lib/hello_web/components/layouts/root.html.heex` which renders `lib/hello_web/components/layouts/app.html.heex` which finally includes our contents.
 If you open those files, you'll see a line that looks like this at the bottom:
 
-```heex
+```perl HEEx
 <%= @inner_content %>
 ```
 
@@ -241,7 +241,7 @@ It is an essential part of how Phoenix handles requests and we will discuss it i
 For now, it suffices to say that each plug defines a slice of request processing.
 In the endpoint you will find a skeleton roughly like this:
 
-```elixir
+```perl Elixir
 defmodule HelloWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :hello
 
@@ -291,7 +291,7 @@ As we did last time, the first thing we'll do is create a new route.
 For this exercise, we're going to reuse `HelloController` created at the [previous step](request_lifecycle.html#a-new-controller) and add a new `show` action.
 We'll add a line just below our last route, like this:
 
-```elixir
+```perl Elixir
 scope "/", HelloWeb do
   pipe_through :browser
 
@@ -312,7 +312,7 @@ We already have the controller at `lib/hello_web/controllers/hello_controller.ex
 This time, we'll need to extract the messenger from the parameters so that we can pass it (the messenger) to the template.
 To do that, we add this show function to the controller:
 
-```elixir
+```perl Elixir
 def show(conn, %{"messenger" => messenger}) do
   render(conn, :show, messenger: messenger)
 end
@@ -322,7 +322,7 @@ Within the body of the `show` action, we also pass a third argument to the rende
 
 If the body of the action needs access to the full map of parameters bound to the `params` variable, in addition to the bound messenger variable, we could define `show/2` like this:
 
-```elixir
+```perl Elixir
 def show(conn, %{"messenger" => messenger} = params) do
   ...
 end
@@ -346,7 +346,7 @@ HEEx is a superset of EEx which is why it shares the `<%= %>` syntax.
 
 And this is what the template should look like:
 
-```heex
+```perl HEEx
 <section>
   <h2>Hello World, from <%= @messenger %>!</h2>
 </section>
